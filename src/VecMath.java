@@ -1,6 +1,6 @@
 public class VecMath {
-
-    //TODO rewrite all vec math functions
+    //TODO make Vector type
+    //TODO rewrite all vec math functions, too bloody ugly
     public static void incArray(double inc, double[] arr, double[] Out){
         for (int i = 0; i < arr.length; i++){
             Out[i] = arr[i] + inc;
@@ -56,10 +56,9 @@ public class VecMath {
 
         double[] rotated = {tempX, tempY};
         return rotated;
-
     }
 
-    //TODO finish
+    //TODO finish toLocal func
     public static double[] toLocal(double[] globalX, double[] globalY, double[] globalPos){
         double[] localX = globalX;
         double[] localY = globalY;
