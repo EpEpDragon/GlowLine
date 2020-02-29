@@ -1,10 +1,8 @@
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-
 import javafx.geometry.Point2D;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 
 
 public class GameObject {

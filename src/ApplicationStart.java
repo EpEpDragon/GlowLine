@@ -1,9 +1,7 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -27,6 +25,7 @@ public class ApplicationStart extends Application {
     private Parent createContent(){
         root.setPrefSize(1920,1080);
 
+        //Spawn Player
         spawnGameObject(player,960, 900);
 
         /***********************************************************
@@ -35,6 +34,7 @@ public class ApplicationStart extends Application {
 
         AnimationTimer timer = new AnimationTimer() {
             long previousTime = 0;
+            //Time since last frame
             double deltaT = 0;
 
             @Override
@@ -56,22 +56,18 @@ public class ApplicationStart extends Application {
         //System.out.println(deltaTime);
 
         //Accelerate player
-        int accel = player.getAcceleration();
+        double accel = player.getAcceleration() * deltaTime;
         if (forward){
-            player.setVelocity(player.getVelocity().add(0,-accel));
-            System.out.println("For");
+            accelerate(player,0,-accel);
         }
         if (backwards){
-            player.setVelocity(player.getVelocity().add(0,accel));
-            System.out.println("back");
+            accelerate(player,0,accel);
         }
         if (left){
-            player.setVelocity(player.getVelocity().add(-accel,0));
-            System.out.println("left");
+            accelerate(player,-accel,0);
         }
         if (right){
             System.out.println("right");
-            player.setVelocity(player.getVelocity().add(accel,0));
         }
 
         //Change player position based on velocity an deltaTime
@@ -124,7 +120,7 @@ public class ApplicationStart extends Application {
     }
 
 
-    private void changeVelocity(GameObject object, double x, double y){
+    private void accelerate(GameObject object, double x, double y){
         object.setVelocity(object.getVelocity().add(x,y));
     }
 
@@ -138,7 +134,8 @@ public class ApplicationStart extends Application {
      *************************************************/
 
     public class Player extends GameObject {
-        private int acceleration = 5;
+        //px/s
+        private int acceleration = 300;
         Player(){
             super(new Polygon(25,0 , 0,50 , 50,50), Color.WHEAT);
         }
