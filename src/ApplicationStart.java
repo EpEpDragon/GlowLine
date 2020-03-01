@@ -1,5 +1,7 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -7,6 +9,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ApplicationStart extends Application {
     //Root
@@ -21,7 +27,84 @@ public class ApplicationStart extends Application {
     Boolean left = false;
     Boolean right = false;
 
-    //Application setup, returns root as parent type
+    //This is not used, manually started later. Override needed for the program to function.
+    @Override
+    public void start(Stage stage){ return; }
+
+    /********************Launch***********************/
+    public static void main(String[] args){
+        new ApplicationStart().initWindow();
+    }
+
+    //Window frame initialization (This is needed to change the desktop resolution)
+    JFrame frame = new JFrame();
+    private void initWindow() {
+        GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice devices = g.getScreenDevices()[0];
+
+        frame = new JFrame();
+        frame.setVisible(false);
+        frame.getContentPane().setBackground(java.awt.Color.BLACK);
+
+        //Revert to original resolution when app closes
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                Window w = devices.getFullScreenWindow();
+                if (w != null) {
+                    w.dispose();
+                }
+                devices.setFullScreenWindow(null);
+                frame.dispose();
+                System.exit(0);
+            }
+        });
+
+        devices.setFullScreenWindow(frame);
+        DisplayMode oldMode = devices.getDisplayMode();
+        DisplayMode displayMode = new DisplayMode(1920, 1080, oldMode.getBitDepth(), oldMode.getRefreshRate());
+        devices.setDisplayMode(displayMode);
+
+        //Used to embed FX into JFrame
+        final JFXPanel fxPanel = new JFXPanel();
+
+        frame.add(fxPanel);
+        //Used to run initFX in the JavaFX thread
+        Platform.runLater(() -> initFX(fxPanel));
+    }
+
+    //Invoked on JavaFX thread, initiate JavaFX
+    private void initFX(JFXPanel fxPanel) {
+        Scene scene = new Scene(createContent());
+        fxPanel.setScene(scene);
+
+        scene.setFill(Color.BLACK);
+
+        /***********************************************************
+         * Input handling
+         ***********************************************************/
+        scene.setOnKeyPressed(e ->{
+            switch (e.getCode()){
+                case W : forward = true; break;
+                case S : backwards = true; break;
+                case A : left = true; break;
+                case D : right = true; break;
+            }
+        });
+
+        scene.setOnKeyReleased(e->{
+            switch (e.getCode()){
+                case W : forward = false; break;
+                case S : backwards = false; break;
+                case A : left = false; break;
+                case D : right = false; break;
+            }
+        });
+
+        fxPanel.setVisible(true);
+    }
+
+    //Setup for game related content, game loop, spawning, etc.
     private Parent createContent(){
         root.setPrefSize(1920,1080);
 
@@ -67,48 +150,12 @@ public class ApplicationStart extends Application {
             accelerate(player,-accel,0);
         }
         if (right){
-            System.out.println("right");
+            accelerate(player,accel,0);
         }
 
         //Change player position based on velocity an deltaTime
         player.getView().setTranslateX(player.getView().getTranslateX() + player.getVelocity().getX() * deltaTime);
         player.getView().setTranslateY(player.getView().getTranslateY() + player.getVelocity().getY() * deltaTime);
-    }
-
-    @Override
-    public void start(Stage stage){
-        //Drawing canvas
-        stage.setScene(new Scene(createContent()));
-
-        /***********************************************************
-         * Input handling
-         ***********************************************************/
-        stage.getScene().setOnKeyPressed(e ->{
-            switch (e.getCode()){
-                case W : forward = true; break;
-                case S : backwards = true; break;
-                case A : left = true; break;
-                case D : right = true; break;
-            }
-        });
-
-        stage.getScene().setOnKeyReleased(e->{
-            switch (e.getCode()){
-                case W : forward = false; break;
-                case S : backwards = false; break;
-                case A : left = false; break;
-                case D : right = false; break;
-            }
-        });
-
-        //Window properties
-        stage.setTitle("GlowLine");
-        stage.getScene().setFill(Color.BLACK);
-        stage.setFullScreen(false);
-        stage.setWidth(1920);
-        stage.setHeight(1080);
-        stage.show();
-
     }
 
     //Add object to game
@@ -122,11 +169,6 @@ public class ApplicationStart extends Application {
 
     private void accelerate(GameObject object, double x, double y){
         object.setVelocity(object.getVelocity().add(x,y));
-    }
-
-    /********************Launch***********************/
-    public static void main(String[] args){
-        launch(args);
     }
 
     /*************************************************
