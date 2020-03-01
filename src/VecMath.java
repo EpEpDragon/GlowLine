@@ -25,8 +25,10 @@ public class VecMath {
         double rotDeg;
         double deltaY = yFoc-ySub;
         double deltaX = xFoc-xSub;
-        rotDeg = Math.atan((deltaY) / (deltaX));
 
+        //System.out.println("DX: " + deltaX + " DY: " + deltaY);
+        rotDeg = Math.atan((deltaY) / (deltaX));
+        System.out.println(rotDeg);
         if (deltaY < 0 && rotDeg > 0) {
             rotDeg = rotDeg - Math.PI;
         }
@@ -39,6 +41,7 @@ public class VecMath {
     public static double length(double[] vec){
         return Math.sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
     }
+
     public static double[] normalize(double[] vec){
         double[] unit = vec;
 

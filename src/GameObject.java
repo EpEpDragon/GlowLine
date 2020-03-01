@@ -6,6 +6,10 @@ import javafx.geometry.Point2D;
 
 
 public class GameObject {
+
+    //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
+    final private double radToDegConst = 180/Math.PI;
+
     private Node view;
     private Point2D velocity;
     private double maxVelocity = 300;
@@ -24,7 +28,7 @@ public class GameObject {
     }
 
     public void setRotation(double angle){
-        view.setRotate(angle);
+        view.setRotate(angle*radToDegConst);
     }
 
     public void setVelocity(Point2D velocity){

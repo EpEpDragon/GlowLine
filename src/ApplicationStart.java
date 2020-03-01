@@ -2,12 +2,14 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
+import javafx.geometry.Point2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,17 +17,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class ApplicationStart extends Application {
-    //Root
-    private Pane root = new Pane();
+    //Root of scene
+    final private Pane root = new Pane();
+
+    final private int[] resolution = {1920, 1080};
+    final private boolean FULLSCREEN = true;
 
     //Player ref
-    Player player = new Player();
+    final private Player player = new Player();
 
-    //input bools
+    //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
     Boolean backwards = false;
     Boolean left = false;
     Boolean right = false;
+    double[] mousePos = {0,0};
 
     //This is not used, manually started later. Override needed for the program to function.
     @Override
@@ -42,8 +48,8 @@ public class ApplicationStart extends Application {
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice devices = g.getScreenDevices()[0];
 
+        //This is the application window
         frame = new JFrame();
-        frame.setVisible(false);
         frame.getContentPane().setBackground(java.awt.Color.BLACK);
 
         //Revert to original resolution when app closes
@@ -60,25 +66,36 @@ public class ApplicationStart extends Application {
             }
         });
 
-        devices.setFullScreenWindow(frame);
-        DisplayMode oldMode = devices.getDisplayMode();
-        DisplayMode displayMode = new DisplayMode(1920, 1080, oldMode.getBitDepth(), oldMode.getRefreshRate());
-        devices.setDisplayMode(displayMode);
+        if(FULLSCREEN) {
+            frame.setVisible(false);
 
-        //Used to embed FX into JFrame
+            //This changes the PC's resolution
+            devices.setFullScreenWindow(frame);
+            DisplayMode oldMode = devices.getDisplayMode();
+            DisplayMode displayMode = new DisplayMode(resolution[0], resolution[1], oldMode.getBitDepth(), oldMode.getRefreshRate());
+            devices.setDisplayMode(displayMode);
+        }else{
+            //For windowed mode the frame must be visible
+            frame.setSize(resolution[0],resolution[1]);
+            frame.setResizable(false);
+            frame.setVisible(true);
+        }
+
+        //JFXPanel is used to embed a JavaFX element into a JFrame
         final JFXPanel fxPanel = new JFXPanel();
-
         frame.add(fxPanel);
-        //Used to run initFX in the JavaFX thread
+
+        //Run initFX in the JavaFX thread
         Platform.runLater(() -> initFX(fxPanel));
     }
 
-    //Invoked on JavaFX thread, initiate JavaFX
+    //Invoked on JavaFX thread, initiate JavaFX scene
     private void initFX(JFXPanel fxPanel) {
         Scene scene = new Scene(createContent());
         fxPanel.setScene(scene);
 
         scene.setFill(Color.BLACK);
+        scene.setCursor(Cursor.CROSSHAIR);
 
         /***********************************************************
          * Input handling
@@ -101,27 +118,32 @@ public class ApplicationStart extends Application {
             }
         });
 
+        scene.setOnMouseMoved(e->{
+            mousePos[0] = e.getX();
+            mousePos[1] = e.getY();
+        });
+
         fxPanel.setVisible(true);
     }
 
     //Setup for game related content, game loop, spawning, etc.
     private Parent createContent(){
-        root.setPrefSize(1920,1080);
+        root.setPrefSize(resolution[0],resolution[1]);
 
         //Spawn Player
-        spawnGameObject(player,960, 900);
+        spawnGameObject(player,(int)(resolution[0]*0.5), (int)(resolution[1]*0.8));
 
         /***********************************************************
          * Game Loop
          ***********************************************************/
-
         AnimationTimer timer = new AnimationTimer() {
             long previousTime = 0;
-            //Time since last frame
-            double deltaT = 0;
+            //Time since last frame in seconds
+            double deltaT;
 
             @Override
             public void handle(long now) {
+                //now is in ns, convert to s
                 deltaT = (now - previousTime)*0.000_000_001;
                 previousTime = now;
                 update(deltaT);
@@ -153,12 +175,15 @@ public class ApplicationStart extends Application {
             accelerate(player,accel,0);
         }
 
-        //Change player position based on velocity an deltaTime
+        //Rotate player
+        player.setRotation(VecMath.deltaAngle(player.getView().getTranslateX(), player.getView().getTranslateY(),
+                mousePos[0], mousePos[1]));
+
+        //Update player position
         player.getView().setTranslateX(player.getView().getTranslateX() + player.getVelocity().getX() * deltaTime);
         player.getView().setTranslateY(player.getView().getTranslateY() + player.getVelocity().getY() * deltaTime);
     }
 
-    //Add object to game
     private void spawnGameObject(GameObject object, int x, int y){
         object.getView().setTranslateX(x);
         object.getView().setTranslateY(y);
@@ -179,7 +204,7 @@ public class ApplicationStart extends Application {
         //px/s
         private int acceleration = 300;
         Player(){
-            super(new Polygon(25,0 , 0,50 , 50,50), Color.WHEAT);
+            super(new Polygon(25,0 , -25,25 , -25,-25), Color.WHEAT);
         }
 
         public int getAcceleration(){
