@@ -3,12 +3,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 
-
-
 public class GameObject {
 
     //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
     final private double radToDegConst = 180/Math.PI;
+    final private double degToRadConst = Math.PI/180;
 
     private Node view;
     private Point2D velocity;
@@ -22,6 +21,14 @@ public class GameObject {
             ((Polygon) view).setStroke(color);
         }
     }
+
+    GameObject (Node view){
+        this.view = view;
+        setVelocity(new Point2D(0,0));
+    }
+
+    public double getRadToDegConst(){ return radToDegConst; }
+    public double getDegToRadConst(){ return degToRadConst; }
 
     public Node getView(){
         return view;
@@ -43,7 +50,11 @@ public class GameObject {
         return velocity;
     }
 
+    public Point2D getForwardVector(){
+        return new Point2D(Math.cos(view.getRotate() * degToRadConst), Math.sin(view.getRotate() * degToRadConst));
+    }
+
     public double getRotation(){
-        return getRotation();
+        return view.getRotate() * degToRadConst;
     }
 }

@@ -28,7 +28,6 @@ public class VecMath {
 
         //System.out.println("DX: " + deltaX + " DY: " + deltaY);
         rotDeg = Math.atan((deltaY) / (deltaX));
-        System.out.println(rotDeg);
         if (deltaY < 0 && rotDeg > 0) {
             rotDeg = rotDeg - Math.PI;
         }
