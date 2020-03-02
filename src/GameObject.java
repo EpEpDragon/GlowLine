@@ -13,17 +13,18 @@ public class GameObject {
     private Point2D velocity;
     private double maxVelocity = 300;
 
-    GameObject (Node view, Color color){
+    GameObject (Node view, double maxVelocity, Color color){
         this.view = view;
         setVelocity(new Point2D(0,0));
-
+        this.maxVelocity = maxVelocity;
         if (view instanceof javafx.scene.shape.Polygon){
             ((Polygon) view).setStroke(color);
         }
     }
 
-    GameObject (Node view){
+    GameObject (Node view, double maxVelocity){
         this.view = view;
+        this.maxVelocity = maxVelocity;
         setVelocity(new Point2D(0,0));
     }
 

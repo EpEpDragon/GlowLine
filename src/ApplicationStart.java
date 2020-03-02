@@ -27,8 +27,8 @@ public class ApplicationStart extends Application {
     //Root of scene
     final private Pane root = new Pane();
 
-    final private int[] resolution = {800, 600};
-    final private boolean FULLSCREEN = false;
+    final private int[] resolution = {1920, 1080};
+    final private boolean FULLSCREEN = true;
 
     //Player ref
     final private Player player = new Player();
@@ -215,6 +215,7 @@ public class ApplicationStart extends Application {
 
     private void addGameObject(GameObject object, String type, double x, double y){
         spawnGameObject(object, x, y);
+        System.out.println(object.getVelocity());
         switch (type){
             case "bullet": bullets.add(object); break;
         }
@@ -243,7 +244,7 @@ public class ApplicationStart extends Application {
         //px/s
         private int acceleration = 10;
         Player(){
-            super(new Polygon(25,0 , -25,25 , -25,-25), Color.WHEAT);
+            super(new Polygon(25,0 , -25,25 , -25,-25),300, Color.WHEAT);
         }
 
         public int getAcceleration(){
@@ -255,7 +256,7 @@ public class ApplicationStart extends Application {
         private int lifetime = 1;
         double speed = 300;
         Bullet(){
-            super(new Circle(10,Color.BURLYWOOD));
+            super(new Circle(10,Color.BURLYWOOD),600);
             setVelocity(player.getForwardVector().multiply(speed).add(player.getVelocity()));
         }
 
