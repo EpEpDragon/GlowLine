@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import javafx.geometry.Point2D;
 
 import javax.swing.*;
 import java.awt.*;
