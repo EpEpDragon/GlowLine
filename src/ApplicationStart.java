@@ -27,7 +27,7 @@ public class ApplicationStart extends Application {
     //Root of scene
     final private Pane root = new Pane();
 
-    final private int[] resolution = {1920, 1080};
+    final private int[] resolution = {3440, 1440};
     final private boolean FULLSCREEN = true;
 
     //Player ref
@@ -55,35 +55,31 @@ public class ApplicationStart extends Application {
     private void initWindow() {
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice devices = g.getScreenDevices()[0];
-
-        //This is the application window
-        final JFrame frame = new JFrame("GlowLine");
-        frame.getContentPane().setBackground(java.awt.Color.BLACK);
-
-        //Revert to original resolution when app closes
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent event) {
-                devices.setFullScreenWindow(null);
-                frame.dispose();
-                System.exit(0);
-            }
-        });
-
-        if(FULLSCREEN) {
-            frame.setVisible(false);
-
-            //This changes the PC's resolution
-            devices.setFullScreenWindow(frame);
-            DisplayMode oldMode = devices.getDisplayMode();
-            DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1], oldMode.getBitDepth(), oldMode.getRefreshRate());
-            devices.setDisplayMode(newDisplayMode);
-        }else{
-            //For windowed mode the frame must be visible
+            //This is the application window
+            final JFrame frame = new JFrame("GlowLine");
+            frame.getContentPane().setBackground(java.awt.Color.BLACK);
             frame.setSize(resolution[0],resolution[1]);
+            frame.setUndecorated(true);
             frame.setResizable(false);
             frame.setVisible(true);
-        }
+
+            //Revert to original resolution when app closes
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent event) {
+                    devices.setFullScreenWindow(null);
+                    frame.dispose();
+                    System.exit(0);
+                }
+            });
+
+            if(FULLSCREEN) {
+                //This changes the PC's resolution
+                devices.setFullScreenWindow(frame);
+                DisplayMode oldMode = devices.getDisplayMode();
+                DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1], oldMode.getBitDepth(), oldMode.getRefreshRate());
+                devices.setDisplayMode(newDisplayMode);
+            }
 
         //JFXPanel is used to embed a JavaFX element into a JFrame
         final JFXPanel fxPanel = new JFXPanel();
