@@ -77,7 +77,10 @@ public class ApplicationStart extends Application {
             //This changes the PC's resolution
             devices.setFullScreenWindow(frame);
             DisplayMode oldMode = devices.getDisplayMode();
-            DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1], oldMode.getBitDepth(), oldMode.getRefreshRate());
+
+            DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1],
+                    devices.getDisplayMode().getBitDepth(), devices.getDisplayMode().getRefreshRate());
+
             devices.setDisplayMode(newDisplayMode);
         }
 
