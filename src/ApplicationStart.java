@@ -37,8 +37,8 @@ public class ApplicationStart extends Application {
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
     //    Boolean backwards = false;
-//    Boolean left = false;
-//    Boolean right = false;
+    //    Boolean left = false;
+    //    Boolean right = false;
     Boolean shoot = false;
     double[] mousePos = {0,0};
 
@@ -76,8 +76,6 @@ public class ApplicationStart extends Application {
         if(FULLSCREEN) {
             //This changes the PC's resolution
             devices.setFullScreenWindow(frame);
-            DisplayMode oldMode = devices.getDisplayMode();
-
             DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1],
                     devices.getDisplayMode().getBitDepth(), devices.getDisplayMode().getRefreshRate());
 

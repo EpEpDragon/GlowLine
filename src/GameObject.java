@@ -28,9 +28,6 @@ public class GameObject {
         setVelocity(new Point2D(0,0));
     }
 
-    public double getRadToDegConst(){ return radToDegConst; }
-    public double getDegToRadConst(){ return degToRadConst; }
-
     public Node getView(){
         return view;
     }
