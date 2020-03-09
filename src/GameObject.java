@@ -51,8 +51,15 @@ public class GameObject {
     public Point2D getForwardVector(){
         return new Point2D(Math.cos(view.getRotate() * degToRadConst), Math.sin(view.getRotate() * degToRadConst));
     }
+//    public Point2D getSidewaysVector(){
+//        return new Point2D(Math.cos(view.getRotate() * degToRadConst ), Math.sin(view.getRotate() * degToRadConst * -1));
+//    }
+
+
 
     public double getRotation(){
         return view.getRotate() * degToRadConst;
     }
+
+
 }

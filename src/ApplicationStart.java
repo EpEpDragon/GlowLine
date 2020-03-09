@@ -33,6 +33,7 @@ public class ApplicationStart extends Application {
     //Player ref
     final private Player player = new Player();
     private List<GameObject> bullets = new ArrayList<>();
+    Enemy enemy = new Enemy();
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
@@ -43,16 +44,18 @@ public class ApplicationStart extends Application {
     //    Boolean left = false;
     //    Boolean right = false;
     Boolean shoot = false;
-    double[] mousePos = {0,0};
+    double[] mousePos = {0, 0};
 
     /********************Launch***********************/
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new ApplicationStart().initWindow();
     }
 
     //This is not used, manually started later. Override needed for the program to function.
     @Override
-    public void start(Stage stage){ return; }
+    public void start(Stage stage) {
+        return;
+    }
 
     //Window JFrame initialization (This is needed to change the desktop resolution)
     private void initWindow() {
@@ -61,7 +64,7 @@ public class ApplicationStart extends Application {
         //This is the application window
         final JFrame frame = new JFrame("GlowLine");
         frame.getContentPane().setBackground(java.awt.Color.BLACK);
-        frame.setSize(resolution[0],resolution[1]);
+        frame.setSize(resolution[0], resolution[1]);
         frame.setUndecorated(true);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -76,7 +79,7 @@ public class ApplicationStart extends Application {
             }
         });
 
-        if(FULLSCREEN) {
+        if (FULLSCREEN) {
             //This changes the PC's resolution
             devices.setFullScreenWindow(frame);
             DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1],
@@ -104,44 +107,60 @@ public class ApplicationStart extends Application {
         /***********************************************************
          * Input handling
          ***********************************************************/
-        scene.setOnKeyPressed(e ->{
-            switch (e.getCode()){
-                case W : forward = true; break;
-                case S : backwards = true; break;
-                case A : left = true; break;
-                case D : right = true; break;
+        scene.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case W:
+                    forward = true;
+                    break;
+                case S:
+                    backwards = true;
+                    break;
+                case A:
+                    left = true;
+                    break;
+                case D:
+                    right = true;
+                    break;
             }
         });
 
-        scene.setOnKeyReleased(e->{
-            switch (e.getCode()){
-                case W : forward = false; break;
-                case S : backwards = false; break;
-                case A : left = false; break;
-                case D : right = false; break;
+        scene.setOnKeyReleased(e -> {
+            switch (e.getCode()) {
+                case W:
+                    forward = false;
+                    break;
+                case S:
+                    backwards = false;
+                    break;
+                case A:
+                    left = false;
+                    break;
+                case D:
+                    right = false;
+                    break;
             }
         });
 
 
-        scene.setOnMousePressed(e->{
-            if(e.getButton() == MouseButton.PRIMARY){
+        scene.setOnMousePressed(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
                 shoot = true;
             }
         });
 
-        scene.setOnMouseReleased(e->{
-            if(e.getButton() == MouseButton.PRIMARY){
+        scene.setOnMouseReleased(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
                 shoot = false;
             }
         });
 
-        scene.setOnMouseMoved(e->{
+        scene.setOnMouseMoved(e -> {
             mousePos[0] = e.getX();
             mousePos[1] = e.getY();
         });
 
         //For when mouse is clicked
-        scene.setOnMouseDragged(e->{
+        scene.setOnMouseDragged(e -> {
             mousePos[0] = e.getX();
             mousePos[1] = e.getY();
         });
@@ -150,11 +169,24 @@ public class ApplicationStart extends Application {
     }
 
     //Setup for game related content, game loop, spawning, etc.
-    private Parent createContent(){
-        root.setPrefSize(resolution[0],resolution[1]);
+    private Parent createContent() {
+        root.setPrefSize(resolution[0], resolution[1]);
 
         //Spawn Player
-        spawnGameObject(player,resolution[0]*0.5, resolution[1]*0.8);
+        spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.8);
+
+        //Spawn 10 Enemies
+//        Enemy[] enemies = new Enemy[10];
+//        for (int i = 0; i < enemies.length; i++) {
+//            spawnGameObject(enemies[i], resolution[0]/2, resolution[1] * 0.1);
+//            resolution[0] += 30;
+//            if (i == 4){
+//                resolution[0] = resolution[0]/2;
+//                resolution[1] += 30;
+//
+//            }
+//
+//        }
 
         /***********************************************************
          * Game Loop
@@ -167,9 +199,9 @@ public class ApplicationStart extends Application {
             @Override
             public void handle(long now) {
                 //now is in ns, convert to s
-                deltaT = (now - previousTime)*0.000_000_001;
+                deltaT = (now - previousTime) * 0.000_000_001;
                 previousTime = now;
-                update(deltaT, now*0.000_000_001);
+                update(deltaT, now * 0.000_000_001);
             }
         };
         timer.start();
@@ -181,26 +213,28 @@ public class ApplicationStart extends Application {
      * Game Loop update
      ***********************************************************/
     double lastShot = 0;
-    private void update(double deltaTime, double time){
+
+    private void update(double deltaTime, double time) {
         //System.out.println(deltaTime);
 
         //Accelerate player
         double accel = player.getAcceleration() * deltaTime;
-        if (forward){
+        if (forward) {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
         }
-        if (backwards){
-            accelerate(player,player.getForwardVector().multiply(player.getAcceleration() * -1));
+        if (backwards) {
+            accelerate(player, player.getForwardVector().multiply(player.getAcceleration() * -1));
         }
-//        if (left){
-//            accelerate(player,-accel,0);
+        System.out.println(player.getForwardVector());
+//        if (left) {
+//            accelerate(player, player.getRotation() * player.acceleration);
 //        }
-//        if (right){
-//            accelerate(player,accel,0);
+//        if (right) {
+//            accelerate(player, accel, 0);
 //        }
 
         System.out.println(lastShot);
-        if (shoot && time-lastShot > 1){
+        if (shoot && time - lastShot > 1) {
             //System.out.println(time-lastShot);
             addGameObject(new Bullet(), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
             lastShot = time;
@@ -217,25 +251,28 @@ public class ApplicationStart extends Application {
         }
     }
 
-    private void addGameObject(GameObject object, String type, double x, double y){
+    private void addGameObject(GameObject object, String type, double x, double y) {
         spawnGameObject(object, x, y);
         //  System.out.println(object.getVelocity());
-        switch (type){
-            case "bullet": bullets.add(object); break;
+        switch (type) {
+            case "bullet":
+                bullets.add(object);
+                break;
         }
     }
-    private void spawnGameObject(GameObject object, double x, double y){
+
+    private void spawnGameObject(GameObject object, double x, double y) {
         object.getView().setTranslateX(x);
         object.getView().setTranslateY(y);
 
         root.getChildren().add(object.getView());
     }
 
-    private void accelerate(GameObject object, Point2D acceleration){
+    private void accelerate(GameObject object, Point2D acceleration) {
         object.setVelocity(object.getVelocity().add(acceleration));
     }
 
-    private void updatePosition(GameObject object, double deltaTime){
+    private void updatePosition(GameObject object, double deltaTime) {
         object.getView().setTranslateX(object.getView().getTranslateX() + object.getVelocity().getX() * deltaTime);
         object.getView().setTranslateY(object.getView().getTranslateY() + object.getVelocity().getY() * deltaTime);
     }
@@ -247,20 +284,31 @@ public class ApplicationStart extends Application {
     public class Player extends GameObject {
         //px/s
         private int acceleration = 10;
-        Player(){
-            super(new Polygon(25,0 , -25,25 , -25,-25),300, Color.WHEAT);
+
+        Player() {
+            super(new Polygon(25, 0, -25, 25, -25, -25), 300, Color.WHEAT);
         }
 
-        public int getAcceleration(){
+        public int getAcceleration() {
             return acceleration;
+        }
+    }
+
+    public class Enemy extends GameObject {
+        boolean alive;
+        double speed;
+
+        Enemy() {
+            super(new Polygon(15, 0, -15, 15, -15, -15), 100, Color.AZURE);
         }
     }
 
     public class Bullet extends GameObject {
         private int lifetime = 1;
         double speed = 300;
-        Bullet(){
-            super(new Circle(10,Color.BURLYWOOD),600);
+
+        Bullet() {
+            super(new Circle(10, Color.BURLYWOOD), 600);
             setVelocity(player.getForwardVector().multiply(speed).add(player.getVelocity()));
         }
 
