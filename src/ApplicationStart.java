@@ -166,7 +166,7 @@ public class ApplicationStart extends Application {
                 //now is in ns, convert to s
                 deltaT = (now - previousTime)*0.000_000_001;
                 previousTime = now;
-                update(deltaT);
+                update(deltaT, now*0.000_000_001);
             }
         };
         timer.start();
@@ -177,7 +177,8 @@ public class ApplicationStart extends Application {
     /***********************************************************
      * Game Loop update
      ***********************************************************/
-    private void update(double deltaTime){
+    double lastShot = 0;
+    private void update(double deltaTime, double time){
         //System.out.println(deltaTime);
 
         //Accelerate player
@@ -195,8 +196,11 @@ public class ApplicationStart extends Application {
 //            accelerate(player,accel,0);
 //        }
 
-        if (shoot){
+        System.out.println(lastShot);
+        if (shoot && time-lastShot > 1){
+            //System.out.println(time-lastShot);
             addGameObject(new Bullet(), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
+            lastShot = time;
         }
 
         //Update player rotation
@@ -212,7 +216,7 @@ public class ApplicationStart extends Application {
 
     private void addGameObject(GameObject object, String type, double x, double y){
         spawnGameObject(object, x, y);
-        System.out.println(object.getVelocity());
+        //  System.out.println(object.getVelocity());
         switch (type){
             case "bullet": bullets.add(object); break;
         }
