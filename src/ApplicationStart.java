@@ -36,6 +36,9 @@ public class ApplicationStart extends Application {
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
+    Boolean backwards = false;
+    Boolean left = false;
+    Boolean right = false;
     //    Boolean backwards = false;
     //    Boolean left = false;
     //    Boolean right = false;
@@ -104,18 +107,18 @@ public class ApplicationStart extends Application {
         scene.setOnKeyPressed(e ->{
             switch (e.getCode()){
                 case W : forward = true; break;
-//                case S : backwards = true; break;
-//                case A : left = true; break;
-//                case D : right = true; break;
+                case S : backwards = true; break;
+                case A : left = true; break;
+                case D : right = true; break;
             }
         });
 
         scene.setOnKeyReleased(e->{
             switch (e.getCode()){
                 case W : forward = false; break;
-//                case S : backwards = false; break;
-//                case A : left = false; break;
-//                case D : right = false; break;
+                case S : backwards = false; break;
+                case A : left = false; break;
+                case D : right = false; break;
             }
         });
 
@@ -186,9 +189,9 @@ public class ApplicationStart extends Application {
         if (forward){
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
         }
-//        if (backwards){
-//            accelerate(player,0,accel);
-//        }
+        if (backwards){
+            accelerate(player,player.getForwardVector().multiply(player.getAcceleration() * -1));
+        }
 //        if (left){
 //            accelerate(player,-accel,0);
 //        }
