@@ -28,13 +28,17 @@ public class ApplicationStart extends Application {
     //Root of scene
     final private Pane root = new Pane();
 
-    final private int[] resolution = {1920, 1080};
+    final private int[] resolution = {3440, 1440};
     final private boolean FULLSCREEN = true;
 
-    //Player ref
-    final private Player player = new Player();
+    //Scale for game objects 1920 by 1080 as base
+    double scale = (double)resolution[1]/1080;
+
+
+    //References
+    final private Player player = new Player(scale);
     private List<GameObject> bullets = new ArrayList<>();
-    Enemy enemy = new Enemy();
+    private List<GameObject> enemies = new ArrayList<>();
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
@@ -46,6 +50,7 @@ public class ApplicationStart extends Application {
     //    Boolean right = false;
     Boolean shoot = false;
     double[] mousePos = {0, 0};
+
 
     /********************Launch***********************/
     public static void main(String[] args) {
@@ -202,6 +207,7 @@ public class ApplicationStart extends Application {
 //
 //        }
 
+
         /***********************************************************
          * Game Loop
          ***********************************************************/
@@ -239,7 +245,7 @@ public class ApplicationStart extends Application {
         if (backwards) {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration() * -1));
         }
-        System.out.println(player.getForwardVector());
+
 //        if (left) {
 //            accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
 //        }
@@ -247,10 +253,9 @@ public class ApplicationStart extends Application {
 //            accelerate(player, accel, 0);
 //        }
 
-        System.out.println(lastShot);
         if (shoot && time - lastShot > 0.5) {
             //System.out.println(time-lastShot);
-            addGameObject(new Bullet(), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
+            addGameObject(new Bullet(scale), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
             lastShot = time;
         }
 
@@ -299,8 +304,8 @@ public class ApplicationStart extends Application {
         //px/s
         private int acceleration = 10;
 
-        Player() {
-            super(new Polygon(18, 0, -18, 18, -18, -18), 300, Color.WHEAT);
+        Player(double scale) {
+            super(new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale), 300, Color.WHEAT);
         }
 
         public int getAcceleration() {
@@ -312,8 +317,8 @@ public class ApplicationStart extends Application {
         boolean alive;
         double speed;
 
-        Enemy() {
-            super(new Polygon(15, 0, -15, 15, -15, -15), 100, Color.AZURE);
+        Enemy(double scale) {
+            super(new Polygon(15*scale, 0*scale, -15*scale, 15*scale, -15*scale, -15*scale), 100, Color.AZURE);
         }
     }
 
@@ -321,8 +326,8 @@ public class ApplicationStart extends Application {
         private int lifetime = 1;
         double speed = 300;
 
-        Bullet() {
-            super(new Circle(6, Color.BURLYWOOD), 600);
+        Bullet(double scale) {
+            super(new Circle(6*scale, Color.BURLYWOOD), 600);
             setVelocity(player.getForwardVector().multiply(speed).add(player.getVelocity()));
         }
 
