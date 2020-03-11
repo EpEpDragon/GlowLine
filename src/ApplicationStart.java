@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import javax.swing.*;
@@ -172,6 +173,19 @@ public class ApplicationStart extends Application {
     private Parent createContent() {
         root.setPrefSize(resolution[0], resolution[1]);
 
+        //Background (atmosphere)
+        root.getChildren().add(new Circle(0.5 * resolution[0],4.2 * resolution[1],4*resolution[1],
+                Color.color(1,1,1, 0.1)));
+        root.getChildren().add(new Circle(0.5 * resolution[0],4.6 * resolution[1],4*resolution[1],
+                Color.color(1,1,1, 0.15)));
+        root.getChildren().add(new Circle(0.5 * resolution[0],4.8 * resolution[1],4*resolution[1],
+                Color.color(1,1,1, 0.135)));
+
+        //Ground
+        Rectangle ground = new Rectangle(0,resolution[1]-20, resolution[0], 20);
+        ground.setFill(Color.color(1,1,1, 0.3));
+        root.getChildren().add(ground);
+
         //Spawn Player
         spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.8);
 
@@ -227,14 +241,14 @@ public class ApplicationStart extends Application {
         }
         System.out.println(player.getForwardVector());
 //        if (left) {
-//            accelerate(player, player.getRotation() * player.acceleration);
+//            accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
 //        }
 //        if (right) {
 //            accelerate(player, accel, 0);
 //        }
 
         System.out.println(lastShot);
-        if (shoot && time - lastShot > 1) {
+        if (shoot && time - lastShot > 0.5) {
             //System.out.println(time-lastShot);
             addGameObject(new Bullet(), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
             lastShot = time;
@@ -286,7 +300,7 @@ public class ApplicationStart extends Application {
         private int acceleration = 10;
 
         Player() {
-            super(new Polygon(25, 0, -25, 25, -25, -25), 300, Color.WHEAT);
+            super(new Polygon(18, 0, -18, 18, -18, -18), 300, Color.WHEAT);
         }
 
         public int getAcceleration() {
@@ -308,7 +322,7 @@ public class ApplicationStart extends Application {
         double speed = 300;
 
         Bullet() {
-            super(new Circle(10, Color.BURLYWOOD), 600);
+            super(new Circle(6, Color.BURLYWOOD), 600);
             setVelocity(player.getForwardVector().multiply(speed).add(player.getVelocity()));
         }
 
