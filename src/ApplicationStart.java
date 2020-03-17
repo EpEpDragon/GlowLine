@@ -28,13 +28,16 @@ public class ApplicationStart extends Application {
     //Root of scene
     final private Pane root = new Pane();
 
-    final private int[] resolution = {1920, 1080};
-    final private boolean FULLSCREEN = true;
+    final private int[] resolution = {800, 600};
+    final private boolean FULLSCREEN = false;
 
     //Player ref
     final private Player player = new Player();
     private List<GameObject> bullets = new ArrayList<>();
     Enemy enemy = new Enemy();
+
+    //Floor ref
+    Rectangle floor = new Rectangle(0,resolution[1]-20, resolution[0], 20);
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
@@ -181,10 +184,9 @@ public class ApplicationStart extends Application {
         root.getChildren().add(new Circle(0.5 * resolution[0],4.8 * resolution[1],4*resolution[1],
                 Color.color(1,1,1, 0.135)));
 
-        //Ground
-        Rectangle ground = new Rectangle(0,resolution[1]-20, resolution[0], 20);
-        ground.setFill(Color.color(1,1,1, 0.3));
-        root.getChildren().add(ground);
+        //floor
+        floor.setFill(Color.color(1,1,1, 0.3));
+        root.getChildren().add(floor);
 
         //Spawn Player
         spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.8);
@@ -232,6 +234,9 @@ public class ApplicationStart extends Application {
         //System.out.println(deltaTime);
 
         //Accelerate player
+        if (player.isColliding(floor)){
+            System.out.println("Intersecting");
+        }
         double accel = player.getAcceleration() * deltaTime;
         if (forward) {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
@@ -239,7 +244,6 @@ public class ApplicationStart extends Application {
         if (backwards) {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration() * -1));
         }
-        System.out.println(player.getForwardVector());
 //        if (left) {
 //            accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
 //        }
@@ -247,7 +251,6 @@ public class ApplicationStart extends Application {
 //            accelerate(player, accel, 0);
 //        }
 
-        System.out.println(lastShot);
         if (shoot && time - lastShot > 0.5) {
             //System.out.println(time-lastShot);
             addGameObject(new Bullet(), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());

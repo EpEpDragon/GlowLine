@@ -2,6 +2,9 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Shape;
+
+import javax.lang.model.type.NullType;
 
 public class GameObject {
 
@@ -55,11 +58,21 @@ public class GameObject {
 //        return new Point2D(Math.cos(view.getRotate() * degToRadConst ), Math.sin(view.getRotate() * degToRadConst * -1));
 //    }
 
-
-
     public double getRotation(){
         return view.getRotate() * degToRadConst;
     }
 
+//    public boolean isColliding(GameObject object){
+//        if (Shape.intersect((Shape)view,(Shape)object.view) != null){
+//            return true;
+//        }
+//        return false;
+//    }
 
+    public boolean isColliding(Shape shape){
+        if (Shape.intersect((Shape)view,shape).getBoundsInLocal().getWidth() != -1){
+            return true;
+        }
+        return false;
+    }
 }
