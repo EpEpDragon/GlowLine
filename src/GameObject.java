@@ -18,6 +18,7 @@ public class GameObject {
     private Node view;
     private Point2D velocity;
     private double maxVelocity = 300;
+    private boolean alive = true;
 
     GameObject (Node view, double maxVelocity, Color color){
         this.view = view;
@@ -42,6 +43,8 @@ public class GameObject {
         view.setRotate(angle*radToDegConst);
     }
 
+    public void setAlive(boolean alive) { this.alive = alive; }
+    public boolean isAlive(){ return alive; }
     public void setVelocity(Point2D velocity){
         if(velocity.distance(0,0) <= maxVelocity) {
             this.velocity = velocity;
@@ -59,6 +62,7 @@ public class GameObject {
         }
     }
 
+    public double getMaxVelocity() { return maxVelocity; }
     public Point2D getVelocity(){
         return velocity;
     }
@@ -74,12 +78,14 @@ public class GameObject {
         return view.getRotate() * degToRadConst;
     }
 
-//    public boolean isColliding(GameObject object){
-//        if (Shape.intersect((Shape)view,(Shape)object.view) != null){
-//            return true;
-//        }
-//        return false;
-//    }
+    public Collision isColliding(GameObject object){
+        Shape resultShape = Shape.intersect((Shape)view, (Shape)object.getView());
+
+        Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
+                resultShape.getBoundsInLocal().getMaxY());
+
+        return collision;
+    }
 
     public Collision isColliding(Shape shape){
         Shape resultShape = Shape.intersect((Shape)view,shape);

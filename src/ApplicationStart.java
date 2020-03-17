@@ -38,7 +38,7 @@ public class ApplicationStart extends Application {
     //References
     final private Player player = new Player(scale);
     private List<GameObject> bullets = new ArrayList<>();
-    private List<GameObject> enemies = new ArrayList<>();
+    private List<GameObject> landers = new ArrayList<>();
 
     //Floor ref
     Rectangle floor = new Rectangle(0,resolution[1]-20, resolution[0], 20);
@@ -196,6 +196,9 @@ public class ApplicationStart extends Application {
         //Spawn Player
         spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.94);
 
+        //Spawn Lander (TEST)
+        addGameObject(new Lander(scale),"lander",500,100);
+
         //Spawn 10 Enemies
 //        Enemy[] enemies = new Enemy[10];
 //        for (int i = 0; i < enemies.length; i++) {
@@ -216,14 +219,15 @@ public class ApplicationStart extends Application {
         AnimationTimer timer = new AnimationTimer() {
             long previousTime = 0;
             //Time since last frame in seconds
-            double deltaT;
+            double deltaTime;
 
             @Override
             public void handle(long now) {
                 //now is in ns, convert to s
-                deltaT = (now - previousTime) * 0.000_000_001;
+                deltaTime = (now - previousTime) * 0.000_000_001;
+                if (deltaTime > 1){deltaTime = 0;}
                 previousTime = now;
-                update(deltaT, now * 0.000_000_001);
+                update(deltaTime, now * 0.000_000_001);
             }
         };
         timer.start();
@@ -239,6 +243,8 @@ public class ApplicationStart extends Application {
     private void update(double deltaTime, double time) {
         //System.out.println(deltaTime);
 
+        //TODO rewrite how looping through objects works
+
         //Accelerate player
         double accel = player.getAcceleration() * deltaTime;
         if (forward) {
@@ -248,6 +254,7 @@ public class ApplicationStart extends Application {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration() * -1));
         }
 
+        //Player collision
         GameObject.Collision collision = player.isColliding(floor);
         if (collision.collided){
             double deltaY = collision.y - floor.getY();
@@ -256,6 +263,23 @@ public class ApplicationStart extends Application {
             //No bounce
             player.setVelocity(player.getVelocity().getX(), 0);
             player.getView().setTranslateY(player.getView().getTranslateY() - deltaY);
+        }
+
+        //Lander collision
+        for (GameObject lander : landers){
+            //floor
+            collision = lander.isColliding(floor);
+            if (collision.collided){
+                lander.setVelocity(0,0);
+                System.exit(0);
+            }
+            //lander
+            for (GameObject bullet : bullets) {
+                collision = lander.isColliding(bullet);
+                if (collision.collided){
+                    lander.setAlive(false);
+                }
+            }
         }
 
 //        if (left) {
@@ -280,6 +304,29 @@ public class ApplicationStart extends Application {
         for (int i = 0; i < bullets.size(); i++) {
             updatePosition(bullets.get(i), deltaTime);
         }
+
+        //Update lander position
+        for (GameObject i : landers){
+            updatePosition(i, deltaTime);
+        }
+
+        //TODO Remove dead things
+//        for(GameObject i : landers){
+//            if (!i.isAlive()){
+//                removeGameObject(i, "lander");
+//            }
+//        }
+    }
+
+    private void removeGameObject(GameObject object, String type){
+        switch (type) {
+            case "bullet":
+                bullets.remove(object);
+                break;
+            case "lander":
+                landers.remove(object);
+                break;
+        }
     }
 
     private void addGameObject(GameObject object, String type, double x, double y) {
@@ -288,6 +335,9 @@ public class ApplicationStart extends Application {
         switch (type) {
             case "bullet":
                 bullets.add(object);
+                break;
+            case "lander":
+                landers.add(object);
                 break;
         }
     }
@@ -334,12 +384,19 @@ public class ApplicationStart extends Application {
         }
     }
 
+    public class Lander extends GameObject{
+        Lander(double scale){
+            super(new Rectangle(30*scale,40*scale, Color.INDIANRED),30);
+            setVelocity(0,30);
+        }
+    }
+
     public class Bullet extends GameObject {
         private int lifetime = 1;
-        double speed = 300;
+        double speed = 1000;
 
         Bullet(double scale) {
-            super(new Circle(6*scale, Color.BURLYWOOD), 600);
+            super(new Circle(6*scale, Color.BURLYWOOD), 1300);
             setVelocity(player.getForwardVector().multiply(speed).add(player.getVelocity()));
         }
 
