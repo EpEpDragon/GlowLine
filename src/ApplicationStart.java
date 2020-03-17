@@ -28,8 +28,8 @@ public class ApplicationStart extends Application {
     //Root of scene
     final private Pane root = new Pane();
 
-    final private int[] resolution = {3440, 1440};
-    final private boolean FULLSCREEN = true;
+    final private int[] resolution = {800, 600};
+    final private boolean FULLSCREEN = false;
 
     //Scale for game objects 1920 by 1080 as base
     double scale = (double)resolution[1]/1080;
@@ -194,7 +194,7 @@ public class ApplicationStart extends Application {
         root.getChildren().add(floor);
 
         //Spawn Player
-        spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.8);
+        spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.94);
 
         //Spawn 10 Enemies
 //        Enemy[] enemies = new Enemy[10];
@@ -240,15 +240,22 @@ public class ApplicationStart extends Application {
         //System.out.println(deltaTime);
 
         //Accelerate player
-        if (player.isColliding(floor)){
-            System.out.println("Intersecting");
-        }
         double accel = player.getAcceleration() * deltaTime;
         if (forward) {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
         }
         if (backwards) {
             accelerate(player, player.getForwardVector().multiply(player.getAcceleration() * -1));
+        }
+
+        GameObject.Collision collision = player.isColliding(floor);
+        if (collision.collided){
+            double deltaY = collision.y - floor.getY();
+            //For bounce
+            //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
+            //No bounce
+            player.setVelocity(player.getVelocity().getX(), 0);
+            player.getView().setTranslateY(player.getView().getTranslateY() - deltaY);
         }
 
 //        if (left) {

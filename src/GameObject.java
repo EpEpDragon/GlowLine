@@ -5,6 +5,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 
 import javax.lang.model.type.NullType;
+import java.security.cert.PolicyNode;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameObject {
 
@@ -47,6 +50,15 @@ public class GameObject {
         }
     }
 
+    public void setVelocity(double x, double y){
+        Point2D velocity = new Point2D(x,y);
+        if(x*x + y*y <= maxVelocity*maxVelocity) {
+            this.velocity = velocity;
+        }else{
+            this.velocity = velocity.normalize().multiply(maxVelocity);
+        }
+    }
+
     public Point2D getVelocity(){
         return velocity;
     }
@@ -69,10 +81,24 @@ public class GameObject {
 //        return false;
 //    }
 
-    public boolean isColliding(Shape shape){
-        if (Shape.intersect((Shape)view,shape).getBoundsInLocal().getWidth() != -1){
-            return true;
+    public Collision isColliding(Shape shape){
+        Shape resultShape = Shape.intersect((Shape)view,shape);
+
+        Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
+                resultShape.getBoundsInLocal().getMaxY());
+
+        return collision;
+    }
+
+    public class Collision{
+        double x;
+        double y;
+        boolean collided;
+        Collision(boolean collided, double x, double y){
+            this.x = x;
+            this.y = y;
+            this.collided = collided;
         }
-        return false;
+
     }
 }
