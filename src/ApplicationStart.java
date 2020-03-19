@@ -2,7 +2,6 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,7 +21,6 @@ import java.awt.event.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class ApplicationStart extends Application {
@@ -244,45 +242,13 @@ public class ApplicationStart extends Application {
     private void update(double deltaTime, double time) {
         //System.out.println(deltaTime);
 
-        //TODO rewrite how looping through objects works
-
         //Accelerate player
-        double accel = player.getAcceleration() * deltaTime;
+        double playerAcceleration = player.getAcceleration() * deltaTime;
         if (forward) {
-            player.accelerate(player.getForwardVector().multiply(player.getAcceleration()));
+            player.accelerate(player.getForwardVector().multiply(playerAcceleration));
         }
         if (backwards) {
-            player.accelerate(player.getForwardVector().multiply(player.getAcceleration() * -1));
-        }
-
-        //Player collision
-        GameObject.Collision collision = player.isColliding(floor);
-        if (collision.collided){
-            double deltaY = collision.y - floor.getY();
-            //For bounce
-            //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
-            //No bounce
-            player.setVelocity(player.getVelocity().getX(), 0);
-            player.getView().setTranslateY(player.getView().getTranslateY() - deltaY);
-        }
-
-        //Lander collision
-        for (GameObject lander : landers){
-            //floor
-            collision = lander.isColliding(floor);
-            if (collision.collided){
-                lander.setVelocity(0,0);
-                System.exit(0);
-            }
-            //lander
-            for (GameObject bullet : bullets) {
-                collision = lander.isColliding(bullet);
-                if (collision.collided){
-                    System.out.println("asd");
-                    lander.setDead(true);
-                    root.getChildren().removeAll(lander.getView());
-                }
-            }
+            player.accelerate(player.getForwardVector().multiply(playerAcceleration * -1));
         }
 
 //        if (left) {
@@ -298,24 +264,61 @@ public class ApplicationStart extends Application {
             lastShot = time;
         }
 
-        //Update player rotation
-        player.setRotation(VecMath.deltaAngle(player.getView().getTranslateX(), player.getView().getTranslateY(), mousePos[0], mousePos[1]));
+        //Player collision
+        GameObject.Collision collision = player.getCollision(floor);
+        if (collision.collided){
+            double deltaY = collision.y - floor.getY();
+            //For bounce
+            //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
+            //No bounce
+            player.setVelocity(player.getVelocity().getX(), 0);
+            player.getView().setTranslateY(player.getView().getTranslateY() - deltaY);
+        }
 
-        updatePosition(player, deltaTime);
+        //Lander collision
+        for (GameObject lander : landers){
+            //floor
+            collision = lander.getCollision(floor);
+            if (collision.collided){
+                lander.setVelocity(0,0);
+                System.exit(0);
+            }
+            //bullet
+            for (GameObject bullet : bullets) {
+                collision = lander.getCollision(bullet);
+                if (collision.collided){
+                    System.out.println("asd");
+                    lander.setDead(true);
+                    root.getChildren().removeAll(lander.getView(), bullet.getView());
+                }
+            }
+        }
+
+        //Bullet collision
+        for (GameObject bullet : bullets) {
+            collision = bullet.getCollision(floor);
+            if (collision.collided) {
+                root.getChildren().remove(bullet.getView());
+                bullet.setDead(true);
+            }
+        }
+
+        //Remove dead things
+        landers.removeIf(GameObject::isDead);
+        bullets.removeIf(GameObject::isDead);
+
+        //Update player
+        player.update(deltaTime);
 
         //Update bullet positions
-        for (int i = 0; i < bullets.size(); i++) {
-            updatePosition(bullets.get(i), deltaTime);
+        for (GameObject bullet : bullets) {
+            bullet.update(deltaTime);
         }
 
         //Update lander position
         for (GameObject lander : landers){
-            updatePosition(lander, deltaTime);
+            lander.update(deltaTime);
         }
-
-        //TODO Remove dead things
-        landers.removeIf(GameObject::isDead);
-
     }
 
     private void removeGameObject(GameObject object, String type){
@@ -349,21 +352,29 @@ public class ApplicationStart extends Application {
         root.getChildren().add(object.getView());
     }
 
-    private void updatePosition(GameObject object, double deltaTime) {
-        object.getView().setTranslateX(object.getView().getTranslateX() + object.getVelocity().getX() * deltaTime);
-        object.getView().setTranslateY(object.getView().getTranslateY() + object.getVelocity().getY() * deltaTime);
-    }
-
     /*************************************************
      * Game Objects
      *************************************************/
 
     public class Player extends GameObject {
         //px/s
-        private int acceleration = 10;
+        private int acceleration = 600;
 
         Player(double scale) {
             super(new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale), 300, Color.WHEAT);
+        }
+
+        @Override
+        public void update(double deltaTime) {
+            super.update(deltaTime);
+            setRotation(VecMath.deltaAngle(getView().getTranslateX(), getView().getTranslateY(), mousePos[0], mousePos[1]));
+            //Teleport player to other side of screen if off-screen
+            if (getView().getTranslateX() < resolution[0]*-0.01){
+                getView().setTranslateX(resolution[0] + resolution[0]*0.01);
+            }else if (getView().getTranslateX() > resolution[0] + resolution[0]*0.01){
+                getView().setTranslateX(resolution[0]*-0.01);
+            }
+
         }
 
         public int getAcceleration() {
@@ -372,9 +383,6 @@ public class ApplicationStart extends Application {
     }
 
     public class Enemy extends GameObject {
-        boolean alive;
-        double speed;
-
         Enemy(double scale) {
             super(new Polygon(15*scale, 0*scale, -15*scale, 15*scale, -15*scale, -15*scale), 100, Color.AZURE);
         }
@@ -389,11 +397,10 @@ public class ApplicationStart extends Application {
 
     public class Bullet extends GameObject {
         private int lifetime = 1;
-        double speed = 1000;
 
         Bullet(double scale) {
-            super(new Circle(6*scale, Color.BURLYWOOD), 1300);
-            setVelocity(player.getForwardVector().multiply(speed).add(player.getVelocity()));
+            super(new Circle(6*scale, Color.BURLYWOOD), 800);
+            setVelocity(player.getForwardVector().multiply(800).add(player.getVelocity()));
         }
 
     }

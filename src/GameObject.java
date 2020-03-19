@@ -54,13 +54,17 @@ public class GameObject{
         }
     }
 
+    public void update(double deltaTime){
+        view.setTranslateX(view.getTranslateX() + velocity.getX() * deltaTime);
+        view.setTranslateY(view.getTranslateY() + velocity.getY() * deltaTime);
+    }
+
     public void accelerate(Point2D acceleration){
         if (velocity.add(acceleration).distance(0,0) > maxVelocity){
             velocity = velocity.normalize().multiply(maxVelocity);
         }else{
             velocity = (velocity.add(acceleration));
         }
-
     }
 
     public void setVelocity(double x, double y){
@@ -88,7 +92,7 @@ public class GameObject{
         return view.getRotate() * degToRadConst;
     }
 
-    public Collision isColliding(GameObject object){
+    public Collision getCollision(GameObject object){
         Shape resultShape = Shape.intersect((Shape)view, (Shape)object.getView());
 
         Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
@@ -97,7 +101,7 @@ public class GameObject{
         return collision;
     }
 
-    public Collision isColliding(Shape shape){
+    public Collision getCollision(Shape shape){
         Shape resultShape = Shape.intersect((Shape)view,shape);
 
         Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
