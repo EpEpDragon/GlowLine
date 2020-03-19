@@ -9,7 +9,7 @@ import java.security.cert.PolicyNode;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameObject {
+public class GameObject{
 
     //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
     final private double radToDegConst = 180/Math.PI;
@@ -18,7 +18,7 @@ public class GameObject {
     private Node view;
     private Point2D velocity;
     private double maxVelocity = 300;
-    private boolean alive = true;
+    private boolean dead = false;
 
     GameObject (Node view, double maxVelocity, Color color){
         this.view = view;
@@ -43,14 +43,24 @@ public class GameObject {
         view.setRotate(angle*radToDegConst);
     }
 
-    public void setAlive(boolean alive) { this.alive = alive; }
-    public boolean isAlive(){ return alive; }
+    public void setDead(boolean alive) { this.dead = true; }
+    public boolean isDead(){ return dead; }
+
     public void setVelocity(Point2D velocity){
         if(velocity.distance(0,0) <= maxVelocity) {
             this.velocity = velocity;
         }else{
             this.velocity = velocity.normalize().multiply(maxVelocity);
         }
+    }
+
+    public void accelerate(Point2D acceleration){
+        if (velocity.add(acceleration).distance(0,0) > maxVelocity){
+            velocity = velocity.normalize().multiply(maxVelocity);
+        }else{
+            velocity = (velocity.add(acceleration));
+        }
+
     }
 
     public void setVelocity(double x, double y){

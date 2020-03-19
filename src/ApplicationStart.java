@@ -22,6 +22,7 @@ import java.awt.event.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ApplicationStart extends Application {
@@ -248,10 +249,10 @@ public class ApplicationStart extends Application {
         //Accelerate player
         double accel = player.getAcceleration() * deltaTime;
         if (forward) {
-            accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
+            player.accelerate(player.getForwardVector().multiply(player.getAcceleration()));
         }
         if (backwards) {
-            accelerate(player, player.getForwardVector().multiply(player.getAcceleration() * -1));
+            player.accelerate(player.getForwardVector().multiply(player.getAcceleration() * -1));
         }
 
         //Player collision
@@ -277,7 +278,9 @@ public class ApplicationStart extends Application {
             for (GameObject bullet : bullets) {
                 collision = lander.isColliding(bullet);
                 if (collision.collided){
-                    lander.setAlive(false);
+                    System.out.println("asd");
+                    lander.setDead(true);
+                    root.getChildren().removeAll(lander.getView());
                 }
             }
         }
@@ -306,16 +309,13 @@ public class ApplicationStart extends Application {
         }
 
         //Update lander position
-        for (GameObject i : landers){
-            updatePosition(i, deltaTime);
+        for (GameObject lander : landers){
+            updatePosition(lander, deltaTime);
         }
 
         //TODO Remove dead things
-//        for(GameObject i : landers){
-//            if (!i.isAlive()){
-//                removeGameObject(i, "lander");
-//            }
-//        }
+        landers.removeIf(GameObject::isDead);
+
     }
 
     private void removeGameObject(GameObject object, String type){
@@ -347,10 +347,6 @@ public class ApplicationStart extends Application {
         object.getView().setTranslateY(y);
 
         root.getChildren().add(object.getView());
-    }
-
-    private void accelerate(GameObject object, Point2D acceleration) {
-        object.setVelocity(object.getVelocity().add(acceleration));
     }
 
     private void updatePosition(GameObject object, double deltaTime) {
