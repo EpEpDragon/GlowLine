@@ -196,6 +196,7 @@ public class ApplicationStart extends Application {
         spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.94);
 
         //Spawn Lander (TEST)
+        //TODO make spawner
         addGameObject(new Lander(scale),"lander",500,100);
 
         //Spawn 10 Enemies
@@ -294,12 +295,18 @@ public class ApplicationStart extends Application {
             }
         }
 
-        //Bullet collision
+        //Bullet clean
         for (GameObject bullet : bullets) {
             collision = bullet.getCollision(floor);
             if (collision.collided) {
                 root.getChildren().remove(bullet.getView());
                 bullet.setDead(true);
+            }
+            if ((bullet.getView().getTranslateX() < 0 || bullet.getView().getTranslateX() > resolution[0]) ||
+                    (bullet.getView().getTranslateY() < 0 || bullet.getView().getTranslateY() > resolution[1])){
+                root.getChildren().remove(bullet.getView());
+                bullet.setDead(true);
+                System.out.println("Delete");
             }
         }
 
@@ -396,12 +403,9 @@ public class ApplicationStart extends Application {
     }
 
     public class Bullet extends GameObject {
-        private int lifetime = 1;
-
         Bullet(double scale) {
             super(new Circle(6*scale, Color.BURLYWOOD), 800);
             setVelocity(player.getForwardVector().multiply(800).add(player.getVelocity()));
         }
-
     }
 }
