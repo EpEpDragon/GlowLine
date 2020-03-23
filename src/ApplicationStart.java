@@ -285,8 +285,9 @@ public class ApplicationStart extends Application {
                 collision = lander.getCollision(bullet);
                 if (collision.collided){
                     System.out.println("asd");
-                    lander.setDead(true);
                     root.getChildren().removeAll(lander.getView(), bullet.getView());
+                    lander.setDead(true);
+                    bullet.setDead(true);
                 }
             }
         }
