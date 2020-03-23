@@ -9,7 +9,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -22,36 +21,35 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ApplicationStart extends Application {
     //Root of scene
-    final private Pane root = new Pane();
+    static final private Pane root = new Pane();
 
-    final private int[] resolution = {800, 600};
-    final private boolean FULLSCREEN = false;
+    static private int[] resolution = {800, 600};
+    static private boolean FULLSCREEN = false;
 
     //Scale for game objects 1920 by 1080 as base
-    double scale = (double)resolution[1]/1080;
+    static double scale = (double)resolution[1]/1080;
 
+
+    static Spawner spawner = new Spawner(resolution[0], resolution[1]);
 
     //References
-    final private Player player = new Player(scale);
-    private List<GameObject> bullets = new ArrayList<>();
-    private List<GameObject> landers = new ArrayList<>();
+    static private Spawner.Player player = new Spawner.Player(scale);
+    static private List<GameObject> bullets = new ArrayList<>();
+    static private List<GameObject> landers = new ArrayList<>();
 
     //Floor ref
     Rectangle floor = new Rectangle(0,resolution[1]-20, resolution[0], 20);
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
-    Boolean backwards = false;
-    Boolean left = false;
-    Boolean right = false;
     //    Boolean backwards = false;
     //    Boolean left = false;
     //    Boolean right = false;
     Boolean shoot = false;
-    double[] mousePos = {0, 0};
+    static double mouseX = 0;
+    static double mouseY = 0;
 
 
     /********************Launch***********************/
@@ -120,15 +118,15 @@ public class ApplicationStart extends Application {
                 case W:
                     forward = true;
                     break;
-                case S:
-                    backwards = true;
-                    break;
-                case A:
-                    left = true;
-                    break;
-                case D:
-                    right = true;
-                    break;
+//                case S:
+//                    backwards = true;
+//                    break;
+//                case A:
+//                    left = true;
+//                    break;
+//                case D:
+//                    right = true;
+//                    break;
             }
         });
 
@@ -137,15 +135,15 @@ public class ApplicationStart extends Application {
                 case W:
                     forward = false;
                     break;
-                case S:
-                    backwards = false;
-                    break;
-                case A:
-                    left = false;
-                    break;
-                case D:
-                    right = false;
-                    break;
+//                case S:
+//                    backwards = false;
+//                    break;
+//                case A:
+//                    left = false;
+//                    break;
+//                case D:
+//                    right = false;
+//                    break;
             }
         });
 
@@ -163,14 +161,14 @@ public class ApplicationStart extends Application {
         });
 
         scene.setOnMouseMoved(e -> {
-            mousePos[0] = e.getX();
-            mousePos[1] = e.getY();
+            mouseX = e.getX();
+            mouseY = e.getY();
         });
 
         //For when mouse is clicked
         scene.setOnMouseDragged(e -> {
-            mousePos[0] = e.getX();
-            mousePos[1] = e.getY();
+            mouseX = e.getX();
+            mouseY = e.getY();
         });
 
         fxPanel.setVisible(true);
@@ -193,11 +191,7 @@ public class ApplicationStart extends Application {
         root.getChildren().add(floor);
 
         //Spawn Player
-        spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.94);
-
-        //Spawn Lander (TEST)
-        //TODO make spawner
-        addGameObject(new Lander(scale),"lander",500,100);
+        spawner.spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.94);
 
         //Spawn 10 Enemies
 //        Enemy[] enemies = new Enemy[10];
@@ -211,7 +205,6 @@ public class ApplicationStart extends Application {
 //            }
 //
 //        }
-
 
         /***********************************************************
          * Game Loop
@@ -243,15 +236,18 @@ public class ApplicationStart extends Application {
     private void update(double deltaTime, double time) {
         //System.out.println(deltaTime);
 
+        //Spawn stuff
+        spawner.spawnPass(time);
+
         //Accelerate player
         double playerAcceleration = player.getAcceleration() * deltaTime;
         if (forward) {
             player.accelerate(player.getForwardVector().multiply(playerAcceleration));
         }
-        if (backwards) {
-            player.accelerate(player.getForwardVector().multiply(playerAcceleration * -1));
-        }
-
+//        if (backwards) {
+//            player.accelerate(player.getForwardVector().multiply(playerAcceleration * -1));
+//        }
+//
 //        if (left) {
 //            accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
 //        }
@@ -261,7 +257,7 @@ public class ApplicationStart extends Application {
 
         if (shoot && time - lastShot > 0.5) {
             //System.out.println(time-lastShot);
-            addGameObject(new Bullet(scale), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
+            spawner.addGameObject(new Spawner.Bullet(scale), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
             lastShot = time;
         }
 
@@ -339,73 +335,11 @@ public class ApplicationStart extends Application {
         }
     }
 
-    private void addGameObject(GameObject object, String type, double x, double y) {
-        spawnGameObject(object, x, y);
-        //  System.out.println(object.getVelocity());
-        switch (type) {
-            case "bullet":
-                bullets.add(object);
-                break;
-            case "lander":
-                landers.add(object);
-                break;
-        }
-    }
-
-    private void spawnGameObject(GameObject object, double x, double y) {
-        object.getView().setTranslateX(x);
-        object.getView().setTranslateY(y);
-
-        root.getChildren().add(object.getView());
-    }
-
-    /*************************************************
-     * Game Objects
-     *************************************************/
-
-    public class Player extends GameObject {
-        //px/s
-        private int acceleration = 600;
-
-        Player(double scale) {
-            super(new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale), 300, Color.WHEAT);
-        }
-
-        @Override
-        public void update(double deltaTime) {
-            super.update(deltaTime);
-            setRotation(VecMath.deltaAngle(getView().getTranslateX(), getView().getTranslateY(), mousePos[0], mousePos[1]));
-            //Teleport player to other side of screen if off-screen
-            if (getView().getTranslateX() < resolution[0]*-0.01){
-                getView().setTranslateX(resolution[0] + resolution[0]*0.01);
-            }else if (getView().getTranslateX() > resolution[0] + resolution[0]*0.01){
-                getView().setTranslateX(resolution[0]*-0.01);
-            }
-
-        }
-
-        public int getAcceleration() {
-            return acceleration;
-        }
-    }
-
-    public class Enemy extends GameObject {
-        Enemy(double scale) {
-            super(new Polygon(15*scale, 0*scale, -15*scale, 15*scale, -15*scale, -15*scale), 100, Color.AZURE);
-        }
-    }
-
-    public class Lander extends GameObject{
-        Lander(double scale){
-            super(new Rectangle(30*scale,40*scale, Color.INDIANRED),30);
-            setVelocity(0,30);
-        }
-    }
-
-    public class Bullet extends GameObject {
-        Bullet(double scale) {
-            super(new Circle(6*scale, Color.BURLYWOOD), 800);
-            setVelocity(player.getForwardVector().multiply(800).add(player.getVelocity()));
-        }
-    }
+    //Getters
+    public static Pane getRoot(){ return root; }
+    public static GameObject getPlayer(){ return player; }
+    public static List<GameObject> getBullets(){ return bullets; }
+    public static List<GameObject> getLanders(){ return landers; }
+    public static double getMouseX(){ return mouseX; }
+    public static double getMouseY(){ return mouseY; }
 }
