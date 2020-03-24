@@ -4,11 +4,6 @@ import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 
-import javax.lang.model.type.NullType;
-import java.security.cert.PolicyNode;
-import java.util.HashMap;
-import java.util.Map;
-
 public class GameObject{
 
     //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
@@ -16,13 +11,12 @@ public class GameObject{
     final private double degToRadConst = Math.PI/180;
 
     private Node view;
-    private Point2D velocity;
-    private double maxVelocity = 300;
+    private Point2D velocity = new Point2D(0,0);
+    private double maxVelocity;
     private boolean dead = false;
 
     GameObject (Node view, double maxVelocity, Color color){
         this.view = view;
-        setVelocity(new Point2D(0,0));
         this.maxVelocity = maxVelocity;
         if (view instanceof javafx.scene.shape.Polygon){
             ((Polygon) view).setStroke(color);
@@ -32,7 +26,6 @@ public class GameObject{
     GameObject (Node view, double maxVelocity){
         this.view = view;
         this.maxVelocity = maxVelocity;
-        setVelocity(new Point2D(0,0));
     }
 
     public Node getView(){
@@ -76,7 +69,6 @@ public class GameObject{
         }
     }
 
-    public double getMaxVelocity() { return maxVelocity; }
     public Point2D getVelocity(){
         return velocity;
     }
@@ -84,9 +76,6 @@ public class GameObject{
     public Point2D getForwardVector(){
         return new Point2D(Math.cos(view.getRotate() * degToRadConst), Math.sin(view.getRotate() * degToRadConst));
     }
-//    public Point2D getSidewaysVector(){
-//        return new Point2D(Math.cos(view.getRotate() * degToRadConst ), Math.sin(view.getRotate() * degToRadConst * -1));
-//    }
 
     public double getRotation(){
         return view.getRotate() * degToRadConst;

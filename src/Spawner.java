@@ -72,20 +72,20 @@ public class Spawner extends ApplicationStart{
 
     public static class Enemy extends GameObject {
         Enemy(double scale) {
-            super(new Polygon(15*scale, 0*scale, -15*scale, 15*scale, -15*scale, -15*scale), 100, Color.AZURE);
+            super(new Polygon(15*scale, 0*scale, -15*scale, 15*scale, -15*scale, -15*scale), 100*scale, Color.AZURE);
         }
     }
 
     public static class Lander extends GameObject{
         Lander(double scale){
-            super(new Rectangle(30*scale,40*scale, Color.INDIANRED),50);
+            super(new Rectangle(30*scale,40*scale, Color.INDIANRED),50*scale);
             setVelocity(0,30);
         }
     }
 
     public static class Bullet extends GameObject {
         Bullet(double scale) {
-            super(new Circle(6*scale, Color.BURLYWOOD), 800);
+            super(new Circle(6*scale, Color.BURLYWOOD), 1000*scale);
             setVelocity(getPlayer().getForwardVector().multiply(800).add(getPlayer().getVelocity()));
         }
     }

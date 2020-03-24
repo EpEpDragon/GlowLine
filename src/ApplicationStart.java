@@ -25,14 +25,14 @@ public class ApplicationStart extends Application {
     //Root of scene
     static final private Pane root = new Pane();
 
-    static private int[] resolution = {800, 600};
-    static private boolean FULLSCREEN = false;
+    static private int resolutionX = 1920;
+    static private int resolutionY = 1080;
+    static private boolean FULLSCREEN = true;
 
     //Scale for game objects 1920 by 1080 as base
-    static double scale = (double)resolution[1]/1080;
+    static double scale = (double)resolutionY/1080;
 
-
-    static Spawner spawner = new Spawner(resolution[0], resolution[1]);
+    static Spawner spawner = new Spawner(resolutionX, resolutionY);
 
     //References
     static private Spawner.Player player = new Spawner.Player(scale);
@@ -40,7 +40,7 @@ public class ApplicationStart extends Application {
     static private List<GameObject> landers = new ArrayList<>();
 
     //Floor ref
-    Rectangle floor = new Rectangle(0,resolution[1]-20, resolution[0], 20);
+    Rectangle floor = new Rectangle(0,resolutionY-20, resolutionX, 20);
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
@@ -70,7 +70,7 @@ public class ApplicationStart extends Application {
         //This is the application window
         final JFrame frame = new JFrame("GlowLine");
         frame.getContentPane().setBackground(java.awt.Color.BLACK);
-        frame.setSize(resolution[0], resolution[1]);
+        frame.setSize(resolutionX, resolutionY);
         frame.setUndecorated(true);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -88,7 +88,7 @@ public class ApplicationStart extends Application {
         if (FULLSCREEN) {
             //This changes the PC's resolution
             devices.setFullScreenWindow(frame);
-            DisplayMode newDisplayMode = new DisplayMode(resolution[0], resolution[1],
+            DisplayMode newDisplayMode = new DisplayMode(resolutionX, resolutionY,
                     devices.getDisplayMode().getBitDepth(), devices.getDisplayMode().getRefreshRate());
 
             devices.setDisplayMode(newDisplayMode);
@@ -176,14 +176,14 @@ public class ApplicationStart extends Application {
 
     //Setup for game related content, game loop, spawning, etc.
     private Parent createContent() {
-        root.setPrefSize(resolution[0], resolution[1]);
+        root.setPrefSize(resolutionX, resolutionY);
 
         //Background (atmosphere)
-        root.getChildren().add(new Circle(0.5 * resolution[0],4.2 * resolution[1],4*resolution[1],
+        root.getChildren().add(new Circle(0.5 * resolutionX,4.2 * resolutionY,4*resolutionY,
                 Color.color(1,1,1, 0.1)));
-        root.getChildren().add(new Circle(0.5 * resolution[0],4.6 * resolution[1],4*resolution[1],
+        root.getChildren().add(new Circle(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY,
                 Color.color(1,1,1, 0.15)));
-        root.getChildren().add(new Circle(0.5 * resolution[0],4.8 * resolution[1],4*resolution[1],
+        root.getChildren().add(new Circle(0.5 * resolutionX,4.8 * resolutionY,4*resolutionY,
                 Color.color(1,1,1, 0.135)));
 
         //floor
@@ -191,20 +191,7 @@ public class ApplicationStart extends Application {
         root.getChildren().add(floor);
 
         //Spawn Player
-        spawner.spawnGameObject(player, resolution[0] * 0.5, resolution[1] * 0.94);
-
-        //Spawn 10 Enemies
-//        Enemy[] enemies = new Enemy[10];
-//        for (int i = 0; i < enemies.length; i++) {
-//            spawnGameObject(enemies[i], resolution[0]/2, resolution[1] * 0.1);
-//            resolution[0] += 30;
-//            if (i == 4){
-//                resolution[0] = resolution[0]/2;
-//                resolution[1] += 30;
-//
-//            }
-//
-//        }
+        spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.94);
 
         /***********************************************************
          * Game Loop
@@ -284,10 +271,7 @@ public class ApplicationStart extends Application {
             for (GameObject bullet : bullets) {
                 collision = lander.getCollision(bullet);
                 if (collision.collided){
-                    System.out.println("asd");
-                    root.getChildren().removeAll(lander.getView(), bullet.getView());
-                    lander.setDead(true);
-                    bullet.setDead(true);
+                    removeGameObjectAll(lander, bullet);
                 }
             }
         }
@@ -296,14 +280,11 @@ public class ApplicationStart extends Application {
         for (GameObject bullet : bullets) {
             collision = bullet.getCollision(floor);
             if (collision.collided) {
-                root.getChildren().remove(bullet.getView());
-                bullet.setDead(true);
+                removeGameObject(bullet);
             }
-            if ((bullet.getView().getTranslateX() < 0 || bullet.getView().getTranslateX() > resolution[0]) ||
-                    (bullet.getView().getTranslateY() < 0 || bullet.getView().getTranslateY() > resolution[1])){
-                root.getChildren().remove(bullet.getView());
-                bullet.setDead(true);
-                System.out.println("Delete");
+            if ((bullet.getView().getTranslateX() < 0 || bullet.getView().getTranslateX() > resolutionX) ||
+                    (bullet.getView().getTranslateY() < 0 || bullet.getView().getTranslateY() > resolutionY)){
+                removeGameObject(bullet);
             }
         }
 
@@ -325,14 +306,16 @@ public class ApplicationStart extends Application {
         }
     }
 
-    private void removeGameObject(GameObject object, String type){
-        switch (type) {
-            case "bullet":
-                bullets.remove(object);
-                break;
-            case "lander":
-                landers.remove(object);
-                break;
+    private void removeGameObject(GameObject object){
+        object.setDead(true);
+        root.getChildren().remove(object.getView());
+    }
+
+    private void removeGameObjectAll(GameObject... object){
+        for (GameObject obj :
+                object) {
+            obj.setDead(true);
+            root.getChildren().remove(obj.getView());
         }
     }
 
