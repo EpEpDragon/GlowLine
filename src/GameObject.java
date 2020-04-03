@@ -10,30 +10,75 @@ public class GameObject{
     final private double radToDegConst = 180/Math.PI;
     final private double degToRadConst = Math.PI/180;
 
-    private Node view;
+    private Node[] view;
+    private Shape collisionShape;
     private Point2D velocity = new Point2D(0,0);
     private double maxVelocity;
     private boolean dead = false;
 
-    GameObject (Node view, double maxVelocity, Color color){
-        this.view = view;
-        this.maxVelocity = maxVelocity;
+    /************************************************************
+     ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼Constructors▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+    ************************************************************/
+
+    //For one shape, stroke color independent
+    GameObject (double maxVelocity, Color color, Node view){
+        this.view = new Node[1];
+        this.view[0] = view;
+        this.collisionShape = (Shape)view;
         if (view instanceof javafx.scene.shape.Polygon){
-            ((Polygon) view).setStroke(color);
+            ((Polygon)view).setStroke(color);
         }
-    }
 
-    GameObject (Node view, double maxVelocity){
-        this.view = view;
         this.maxVelocity = maxVelocity;
     }
 
-    public Node getView(){
+    //For one shape
+    GameObject (double maxVelocity, Node view){
+        this.view = new Node[1];
+        this.view[0] = view;
+        this.collisionShape = (Shape)view;
+        this.maxVelocity = maxVelocity;
+    }
+
+    //For multiple shapes, stroke color independent
+    GameObject (double maxVelocity, Color color, Node collisionShape, Node... views){
+        this.view = new Node[views.length];
+        for (int i = 0; i < views.length; i++) {
+            this.view[i] = view[i];
+
+            if (view[i] instanceof javafx.scene.shape.Polygon){
+                ((Polygon)view[i]).setStroke(color);
+            }
+        }
+        this.collisionShape = (Shape)collisionShape;
+        this.maxVelocity = maxVelocity;
+    }
+
+    //For multiple shapes
+    GameObject (double maxVelocity, Node collisionShape, Node... views){
+        this.view = new Node[views.length];
+        for (int i = 0; i < views.length; i++) {
+            this.view[i] = view[i];
+        }
+        this.collisionShape = (Shape)collisionShape;
+        this.maxVelocity = maxVelocity;
+    }
+
+    /************************************************************
+     ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲Constructors▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+     ************************************************************/
+
+    public Node[] getView(){
         return view;
     }
 
+    public Shape getCollisionShape(){
+        return (Shape)collisionShape;
+    }
     public void setRotation(double angle){
-        view.setRotate(angle*radToDegConst);
+        for (Node view : this.view) {
+            view.setRotate(angle*radToDegConst);
+        }
     }
 
     public void setDead(boolean alive) { this.dead = true; }
@@ -48,8 +93,10 @@ public class GameObject{
     }
 
     public void update(double deltaTime){
-        view.setTranslateX(view.getTranslateX() + velocity.getX() * deltaTime);
-        view.setTranslateY(view.getTranslateY() + velocity.getY() * deltaTime);
+        for(Node view : this.view) {
+            view.setTranslateX(view.getTranslateX() + velocity.getX() * deltaTime);
+            view.setTranslateY(view.getTranslateY() + velocity.getY() * deltaTime);
+        }
     }
 
     public void accelerate(Point2D acceleration){
@@ -74,15 +121,15 @@ public class GameObject{
     }
 
     public Point2D getForwardVector(){
-        return new Point2D(Math.cos(view.getRotate() * degToRadConst), Math.sin(view.getRotate() * degToRadConst));
+        return new Point2D(Math.cos(view[0].getRotate() * degToRadConst), Math.sin(view[0].getRotate() * degToRadConst));
     }
 
     public double getRotation(){
-        return view.getRotate() * degToRadConst;
+        return view[0].getRotate() * degToRadConst;
     }
 
     public Collision getCollision(GameObject object){
-        Shape resultShape = Shape.intersect((Shape)view, (Shape)object.getView());
+        Shape resultShape = Shape.intersect(collisionShape, object.getCollisionShape());
 
         Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
                 resultShape.getBoundsInLocal().getMaxY());
@@ -91,7 +138,7 @@ public class GameObject{
     }
 
     public Collision getCollision(Shape shape){
-        Shape resultShape = Shape.intersect((Shape)view,shape);
+        Shape resultShape = Shape.intersect(collisionShape,shape);
 
         Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
                 resultShape.getBoundsInLocal().getMaxY());

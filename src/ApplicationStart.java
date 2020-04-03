@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
@@ -25,9 +26,9 @@ public class ApplicationStart extends Application {
     //Root of scene
     static final private Pane root = new Pane();
 
-    static private int resolutionX = 1920;
-    static private int resolutionY = 1080;
-    static private boolean FULLSCREEN = true;
+    static private int resolutionX = 800;
+    static private int resolutionY = 600;
+    static private boolean FULLSCREEN = false;
 
     //Scale for game objects 1920 by 1080 as base
     static double scale = (double)resolutionY/1080;
@@ -231,6 +232,7 @@ public class ApplicationStart extends Application {
         if (forward) {
             player.accelerate(player.getForwardVector().multiply(playerAcceleration));
         }
+
 //        if (backwards) {
 //            player.accelerate(player.getForwardVector().multiply(playerAcceleration * -1));
 //        }
@@ -244,7 +246,7 @@ public class ApplicationStart extends Application {
 
         if (shoot && time - lastShot > 0.5) {
             //System.out.println(time-lastShot);
-            spawner.addGameObject(new Spawner.Bullet(scale), "bullet", player.getView().getTranslateX(), player.getView().getTranslateY());
+            spawner.addGameObject(new Spawner.Bullet(scale), "bullet", player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
             lastShot = time;
         }
 
@@ -256,7 +258,7 @@ public class ApplicationStart extends Application {
             //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
             //No bounce
             player.setVelocity(player.getVelocity().getX(), 0);
-            player.getView().setTranslateY(player.getView().getTranslateY() - deltaY);
+            player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() - deltaY);
         }
 
         //Lander collision
@@ -265,7 +267,7 @@ public class ApplicationStart extends Application {
             collision = lander.getCollision(floor);
             if (collision.collided){
                 lander.setVelocity(0,0);
-                System.exit(0);
+                System.exit(1);
             }
             //bullet
             for (GameObject bullet : bullets) {
@@ -282,8 +284,9 @@ public class ApplicationStart extends Application {
             if (collision.collided) {
                 removeGameObject(bullet);
             }
-            if ((bullet.getView().getTranslateX() < 0 || bullet.getView().getTranslateX() > resolutionX) ||
-                    (bullet.getView().getTranslateY() < 0 || bullet.getView().getTranslateY() > resolutionY)){
+
+            if ((bullet.getView()[0].getTranslateX() < 0 || bullet.getView()[0].getTranslateX() > resolutionX) ||
+                    (bullet.getView()[0].getTranslateY() < 0 || bullet.getView()[0].getTranslateY() > resolutionY)){
                 removeGameObject(bullet);
             }
         }
@@ -308,14 +311,18 @@ public class ApplicationStart extends Application {
 
     private void removeGameObject(GameObject object){
         object.setDead(true);
-        root.getChildren().remove(object.getView());
+        for(Node view : object.getView()) {
+            root.getChildren().remove(view);
+        }
     }
 
-    private void removeGameObjectAll(GameObject... object){
-        for (GameObject obj :
-                object) {
-            obj.setDead(true);
-            root.getChildren().remove(obj.getView());
+    private void removeGameObjectAll(GameObject... objects){
+        for (GameObject object : objects) {
+            object.setDead(true);
+            
+            for(Node view : object.getView()) {
+                root.getChildren().remove(view);
+            }
         }
     }
 
