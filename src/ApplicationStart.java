@@ -38,7 +38,7 @@ public class ApplicationStart extends Application {
     //References
     static private Spawner.Player player = new Spawner.Player(scale);
     static private List<GameObject> bullets = new ArrayList<>();
-    static private List<GameObject> landers = new ArrayList<>();
+    static private List<GameObject> enemies = new ArrayList<>();
 
     //Floor ref
     Rectangle floor = new Rectangle(0,resolutionY-20, resolutionX, 20);
@@ -262,7 +262,7 @@ public class ApplicationStart extends Application {
         }
 
         //Lander collision
-        for (GameObject lander : landers){
+        for (GameObject lander : enemies){
             //floor
             collision = lander.getCollision(floor);
             if (collision.collided){
@@ -292,7 +292,7 @@ public class ApplicationStart extends Application {
         }
 
         //Remove dead things
-        landers.removeIf(GameObject::isDead);
+        enemies.removeIf(GameObject::isDead);
         bullets.removeIf(GameObject::isDead);
 
         //Update player
@@ -304,7 +304,7 @@ public class ApplicationStart extends Application {
         }
 
         //Update lander position
-        for (GameObject lander : landers){
+        for (GameObject lander : enemies){
             lander.update(deltaTime);
         }
     }
@@ -319,7 +319,7 @@ public class ApplicationStart extends Application {
     private void removeGameObjectAll(GameObject... objects){
         for (GameObject object : objects) {
             object.setDead(true);
-            
+
             for(Node view : object.getView()) {
                 root.getChildren().remove(view);
             }
@@ -330,7 +330,7 @@ public class ApplicationStart extends Application {
     public static Pane getRoot(){ return root; }
     public static GameObject getPlayer(){ return player; }
     public static List<GameObject> getBullets(){ return bullets; }
-    public static List<GameObject> getLanders(){ return landers; }
+    public static List<GameObject> getEnemies(){ return enemies; }
     public static double getMouseX(){ return mouseX; }
     public static double getMouseY(){ return mouseY; }
 }

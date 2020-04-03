@@ -1,17 +1,21 @@
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import sun.management.snmp.jvminstr.JvmThreadInstanceEntryImpl;
-
-import javax.swing.*;
 
 public class Spawner extends ApplicationStart{
     static int resolutionX;
     static int resolutionY;
+
+    //Lander spawn time
     static final int landerSpawnTime = 2;
     static double previousTimeLander = landerSpawnTime;
+
+    //Kamikaze spawn time
+    static final int kamikazeSpawnTime = 5;
+    static double previousTimeKamikaze = kamikazeSpawnTime;
 
     Spawner(int resolutionX, int resolutionY){
         this.resolutionX = resolutionX;
@@ -19,9 +23,17 @@ public class Spawner extends ApplicationStart{
     }
 
     public static void spawnPass(double time){
-        if (time - previousTimeLander >= landerSpawnTime){
-            addGameObject(new Lander(scale),"lander", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-            previousTimeLander = time;
+        //Lander spawn logic
+//        if (time - previousTimeLander >= landerSpawnTime){
+//            addGameObject(new Lander(scale),"enemy", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+//            previousTimeLander = time;
+//        }
+
+        //Kamikaze spawn logic
+        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
+            addGameObject(new Kamikaze(scale),"enemy", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * 0.1);
+            System.out.println("Spawn kamikaze");
+            previousTimeKamikaze = time;
         }
     }
 
@@ -32,8 +44,8 @@ public class Spawner extends ApplicationStart{
             case "bullet":
                 getBullets().add(object);
                 break;
-            case "lander":
-                getLanders().add(object);
+            case "enemy":
+                getEnemies().add(object);
                 break;
         }
     }
@@ -81,11 +93,20 @@ public class Spawner extends ApplicationStart{
     }
 
     public static class Kamikaze extends GameObject{
+        private int acceleration = 1000;
         Kamikaze(double scale){
-            super(280*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
+            super(600*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(10*scale, Color.TRANSPARENT),
                     new Circle(8*scale, Color.TRANSPARENT));
+        }
+
+        @Override
+        public void update(double deltaTime) {
+            super.update(deltaTime);
+            //Accelerate to player
+            Point2D unitVecTo = OwnMath.unitVecTo(getView()[0].getTranslateX(), getView()[0].getTranslateY(), getPlayer().getView()[0].getTranslateX(),getPlayer().getView()[0].getTranslateY());
+            accelerate(unitVecTo.multiply(acceleration*deltaTime));
         }
     }
 

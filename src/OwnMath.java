@@ -1,10 +1,12 @@
+import javafx.geometry.Point2D;
+
 public class OwnMath {
 
     //Find angle between two points (0 to PI / to -PI)
-    public static double deltaAngle(double xSub, double ySub, double xFoc, double yFoc){
+    public static double deltaAngle(double xFrom, double yFrom, double xTo, double yTo){
         double rotDeg;
-        double deltaY = yFoc-ySub;
-        double deltaX = xFoc-xSub;
+        double deltaY = yTo-yFrom;
+        double deltaX = xTo-xFrom;
 
         //System.out.println("DX: " + deltaX + " DY: " + deltaY);
         rotDeg = Math.atan((deltaY) / (deltaX));
@@ -15,6 +17,11 @@ public class OwnMath {
             rotDeg = rotDeg + Math.PI;
         }
         return rotDeg;
+    }
+
+    public static Point2D unitVecTo(double xFrom, double yFrom, double xTo, double yTo){
+        double deltaAngle = deltaAngle(xFrom, yFrom, xTo, yTo);
+        return new Point2D(Math.cos(deltaAngle), Math.sin(deltaAngle));
     }
 
     public static double clamp(double toClamp, double low, double high){
