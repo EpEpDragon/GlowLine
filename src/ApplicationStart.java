@@ -193,8 +193,8 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        player.setVelocity(0,-300);
-        Spawner.addGameObject(new Spawner.Kamikaze(scale), "enemy", resolutionX*0.5, resolutionY*0.1);
+        player.setVelocity(0,0);
+        Spawner.addGameObject(new Spawner.Kamikaze(scale), "enemy", resolutionX*0.5, resolutionY*0.8);
         enemies.get(0).setVelocity(0,0);
 //        Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(enemies.get(0).getView()[0].getTranslateX(), enemies.get(0).getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), enemies.get(0).getVelocity(), getPlayer().getVelocity(), enemies.get(0).getMaxVelocity()).normalize();
 //        enemies.get(0).accelerate(interceptVec.multiply(1000));

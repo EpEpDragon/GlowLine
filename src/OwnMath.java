@@ -45,60 +45,29 @@ public class OwnMath {
         return new Point2D(Math.abs(vector.getX()), Math.abs(vector.getY()));
     }
 
-    //TODO find bug that makes kamikaze vanish
     public static Point2D findInterceptVector(Point2D from, Point2D to, Point2D missileV, Point2D targetV, double missileS){
         Point2D targetRelativeV = targetV.subtract(missileV);
         Point2D relative = to.subtract(from);
-        if (lengthSqrd(relative) == 0){
+        if (Math.round(lengthSqrd(relative)) == 0){
             return relative;
         }
         Point2D right = new Point2D(relative.getY(), relative.getX() * -1);
 
 
         double missileVu = right.normalize().dotProduct(targetRelativeV);
-        //Debug catch for NaN
-        if (missileVu == Double.NaN){
-            System.out.println("ERROR: missileVu = NaN");
-            System.out.println("from: " + from);
-            System.out.println("to: " + to);
-            System.out.println("missileV: " + missileV);
-            System.out.println("targetV: " + targetV);
-            System.out.println("targetRelativeV: " + targetRelativeV);
-            System.out.println("relative: " + relative);
-        }
 
-        if(relative.getY() < 0){
+        if(relative.getY() <= 0){
             missileVu *= -1;
         }
+
         double missileVt = Math.sqrt(missileS*missileS - missileVu*missileVu);
-        //Debug catch for NaN
-        if (missileVu == Double.NaN){
-            System.out.println("ERROR: missileVt = NaN");
-            System.out.println("from: " + from);
-            System.out.println("to: " + to);
-            System.out.println("missileV: " + missileV);
-            System.out.println("targetV: " + targetV);
-            System.out.println("targetRelativeV: " + targetRelativeV);
-            System.out.println("relative: " + relative);
-            System.out.println("missileVu: " + missileVu);
-        }
-        if (relative.getY() < 0){
+
+        if (relative.getY() <= 0){
             missileVt *= -1;
         }
 
         double rad;
-        //Debug catch for NaN
-        if (missileVu == Double.NaN){
-            System.out.println("ERROR: rad = NaN");
-            System.out.println("from: " + from);
-            System.out.println("to: " + to);
-            System.out.println("missileV: " + missileV);
-            System.out.println("targetV: " + targetV);
-            System.out.println("targetRelativeV: " + targetRelativeV);
-            System.out.println("relative: " + relative);
-            System.out.println("missileVu: " + missileVu);
-            System.out.println("missileVt: " + missileVt);
-        }
+
 
         if (relative.getY() >= 0){
             rad = relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), true) - Math.PI/2;
@@ -106,7 +75,6 @@ public class OwnMath {
         }else{
             rad = relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), true) + Math.PI/2;
         }
-
         Point2D rotated = rotateVec(missileVu, missileVt, rad);
         return rotated;
     }

@@ -95,9 +95,9 @@ public class Spawner extends ApplicationStart{
     }
 
     public static class Kamikaze extends GameObject{
-        private int acceleration = 600;
+        private int acceleration = 700;
         Kamikaze(double scale){
-            super(500*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
+            super(700*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(10*scale, Color.TRANSPARENT),
                     new Circle(8*scale, Color.TRANSPARENT));
