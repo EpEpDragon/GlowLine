@@ -3,25 +3,112 @@ import javafx.geometry.Point2D;
 public class OwnMath {
 
     //Find angle between two points (0 to PI / to -PI)
-    public static double deltaAngle(double xFrom, double yFrom, double xTo, double yTo){
+    public static double relativeDeltaAngle(double xFrom, double yFrom, double xTo, double yTo, boolean halfScale){
         double rotDeg;
         double deltaY = yTo-yFrom;
         double deltaX = xTo-xFrom;
 
         //System.out.println("DX: " + deltaX + " DY: " + deltaY);
-        rotDeg = Math.atan((deltaY) / (deltaX));
-        if (deltaY < 0 && rotDeg > 0) {
-            rotDeg = rotDeg - Math.PI;
-        }
-        else if(deltaY > 0 && rotDeg < 0){
-            rotDeg = rotDeg + Math.PI;
+         rotDeg = Math.atan((deltaY) / (deltaX));
+        if(halfScale) {
+            if (deltaY < 0 && rotDeg > 0) {
+                rotDeg = rotDeg - Math.PI;
+            } else if (deltaY > 0 && rotDeg < 0) {
+                rotDeg = rotDeg + Math.PI;
+            }
+        }else{
+            if (deltaY < 0 && rotDeg < 0){
+                rotDeg = 2*Math.PI - Math.abs(rotDeg);
+            } else if (deltaY < 0 && rotDeg > 0) {
+                rotDeg = rotDeg + Math.PI;
+            } else if (deltaY > 0 && rotDeg < 0) {
+                rotDeg = Math.PI + Math.abs(rotDeg);
+            }
         }
         return rotDeg;
     }
 
     public static Point2D unitVecTo(double xFrom, double yFrom, double xTo, double yTo){
-        double deltaAngle = deltaAngle(xFrom, yFrom, xTo, yTo);
+        double deltaAngle = relativeDeltaAngle(xFrom, yFrom, xTo, yTo, true);
         return new Point2D(Math.cos(deltaAngle), Math.sin(deltaAngle));
+    }
+
+    public static Point2D rotateVec(double x, double y, double rad){
+        return new Point2D(x*Math.cos(rad) - y*Math.sin(rad), x*Math.sin(rad) + y*Math.cos(rad));
+    }
+
+    public static double lengthSqrd(Point2D vector){
+        return vector.getY()*vector.getY() + vector.getX()*vector.getX();
+    }
+
+    public static Point2D abs(Point2D vector){
+        return new Point2D(Math.abs(vector.getX()), Math.abs(vector.getY()));
+    }
+
+    //TODO find bug that makes kamikaze vanish
+    public static Point2D findInterceptVector(Point2D from, Point2D to, Point2D missileV, Point2D targetV, double missileS){
+        Point2D targetRelativeV = targetV.subtract(missileV);
+        Point2D relative = to.subtract(from);
+        if (lengthSqrd(relative) == 0){
+            return relative;
+        }
+        Point2D right = new Point2D(relative.getY(), relative.getX() * -1);
+
+
+        double missileVu = right.normalize().dotProduct(targetRelativeV);
+        //Debug catch for NaN
+        if (missileVu == Double.NaN){
+            System.out.println("ERROR: missileVu = NaN");
+            System.out.println("from: " + from);
+            System.out.println("to: " + to);
+            System.out.println("missileV: " + missileV);
+            System.out.println("targetV: " + targetV);
+            System.out.println("targetRelativeV: " + targetRelativeV);
+            System.out.println("relative: " + relative);
+        }
+
+        if(relative.getY() < 0){
+            missileVu *= -1;
+        }
+        double missileVt = Math.sqrt(missileS*missileS - missileVu*missileVu);
+        //Debug catch for NaN
+        if (missileVu == Double.NaN){
+            System.out.println("ERROR: missileVt = NaN");
+            System.out.println("from: " + from);
+            System.out.println("to: " + to);
+            System.out.println("missileV: " + missileV);
+            System.out.println("targetV: " + targetV);
+            System.out.println("targetRelativeV: " + targetRelativeV);
+            System.out.println("relative: " + relative);
+            System.out.println("missileVu: " + missileVu);
+        }
+        if (relative.getY() < 0){
+            missileVt *= -1;
+        }
+
+        double rad;
+        //Debug catch for NaN
+        if (missileVu == Double.NaN){
+            System.out.println("ERROR: rad = NaN");
+            System.out.println("from: " + from);
+            System.out.println("to: " + to);
+            System.out.println("missileV: " + missileV);
+            System.out.println("targetV: " + targetV);
+            System.out.println("targetRelativeV: " + targetRelativeV);
+            System.out.println("relative: " + relative);
+            System.out.println("missileVu: " + missileVu);
+            System.out.println("missileVt: " + missileVt);
+        }
+
+        if (relative.getY() >= 0){
+            rad = relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), true) - Math.PI/2;
+
+        }else{
+            rad = relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), true) + Math.PI/2;
+        }
+
+        Point2D rotated = rotateVec(missileVu, missileVt, rad);
+        return rotated;
     }
 
     public static double clamp(double toClamp, double low, double high){

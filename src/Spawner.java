@@ -30,11 +30,13 @@ public class Spawner extends ApplicationStart{
 //        }
 
         //Kamikaze spawn logic
-        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
-            addGameObject(new Kamikaze(scale),"enemy", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * 0.1);
-            System.out.println("Spawn kamikaze");
-            previousTimeKamikaze = time;
-        }
+//        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
+//            addGameObject(new Kamikaze(scale),"enemy", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * 0.1);
+//            System.out.println("Spawn kamikaze");
+//            previousTimeKamikaze = time;
+//        }
+
+
     }
 
     public static void addGameObject(GameObject object, String type, double x, double y) {
@@ -76,7 +78,7 @@ public class Spawner extends ApplicationStart{
             super.update(deltaTime);
 
             for(Node view : getView()) {
-                setRotation(OwnMath.deltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY()));
+                setRotation(OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true));
 
                 //Teleport player to other side of screen if off-screen
                 if (view.getTranslateX() < resolutionX * -0.01) {
@@ -93,9 +95,9 @@ public class Spawner extends ApplicationStart{
     }
 
     public static class Kamikaze extends GameObject{
-        private int acceleration = 1000;
+        private int acceleration = 600;
         Kamikaze(double scale){
-            super(600*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
+            super(500*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(10*scale, Color.TRANSPARENT),
                     new Circle(8*scale, Color.TRANSPARENT));
@@ -105,8 +107,8 @@ public class Spawner extends ApplicationStart{
         public void update(double deltaTime) {
             super.update(deltaTime);
             //Accelerate to player
-            Point2D unitVecTo = OwnMath.unitVecTo(getView()[0].getTranslateX(), getView()[0].getTranslateY(), getPlayer().getView()[0].getTranslateX(),getPlayer().getView()[0].getTranslateY());
-            accelerate(unitVecTo.multiply(acceleration*deltaTime));
+            Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(getView()[0].getTranslateX(), getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), getVelocity(), getPlayer().getVelocity(), getMaxVelocity()).normalize();
+            accelerate(interceptVec.multiply(acceleration*deltaTime));
         }
     }
 

@@ -26,8 +26,8 @@ public class ApplicationStart extends Application {
     //Root of scene
     static final private Pane root = new Pane();
 
-    static private int resolutionX = 800;
-    static private int resolutionY = 600;
+    static private int resolutionX = 1920;
+    static private int resolutionY = 1080;
     static private boolean FULLSCREEN = false;
 
     //Scale for game objects 1920 by 1080 as base
@@ -192,7 +192,14 @@ public class ApplicationStart extends Application {
         root.getChildren().add(floor);
 
         //Spawn Player
-        spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.94);
+        spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
+        player.setVelocity(0,-300);
+        Spawner.addGameObject(new Spawner.Kamikaze(scale), "enemy", resolutionX*0.5, resolutionY*0.1);
+        enemies.get(0).setVelocity(0,0);
+//        Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(enemies.get(0).getView()[0].getTranslateX(), enemies.get(0).getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), enemies.get(0).getVelocity(), getPlayer().getVelocity(), enemies.get(0).getMaxVelocity()).normalize();
+//        enemies.get(0).accelerate(interceptVec.multiply(1000));
+
+
 
         /***********************************************************
          * Game Loop

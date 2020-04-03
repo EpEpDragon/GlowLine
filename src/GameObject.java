@@ -104,10 +104,9 @@ public class GameObject{
     }
 
     public void accelerate(Point2D acceleration){
-        if (velocity.add(acceleration).distance(0,0) > maxVelocity){
+        velocity = (velocity.add(acceleration));
+        if (velocity.distance(0,0) > maxVelocity){
             velocity = velocity.normalize().multiply(maxVelocity);
-        }else{
-            velocity = (velocity.add(acceleration));
         }
     }
 
