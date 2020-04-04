@@ -194,9 +194,8 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        player.setVelocity(0,0);
-        Spawner.addGameObject(new Spawner.Kamikaze(scale), "enemyBullet", resolutionX*0.5, resolutionY*0.1);
-        enemyBullets.get(0).setVelocity(0,0);
+//        Spawner.addGameObject(new Spawner.Kamikaze(scale), resolutionX*0.5, resolutionY*0.1);
+//        bullets.get(0).setVelocity(0,0);
 //        Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(enemies.get(0).getView()[0].getTranslateX(), enemies.get(0).getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), enemies.get(0).getVelocity(), getPlayer().getVelocity(), enemies.get(0).getMaxVelocity()).normalize();
 //        enemies.get(0).accelerate(interceptVec.multiply(1000));
 
@@ -257,10 +256,12 @@ public class ApplicationStart extends Application {
 
             if (shoot && time - lastShot > 0.5) {
                 //System.out.println(time-lastShot);
-                spawner.addGameObject(new Spawner.Bullet(scale), "bullet", player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
+                spawner.addGameObject(new Spawner.Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
 
+
+            //TODO wrap collisions into functions
             //Player collision
             collision = player.getCollision(floor);
             if (collision.collided) {
@@ -296,7 +297,28 @@ public class ApplicationStart extends Application {
             }
         }
 
-        //Bullet clean
+        //Enemy bullet collisions/clean
+        for (GameObject enemyBullet : enemyBullets){
+            if (enemyBullet.getType() == "kamikaze") {
+                for (GameObject allyBullet : bullets){
+                    collision = enemyBullet.getCollision(allyBullet);
+                    if (collision.collided){
+                        removeGameObjectAll(enemyBullet, allyBullet);
+                    }
+                }
+
+                //TODO add translate method tp game object to handle views, collision shape translation
+                //Kamikaze floor collision
+                collision = enemyBullet.getCollision(floor);
+                if (collision.collided) {
+                    double deltaY = collision.y - floor.getY();
+                    enemyBullet.setVelocity(enemyBullet.getVelocity().getX(), 0);
+                    enemyBullet.getCollisionShape().setTranslateY(enemyBullet.getCollisionShape().getTranslateY() - deltaY);
+                }
+            }
+        }
+
+        //Bullet collisions/clean
         for (GameObject bullet : bullets) {
             collision = bullet.getCollision(floor);
             if (collision.collided) {

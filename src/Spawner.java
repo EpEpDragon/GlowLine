@@ -14,7 +14,7 @@ public class Spawner extends ApplicationStart{
     static double previousTimeLander = landerSpawnTime;
 
     //Kamikaze spawn time
-    static final int kamikazeSpawnTime = 5;
+    static final int kamikazeSpawnTime = 3;
     static double previousTimeKamikaze = kamikazeSpawnTime;
 
     Spawner(int resolutionX, int resolutionY){
@@ -24,34 +24,33 @@ public class Spawner extends ApplicationStart{
 
     public static void spawnPass(double time){
         //Lander spawn logic
-//        if (time - previousTimeLander >= landerSpawnTime){
-//            addGameObject(new Lander(scale),"enemy", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeLander = time;
-//        }
+        if (time - previousTimeLander >= landerSpawnTime){
+            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeLander = time;
+        }
 
         //Kamikaze spawn logic
-//        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
-//            addGameObject(new Kamikaze(scale),"enemyBullet", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * 0.1);
-//            System.out.println("Spawn kamikaze");
-//            previousTimeKamikaze = time;
-//        }
+        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
+            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            System.out.println("Spawn kamikaze");
+            previousTimeKamikaze = time;
+        }
 
     }
 
-    public static void addGameObject(GameObject object, String type, double x, double y) {
+    public static void addGameObject(GameObject object, double x, double y) {
         spawnGameObject(object, x, y);
-        //  System.out.println(object.getVelocity());
-        switch (type) {
+        switch (object.getType()) {
             case "bullet":
                 getBullets().add(object);
                 break;
             case "enemyBullet":
+            case "kamikaze":
                 getEnemyBullets().add(object);
                 break;
             case "enemy":
                 getEnemies().add(object);
                 break;
-
         }
     }
 
@@ -75,7 +74,7 @@ public class Spawner extends ApplicationStart{
         private int acceleration = 600;
 
         Player(double scale) {
-            super(300, Color.WHEAT, new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
+            super(300, Color.WHEAT, "ally", new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
 
         }
 
@@ -102,7 +101,7 @@ public class Spawner extends ApplicationStart{
     public static class Kamikaze extends GameObject{
         private int acceleration = 700;
         Kamikaze(double scale){
-            super(700*scale, Color.AZURE, new Circle(15*scale, Color.TRANSPARENT),
+            super(700*scale, Color.AZURE, "kamikaze", new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(10*scale, Color.TRANSPARENT),
                     new Circle(8*scale, Color.TRANSPARENT));
@@ -114,23 +113,20 @@ public class Spawner extends ApplicationStart{
             //Accelerate to player
             Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(getView()[0].getTranslateX(), getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), getVelocity(), getPlayer().getVelocity(), getMaxVelocity()).normalize();
             System.out.println(interceptVec);
-            if(Double.isNaN(interceptVec.getY())){
-                System.out.println("NANANANANA");
-            }
             accelerate(interceptVec.multiply(acceleration*deltaTime));
         }
     }
 
     public static class Lander extends GameObject{
         Lander(double scale){
-            super(50*scale, new Rectangle(30*scale,40*scale, Color.INDIANRED));
+            super(50*scale,"enemy", new Rectangle(30*scale,40*scale, Color.INDIANRED));
             setVelocity(0,30);
         }
     }
 
     public static class Bullet extends GameObject {
-        Bullet(double scale) {
-            super(1000*scale, new Circle(6*scale, Color.BURLYWOOD));
+        Bullet(double scale, String type) {
+            super(1000*scale, type, new Circle(6*scale, Color.BURLYWOOD));
             setVelocity(getPlayer().getForwardVector().multiply(800).add(getPlayer().getVelocity()));
         }
     }

@@ -16,13 +16,14 @@ public class GameObject{
     private Point2D velocity = new Point2D(0,0);
     private double maxVelocity;
     private boolean dead = false;
+    private String type;
 
     /************************************************************
      ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼Constructors▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
     ************************************************************/
 
     //For one shape, stroke color independent
-    GameObject (double maxVelocity, Color color, Node view){
+    GameObject (double maxVelocity, Color color, String type, Node view){
         this.view = new Node[1];
         this.view[0] = view;
         this.collisionShape = (Shape)view;
@@ -37,18 +38,20 @@ public class GameObject{
         }
 
         this.maxVelocity = maxVelocity;
+        this.type = type;
     }
 
     //For one shape
-    GameObject (double maxVelocity, Node view){
+    GameObject (double maxVelocity, String type, Node view){
         this.view = new Node[1];
         this.view[0] = view;
         this.collisionShape = (Shape)view;
         this.maxVelocity = maxVelocity;
+        this.type = type;
     }
 
     //For multiple shapes, stroke color independent
-    GameObject (double maxVelocity, Color color, Node collisionShape, Node... views){
+    GameObject (double maxVelocity, Color color, String type, Node collisionShape, Node... views){
         this.view = new Node[views.length];
         for (int i = 0; i < views.length; i++) {
             this.view[i] = views[i];
@@ -64,16 +67,18 @@ public class GameObject{
         }
         this.collisionShape = (Shape)collisionShape;
         this.maxVelocity = maxVelocity;
+        this.type = type;
     }
 
     //For multiple shapes
-    GameObject (double maxVelocity, Node collisionShape, Node... views){
+    GameObject (double maxVelocity, String type, Node collisionShape, Node... views){
         this.view = new Node[views.length];
         for (int i = 0; i < views.length; i++) {
             this.view[i] = views[i];
         }
         this.collisionShape = (Shape)collisionShape;
         this.maxVelocity = maxVelocity;
+        this.type = type;
     }
 
     /************************************************************
@@ -83,6 +88,8 @@ public class GameObject{
     public Node[] getView(){
         return view;
     }
+
+    public String getType(){ return type; }
 
     public Shape getCollisionShape(){
         return (Shape)collisionShape;
