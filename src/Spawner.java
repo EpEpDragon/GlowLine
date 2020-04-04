@@ -31,11 +31,10 @@ public class Spawner extends ApplicationStart{
 
         //Kamikaze spawn logic
 //        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
-//            addGameObject(new Kamikaze(scale),"enemy", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * 0.1);
+//            addGameObject(new Kamikaze(scale),"enemyBullet", OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * 0.1);
 //            System.out.println("Spawn kamikaze");
 //            previousTimeKamikaze = time;
 //        }
-
 
     }
 
@@ -46,9 +45,13 @@ public class Spawner extends ApplicationStart{
             case "bullet":
                 getBullets().add(object);
                 break;
+            case "enemyBullet":
+                getEnemyBullets().add(object);
+                break;
             case "enemy":
                 getEnemies().add(object);
                 break;
+
         }
     }
 
@@ -59,6 +62,8 @@ public class Spawner extends ApplicationStart{
 
             getRoot().getChildren().add(view);
         }
+        object.getCollisionShape().setTranslateX(x);
+        object.getCollisionShape().setTranslateY(y);
     }
 
     /*************************************************
@@ -71,12 +76,12 @@ public class Spawner extends ApplicationStart{
 
         Player(double scale) {
             super(300, Color.WHEAT, new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
+
         }
 
         @Override
         public void update(double deltaTime) {
             super.update(deltaTime);
-
             for(Node view : getView()) {
                 setRotation(OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true));
 
@@ -108,6 +113,10 @@ public class Spawner extends ApplicationStart{
             super.update(deltaTime);
             //Accelerate to player
             Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(getView()[0].getTranslateX(), getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), getVelocity(), getPlayer().getVelocity(), getMaxVelocity()).normalize();
+            System.out.println(interceptVec);
+            if(Double.isNaN(interceptVec.getY())){
+                System.out.println("NANANANANA");
+            }
             accelerate(interceptVec.multiply(acceleration*deltaTime));
         }
     }

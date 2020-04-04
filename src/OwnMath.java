@@ -55,27 +55,46 @@ public class OwnMath {
 
 
         double missileVu = right.normalize().dotProduct(targetRelativeV);
-
+        //Axis system correction
         if(relative.getY() <= 0){
             missileVu *= -1;
         }
 
         double missileVt = Math.sqrt(missileS*missileS - missileVu*missileVu);
 
+        //Catch for when missile can not catch player, otherwise missile Vt in NaN and missile vanishes.
+        if(Double.isNaN(missileVt)){
+            missileVt = 0;
+        }
+
+        //Axis system correction
         if (relative.getY() <= 0){
             missileVt *= -1;
         }
 
         double rad;
-
-
         if (relative.getY() >= 0){
             rad = relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), true) - Math.PI/2;
-
         }else{
             rad = relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), true) + Math.PI/2;
         }
+
+        //rotate missile Vt and missile Vu to original axis system
         Point2D rotated = rotateVec(missileVu, missileVt, rad);
+        if(Double.isNaN(rotated.getY())){
+            System.out.println("ERROR: NaN");
+            System.out.println("from: " + from);
+            System.out.println("to: " + to);
+            System.out.println("missileV: " + missileV);
+            System.out.println("targetV: " + targetV);
+            System.out.println("targetRelativeV: " + targetRelativeV);
+            System.out.println("relative: " + relative);
+            System.out.println("right: " + right);
+            System.out.println("missileVu: " + missileVu);
+            System.out.println("missileVt: " + missileVt);
+            System.out.println("rad: " + rad);
+            System.out.println("rotated: " + rotated);
+        }
         return rotated;
     }
 

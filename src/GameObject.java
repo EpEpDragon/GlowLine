@@ -101,6 +101,8 @@ public class GameObject{
             view.setTranslateX(view.getTranslateX() + velocity.getX() * deltaTime);
             view.setTranslateY(view.getTranslateY() + velocity.getY() * deltaTime);
         }
+        collisionShape.setTranslateX(collisionShape.getTranslateX() + velocity.getX() * deltaTime);
+        collisionShape.setTranslateY(collisionShape.getTranslateY() + velocity.getY() * deltaTime);
     }
 
     public void accelerate(Point2D acceleration){

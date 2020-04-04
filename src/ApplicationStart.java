@@ -38,6 +38,7 @@ public class ApplicationStart extends Application {
     //References
     static private Spawner.Player player = new Spawner.Player(scale);
     static private List<GameObject> bullets = new ArrayList<>();
+    static private List<GameObject> enemyBullets = new ArrayList<>();
     static private List<GameObject> enemies = new ArrayList<>();
 
     //Floor ref
@@ -194,8 +195,8 @@ public class ApplicationStart extends Application {
         //Spawn Player
         spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
         player.setVelocity(0,0);
-        Spawner.addGameObject(new Spawner.Kamikaze(scale), "enemy", resolutionX*0.5, resolutionY*0.8);
-        enemies.get(0).setVelocity(0,0);
+        Spawner.addGameObject(new Spawner.Kamikaze(scale), "enemyBullet", resolutionX*0.5, resolutionY*0.1);
+        enemyBullets.get(0).setVelocity(0,0);
 //        Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(enemies.get(0).getView()[0].getTranslateX(), enemies.get(0).getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), enemies.get(0).getVelocity(), getPlayer().getVelocity(), enemies.get(0).getMaxVelocity()).normalize();
 //        enemies.get(0).accelerate(interceptVec.multiply(1000));
 
@@ -230,15 +231,18 @@ public class ApplicationStart extends Application {
 
     private void update(double deltaTime, double time) {
         //System.out.println(deltaTime);
+        //Collision handeling
+        GameObject.Collision collision;
 
         //Spawn stuff
         spawner.spawnPass(time);
 
-        //Accelerate player
-        double playerAcceleration = player.getAcceleration() * deltaTime;
-        if (forward) {
-            player.accelerate(player.getForwardVector().multiply(playerAcceleration));
-        }
+        if(!player.isDead()) {
+            //Accelerate player
+            double playerAcceleration = player.getAcceleration() * deltaTime;
+            if (forward) {
+                player.accelerate(player.getForwardVector().multiply(playerAcceleration));
+            }
 
 //        if (backwards) {
 //            player.accelerate(player.getForwardVector().multiply(playerAcceleration * -1));
@@ -251,21 +255,28 @@ public class ApplicationStart extends Application {
 //            accelerate(player, accel, 0);
 //        }
 
-        if (shoot && time - lastShot > 0.5) {
-            //System.out.println(time-lastShot);
-            spawner.addGameObject(new Spawner.Bullet(scale), "bullet", player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
-            lastShot = time;
-        }
+            if (shoot && time - lastShot > 0.5) {
+                //System.out.println(time-lastShot);
+                spawner.addGameObject(new Spawner.Bullet(scale), "bullet", player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
+                lastShot = time;
+            }
 
-        //Player collision
-        GameObject.Collision collision = player.getCollision(floor);
-        if (collision.collided){
-            double deltaY = collision.y - floor.getY();
-            //For bounce
-            //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
-            //No bounce
-            player.setVelocity(player.getVelocity().getX(), 0);
-            player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() - deltaY);
+            //Player collision
+            collision = player.getCollision(floor);
+            if (collision.collided) {
+                double deltaY = collision.y - floor.getY();
+                //For bounce
+                //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
+                //No bounce
+                player.setVelocity(player.getVelocity().getX(), 0);
+                player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() - deltaY);
+            }
+            for (GameObject enemyBullet : enemyBullets) {
+                collision = player.getCollision(enemyBullet);
+                if (collision.collided) {
+                    removeGameObjectAll(enemyBullet, player);
+                }
+            }
         }
 
         //Lander collision
@@ -301,12 +312,19 @@ public class ApplicationStart extends Application {
         //Remove dead things
         enemies.removeIf(GameObject::isDead);
         bullets.removeIf(GameObject::isDead);
+        enemyBullets.removeIf(GameObject::isDead);
 
         //Update player
-        player.update(deltaTime);
-
+        if(!player.isDead()) {
+            player.update(deltaTime);
+        }
         //Update bullet positions
         for (GameObject bullet : bullets) {
+            bullet.update(deltaTime);
+        }
+
+        //Update enemy bullet positions
+        for (GameObject bullet : enemyBullets) {
             bullet.update(deltaTime);
         }
 
@@ -338,6 +356,7 @@ public class ApplicationStart extends Application {
     public static GameObject getPlayer(){ return player; }
     public static List<GameObject> getBullets(){ return bullets; }
     public static List<GameObject> getEnemies(){ return enemies; }
+    public static List<GameObject> getEnemyBullets(){ return enemyBullets; }
     public static double getMouseX(){ return mouseX; }
     public static double getMouseY(){ return mouseY; }
 }
