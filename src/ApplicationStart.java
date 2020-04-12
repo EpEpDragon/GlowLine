@@ -182,13 +182,6 @@ public class ApplicationStart extends Application {
         //root.setPrefSize(resolutionX, resolutionY);
 
         //Background (atmosphere)
-        gc.setFill(Color.color(1,1,1, 0.15));
-        gc.fillOval(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY, 4*resolutionY);
-
-        gc.setFill(Color.color(1,1,1, 0.135));
-        gc.fillOval(0.5 * resolutionX,4.8 * resolutionY,4*resolutionY, 4*resolutionY);
-
-
         root.getChildren().add(new Circle(0.5 * resolutionX,4.2 * resolutionY,4*resolutionY,
                 Color.color(1,1,1, 0.1)));
         root.getChildren().add(new Circle(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY,
@@ -202,7 +195,7 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(100, 2000, Color.ORCHID, 0.5);
+        playerThrust = new Emitter(10000, 3000, Color.DARKORCHID, 0.1);
 
 
         /***********************************************************
@@ -237,10 +230,6 @@ public class ApplicationStart extends Application {
         //Collision handeling
         GameObject.Collision collision;
 
-        gc.clearRect(0,0,resolutionX, resolutionY);
-        playerThrust.emit(player.getX(), player.getY(), player.getVelocity(), Math.PI + player.getRotation(),Math.PI/4,1, deltaTime);
-        playerThrust.update();
-
         //Spawn stuff
         Spawner.spawnPass(time);
 
@@ -268,7 +257,6 @@ public class ApplicationStart extends Application {
                 Spawner.addGameObject(new Spawner.Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
-
 
             //TODO wrap collisions into functions
             //Player collision
@@ -363,6 +351,12 @@ public class ApplicationStart extends Application {
         for (GameObject lander : enemies){
             lander.update(deltaTime);
         }
+
+        gc.clearRect(0,0,resolutionX, resolutionY);
+        if(forward) {
+            playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getVelocity(), Math.PI + player.getRotation(), Math.PI / 4, 1, deltaTime);
+        }
+        playerThrust.update();
     }
 
     private void removeGameObject(GameObject object){

@@ -36,7 +36,7 @@ public class Particle {
         x += velocity.getX()*deltaTime;
         y += velocity.getY()*deltaTime;
 
-        life -= decay;
+        life -= decay * deltaTime;
     }
 
     public boolean isDead(){

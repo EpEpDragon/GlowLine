@@ -23,18 +23,20 @@ public abstract class GameObject{
     ************************************************************/
 
     //For one shape, stroke color independent
-    GameObject (double maxVelocity, Color color, String type, Node view){
+    GameObject (double maxVelocity, Color strokeColor, Color fillColor, String type, Node view){
         this.view = new Node[1];
         this.view[0] = view;
         this.collisionShape = (Shape)view;
 
         //if polygon
         if (view instanceof javafx.scene.shape.Polygon){
-            ((Polygon)view).setStroke(color);
+            ((Polygon)view).setStroke(strokeColor);
+            ((Polygon)view).setFill(fillColor);
         }
         //if circle
         if (view instanceof javafx.scene.shape.Circle){
-            ((Circle)view).setStroke(color);
+            ((Circle)view).setStroke(strokeColor);
+            ((Circle)view).setFill(fillColor);
         }
 
         this.maxVelocity = maxVelocity;
@@ -51,18 +53,20 @@ public abstract class GameObject{
     }
 
     //For multiple shapes, stroke color independent
-    GameObject (double maxVelocity, Color color, String type, Node collisionShape, Node... views){
+    GameObject (double maxVelocity, Color strokeColor, Color fillColor, String type, Node collisionShape, Node... views){
         this.view = new Node[views.length];
         for (int i = 0; i < views.length; i++) {
             this.view[i] = views[i];
 
             //if polygon
             if (view[i] instanceof javafx.scene.shape.Polygon){
-                ((Polygon)view[i]).setStroke(color);
+                ((Polygon)view[i]).setStroke(strokeColor);
+                ((Polygon)view[i]).setFill(fillColor);
             }
             //if circle
             if (view[i] instanceof javafx.scene.shape.Circle){
-                ((Circle)view[i]).setStroke(color);
+                ((Circle)view[i]).setStroke(strokeColor);
+                ((Polygon)view[i]).setFill(fillColor);
             }
         }
         this.collisionShape = (Shape)collisionShape;
@@ -100,8 +104,8 @@ public abstract class GameObject{
         }
     }
 
-    public double getX(){ return collisionShape.getTranslateX(); }
-    public double getY(){ return collisionShape.getTranslateY(); }
+    public double getX(){ return view[0].getTranslateX(); }
+    public double getY(){ return view[0].getTranslateY(); }
 
     public void setDead(boolean alive) { this.dead = true; }
     public boolean isDead(){ return dead; }

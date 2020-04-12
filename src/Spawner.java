@@ -65,8 +65,7 @@ public abstract class Spawner extends ApplicationStart{
         private int acceleration = 600;
 
         Player(double scale) {
-            super(300, Color.WHEAT, "ally", new Polygon(18*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
-
+            super(300, Color.WHEAT, Color.BLACK, "ally", new Polygon(20*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
         }
 
         @Override
@@ -92,7 +91,7 @@ public abstract class Spawner extends ApplicationStart{
     public static class Kamikaze extends GameObject{
         private int acceleration = 700;
         Kamikaze(double scale){
-            super(700*scale, Color.AZURE, "kamikaze", new Circle(15*scale, Color.TRANSPARENT),
+            super(700*scale, Color.RED, Color.BLACK, "kamikaze", new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(15*scale, Color.TRANSPARENT),
                     new Circle(10*scale, Color.TRANSPARENT),
                     new Circle(8*scale, Color.TRANSPARENT));
