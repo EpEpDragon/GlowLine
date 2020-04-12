@@ -12,23 +12,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import  javafx.scene.canvas.Canvas;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationStart extends Application {
-    //Root of scene
-    static final private Pane root = new Pane();
-
     static private int resolutionX = 1920;
     static private int resolutionY = 1080;
     static private boolean FULLSCREEN = false;
+
+    //Root of scene
+    static final private Pane root = new Pane();
+    
+    //Drawing canvas
+    static final private Canvas canvas = new Canvas(resolutionX, resolutionY);
 
     //Scale for game objects 1920 by 1080 as base
     static double scale = (double)resolutionY/1080;
@@ -178,6 +181,7 @@ public class ApplicationStart extends Application {
 
     //Setup for game related content, game loop, spawning, etc.
     private Parent createContent() {
+        root.getChildren().add(canvas);
         root.setPrefSize(resolutionX, resolutionY);
 
         //Background (atmosphere)

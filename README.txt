@@ -15,3 +15,5 @@ KeyListener : https://stackoverflow.com/questions/29962395/how-to-write-a-keylis
 ScreenResolution : https://coderanch.com/t/503348/java/set-screen-resolution
 Run FX in AWT Window: https://docs.oracle.com/javase/8/javafx/api/javafx/embed/swing/JFXPanel.html
 Multi input method: https://stackoverflow.com/questions/2330942/java-variable-number-or-arguments-for-a-method
+Canvas doc: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/canvas/Canvas.html#method.summary
+Graphics contrext doc: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/canvas/GraphicsContext.html
