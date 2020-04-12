@@ -23,20 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationStart extends Application {
-    static private int resolutionX = 1920;
-    static private int resolutionY = 1080;
+    protected static int resolutionX = 1920;
+    protected static int resolutionY = 1080;
     static private boolean FULLSCREEN = false;
 
     //Root of scene
     static final private Pane root = new Pane();
-    
+
     //Drawing canvas
     static final private Canvas canvas = new Canvas(resolutionX, resolutionY);
 
     //Scale for game objects 1920 by 1080 as base
     static double scale = (double)resolutionY/1080;
-
-    static Spawner spawner = new Spawner(resolutionX, resolutionY);
 
     //References
     static private Spawner.Player player = new Spawner.Player(scale);
@@ -64,9 +62,7 @@ public class ApplicationStart extends Application {
 
     //This is not used, manually started later. Override needed for the program to function.
     @Override
-    public void start(Stage stage) {
-        return;
-    }
+    public void start(Stage stage) {}
 
     //Window JFrame initialization (This is needed to change the desktop resolution)
     private void initWindow() {
@@ -197,12 +193,7 @@ public class ApplicationStart extends Application {
         root.getChildren().add(floor);
 
         //Spawn Player
-        spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-//        Spawner.addGameObject(new Spawner.Kamikaze(scale), resolutionX*0.5, resolutionY*0.1);
-//        bullets.get(0).setVelocity(0,0);
-//        Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(enemies.get(0).getView()[0].getTranslateX(), enemies.get(0).getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), enemies.get(0).getVelocity(), getPlayer().getVelocity(), enemies.get(0).getMaxVelocity()).normalize();
-//        enemies.get(0).accelerate(interceptVec.multiply(1000));
-
+        Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
 
 
         /***********************************************************
@@ -238,7 +229,7 @@ public class ApplicationStart extends Application {
         GameObject.Collision collision;
 
         //Spawn stuff
-        spawner.spawnPass(time);
+        Spawner.spawnPass(time);
 
         if(!player.isDead()) {
             //Accelerate player
@@ -260,7 +251,7 @@ public class ApplicationStart extends Application {
 
             if (shoot && time - lastShot > 0.5) {
                 //System.out.println(time-lastShot);
-                spawner.addGameObject(new Spawner.Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
+                Spawner.addGameObject(new Spawner.Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
 
@@ -303,7 +294,7 @@ public class ApplicationStart extends Application {
 
         //Enemy bullet collisions/clean
         for (GameObject enemyBullet : enemyBullets){
-            if (enemyBullet.getType() == "kamikaze") {
+            if (enemyBullet.getType().equals("kamikaze")) {
                 for (GameObject allyBullet : bullets){
                     collision = enemyBullet.getCollision(allyBullet);
                     if (collision.collided){

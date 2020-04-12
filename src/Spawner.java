@@ -6,9 +6,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
 public class Spawner extends ApplicationStart{
-    static int resolutionX;
-    static int resolutionY;
-
     //Lander spawn time
     static final int landerSpawnTime = 2;
     static double previousTimeLander = landerSpawnTime;
@@ -16,11 +13,6 @@ public class Spawner extends ApplicationStart{
     //Kamikaze spawn time
     static final int kamikazeSpawnTime = 3;
     static double previousTimeKamikaze = kamikazeSpawnTime;
-
-    Spawner(int resolutionX, int resolutionY){
-        this.resolutionX = resolutionX;
-        this.resolutionY = resolutionY;
-    }
 
     public static void spawnPass(double time){
         //Lander spawn logic
