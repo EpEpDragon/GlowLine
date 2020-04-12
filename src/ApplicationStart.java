@@ -195,7 +195,7 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(10000, 3000, Color.DARKORCHID, 0.1);
+        playerThrust = new Emitter(10000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.12);
 
 
         /***********************************************************
@@ -354,8 +354,9 @@ public class ApplicationStart extends Application {
 
         gc.clearRect(0,0,resolutionX, resolutionY);
         if(forward) {
-            playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getVelocity(), Math.PI + player.getRotation(), Math.PI / 4, 1, deltaTime);
+            playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
         }
+        //playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
         playerThrust.update();
     }
 

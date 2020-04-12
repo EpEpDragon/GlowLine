@@ -11,45 +11,34 @@ public class Emitter {
     int particleSpeed;
     Color color;
     double decay;
+    double spread;
+    double taperRate;
+    double speedVariation;
 
-    Emitter(int spawnRate, int particleSpeed, Color color, double lifetime){
+    Emitter(int spawnRate, int particleSpeed, Color color, double lifetime, double spread, double taperRate, double speedVariation){
         this.spawnRate = spawnRate;
         this.particleSpeed = particleSpeed;
         this.color = color;
         this.decay = 1/lifetime;
+        this.spread = spread;
+        this.taperRate = taperRate;
+        this.speedVariation = speedVariation;
     }
 
-    //Directional emitter
-    public void emit(double x, double y, double direction, Point2D systemVelocity, double spread, double deltaTime) {
+    public void emit(double x, double y, double direction, Point2D systemVelocity, double deltaTime) {
         for (int i = 0; i < spawnRate * deltaTime; i++) {
-            double rotation = direction + (Math.random() - 0.5)*spread*2;
-            Point2D velocity = new Point2D(Math.cos(rotation), Math.sin(rotation)).multiply(particleSpeed*Math.random()*0.8+0.8);
+            double offset = (Math.random() - 0.5)*spread*2;
+            double rotation = direction + offset;
+
+            double taper = Math.abs(Math.atan(offset)*particleSpeed)*taperRate;
+            double deltaSpeed = Math.random()*speedVariation+speedVariation;
+
+            Point2D velocity = new Point2D(Math.cos(rotation), Math.sin(rotation));
+            velocity = velocity.multiply(OwnMath.clamp(particleSpeed - taper
+                    -deltaSpeed*particleSpeed, 0, particleSpeed));
+
             velocity = velocity.add(systemVelocity);
-            velocity = OwnMath.rotateVec(velocity, direction);
-            particles.add(new Particle(x, y, 10, color, velocity, decay, deltaTime));
-        }
-    }
-
-    public void emit(double x, double y, Point2D systemVelocity, double direction, double spread, double taperRate, double deltaTime) {
-        for (int i = 0; i < spawnRate * deltaTime; i++) {
-            double deltaRotation = (Math.random() - 0.5)*spread*2;
-            double rotation = direction + deltaRotation;
-
-            Point2D velocity = new Point2D(Math.cos(rotation), Math.sin(rotation)).multiply((particleSpeed-Math.abs((Math.atan(deltaRotation*taperRate)*particleSpeed)))*Math.random()*0.8+0.8);
-            velocity = velocity.add(systemVelocity);
-            System.out.println(velocity);
-            particles.add(new Particle(x, y, 10, color, velocity, decay, deltaTime));
-        }
-    }
-
-    //Circular emitter
-    public void emit(double x, double y, Point2D systemVelocity, double deltaTime){
-        double rotation = Math.random() * 2 * Math.PI;
-        Point2D velocity = new Point2D(Math.cos(rotation), Math.sin(rotation));
-        velocity = velocity.multiply(particleSpeed*Math.random()*0.8+0.8);
-        velocity = velocity.add(systemVelocity);
-        for (int i = 0; i < spawnRate * deltaTime; i++) {
-            particles.add(new Particle(x, y, 10, color, velocity, decay, deltaTime));
+            particles.add(new Particle(x, y, 5, color, velocity, decay, deltaTime));
         }
     }
 
