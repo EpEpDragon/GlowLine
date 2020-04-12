@@ -66,7 +66,7 @@ public abstract class GameObject{
             //if circle
             if (view[i] instanceof javafx.scene.shape.Circle){
                 ((Circle)view[i]).setStroke(strokeColor);
-                ((Polygon)view[i]).setFill(fillColor);
+                ((Circle)view[i]).setFill(fillColor);
             }
         }
         this.collisionShape = (Shape)collisionShape;

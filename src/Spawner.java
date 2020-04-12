@@ -16,17 +16,16 @@ public abstract class Spawner extends ApplicationStart{
 
     public static void spawnPass(double time){
         //Lander spawn logic
-//        if (time - previousTimeLander >= landerSpawnTime){
-//            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeLander = time;
-//        }
+        if (time - previousTimeLander >= landerSpawnTime){
+            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeLander = time;
+        }
 
         //Kamikaze spawn logic
-//        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
-//            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeKamikaze = time;
-//        }
-
+        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
+            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeKamikaze = time;
+        }
     }
 
     public static void addGameObject(GameObject object, double x, double y) {
@@ -89,12 +88,12 @@ public abstract class Spawner extends ApplicationStart{
     }
 
     public static class Kamikaze extends GameObject{
-        private int acceleration = 700;
+        private int acceleration = 900;
         Kamikaze(double scale){
-            super(1000*scale, Color.RED, Color.BLACK, "kamikaze", new Circle(15*scale, Color.TRANSPARENT),
+            super(900*scale, Color.WHITE, Color.BLACK, "kamikaze", new Circle(18*scale, Color.TRANSPARENT),
+                    new Circle(20*scale, Color.TRANSPARENT),
                     new Circle(15*scale, Color.TRANSPARENT),
-                    new Circle(10*scale, Color.TRANSPARENT),
-                    new Circle(8*scale, Color.TRANSPARENT));
+                    new Circle(10*scale, Color.TRANSPARENT));
         }
 
         @Override

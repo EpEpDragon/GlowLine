@@ -333,10 +333,17 @@ public class ApplicationStart extends Application {
         bullets.removeIf(GameObject::isDead);
         enemyBullets.removeIf(GameObject::isDead);
 
+        gc.clearRect(0,0,resolutionX, resolutionY);
         //Update player
         if(!player.isDead()) {
             player.update(deltaTime);
+            if(forward) {
+                playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
+            }
+            //playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
+            playerThrust.update();
         }
+
         //Update bullet positions
         for (GameObject bullet : bullets) {
             bullet.update(deltaTime);
@@ -351,13 +358,6 @@ public class ApplicationStart extends Application {
         for (GameObject lander : enemies){
             lander.update(deltaTime);
         }
-
-        gc.clearRect(0,0,resolutionX, resolutionY);
-        if(forward) {
-            playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
-        }
-        //playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
-        playerThrust.update();
     }
 
     private void removeGameObject(GameObject object){
