@@ -37,6 +37,10 @@ public class OwnMath {
         return new Point2D(x*Math.cos(rad) - y*Math.sin(rad), x*Math.sin(rad) + y*Math.cos(rad));
     }
 
+    public static Point2D rotateVec(Point2D vec, double rad){
+        return new Point2D(vec.getX()*Math.cos(rad) - vec.getY()*Math.sin(rad), vec.getX()*Math.sin(rad) + vec.getY()*Math.cos(rad));
+    }
+
     public static double lengthSqrd(Point2D vector){
         return vector.getY()*vector.getY() + vector.getX()*vector.getX();
     }

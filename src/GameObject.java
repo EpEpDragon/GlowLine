@@ -5,8 +5,8 @@ import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 
-public class GameObject{
-
+public abstract class GameObject{
+    //TODO use Math functions for rad degree conversion
     //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
     final private double radToDegConst = 180/Math.PI;
     final private double degToRadConst = Math.PI/180;
@@ -100,6 +100,9 @@ public class GameObject{
         }
     }
 
+    public double getX(){ return collisionShape.getTranslateX(); }
+    public double getY(){ return collisionShape.getTranslateY(); }
+
     public void setDead(boolean alive) { this.dead = true; }
     public boolean isDead(){ return dead; }
 
@@ -158,7 +161,7 @@ public class GameObject{
     }
 
     public double getRotation(){
-        return view[0].getRotate() * degToRadConst;
+        return Math.toRadians(view[0].getRotate());
     }
 
     public Collision getCollision(GameObject object){

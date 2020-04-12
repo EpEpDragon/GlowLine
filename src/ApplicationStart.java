@@ -2,10 +2,12 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -29,9 +31,9 @@ public class ApplicationStart extends Application {
 
     //Root of scene
     static final private Pane root = new Pane();
-
     //Drawing canvas
-    static final private Canvas canvas = new Canvas(resolutionX, resolutionY);
+    private static final Canvas canvas = new Canvas(resolutionX, resolutionY);
+    private static final GraphicsContext gc = canvas.getGraphicsContext2D();
 
     //Scale for game objects 1920 by 1080 as base
     static double scale = (double)resolutionY/1080;
@@ -41,6 +43,7 @@ public class ApplicationStart extends Application {
     static private List<GameObject> bullets = new ArrayList<>();
     static private List<GameObject> enemyBullets = new ArrayList<>();
     static private List<GameObject> enemies = new ArrayList<>();
+    Emitter playerThrust;
 
     //Floor ref
     Rectangle floor = new Rectangle(0,resolutionY-20, resolutionX, 20);
@@ -105,10 +108,10 @@ public class ApplicationStart extends Application {
 
     //Invoked on JavaFX thread, initiate JavaFX scene
     private void initFX(JFXPanel fxPanel) {
-        Scene scene = new Scene(createContent());
+        Scene scene = new Scene(createContent(), resolutionX, resolutionY, Color.BLACK);
         fxPanel.setScene(scene);
+        fxPanel.setVisible(true);
 
-        scene.setFill(Color.BLACK);
         scene.setCursor(Cursor.CROSSHAIR);
 
         /***********************************************************
@@ -171,16 +174,21 @@ public class ApplicationStart extends Application {
             mouseX = e.getX();
             mouseY = e.getY();
         });
-
-        fxPanel.setVisible(true);
     }
 
     //Setup for game related content, game loop, spawning, etc.
     private Parent createContent() {
         root.getChildren().add(canvas);
-        root.setPrefSize(resolutionX, resolutionY);
+        //root.setPrefSize(resolutionX, resolutionY);
 
         //Background (atmosphere)
+        gc.setFill(Color.color(1,1,1, 0.15));
+        gc.fillOval(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY, 4*resolutionY);
+
+        gc.setFill(Color.color(1,1,1, 0.135));
+        gc.fillOval(0.5 * resolutionX,4.8 * resolutionY,4*resolutionY, 4*resolutionY);
+
+
         root.getChildren().add(new Circle(0.5 * resolutionX,4.2 * resolutionY,4*resolutionY,
                 Color.color(1,1,1, 0.1)));
         root.getChildren().add(new Circle(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY,
@@ -194,6 +202,7 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
+        playerThrust = new Emitter(100, 2000, Color.ORCHID, 0.5);
 
 
         /***********************************************************
@@ -228,6 +237,10 @@ public class ApplicationStart extends Application {
         //Collision handeling
         GameObject.Collision collision;
 
+        gc.clearRect(0,0,resolutionX, resolutionY);
+        playerThrust.emit(player.getX(), player.getY(), player.getVelocity(), Math.PI + player.getRotation(),Math.PI/4,1, deltaTime);
+        playerThrust.update();
+
         //Spawn stuff
         Spawner.spawnPass(time);
 
@@ -248,6 +261,7 @@ public class ApplicationStart extends Application {
 //        if (right) {
 //            accelerate(player, accel, 0);
 //        }
+
 
             if (shoot && time - lastShot > 0.5) {
                 //System.out.println(time-lastShot);
@@ -369,6 +383,7 @@ public class ApplicationStart extends Application {
     }
 
     //Getters
+    public static GraphicsContext getGc() { return gc; }
     public static Pane getRoot(){ return root; }
     public static GameObject getPlayer(){ return player; }
     public static List<GameObject> getBullets(){ return bullets; }

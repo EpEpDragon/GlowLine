@@ -5,7 +5,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-public class Spawner extends ApplicationStart{
+public abstract class Spawner extends ApplicationStart{
     //Lander spawn time
     static final int landerSpawnTime = 2;
     static double previousTimeLander = landerSpawnTime;
@@ -16,17 +16,16 @@ public class Spawner extends ApplicationStart{
 
     public static void spawnPass(double time){
         //Lander spawn logic
-        if (time - previousTimeLander >= landerSpawnTime){
-            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-            previousTimeLander = time;
-        }
+//        if (time - previousTimeLander >= landerSpawnTime){
+//            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+//            previousTimeLander = time;
+//        }
 
         //Kamikaze spawn logic
-        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
-            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-            System.out.println("Spawn kamikaze");
-            previousTimeKamikaze = time;
-        }
+//        if (time - previousTimeKamikaze >= kamikazeSpawnTime){
+//            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+//            previousTimeKamikaze = time;
+//        }
 
     }
 
@@ -104,7 +103,6 @@ public class Spawner extends ApplicationStart{
             super.update(deltaTime);
             //Accelerate to player
             Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(getView()[0].getTranslateX(), getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), getVelocity(), getPlayer().getVelocity(), getMaxVelocity()).normalize();
-            System.out.println(interceptVec);
             accelerate(interceptVec.multiply(acceleration*deltaTime));
         }
     }
