@@ -2,7 +2,6 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -195,7 +194,7 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(10000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.12);
+        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.12);
 
 
         /***********************************************************
@@ -210,9 +209,11 @@ public class ApplicationStart extends Application {
             public void handle(long now) {
                 //now is in ns, convert to s
                 deltaTime = (now - previousTime) * 0.000_000_001;
-                if (deltaTime > 1){deltaTime = 0;}
                 previousTime = now;
-                update(deltaTime, now * 0.000_000_001);
+                if (!(deltaTime > 1)){
+                    update(deltaTime, now *  0.000_000_001);
+                    System.out.println(now * 0.000_000_001);
+                }
             }
         };
         timer.start();
@@ -226,7 +227,7 @@ public class ApplicationStart extends Application {
     double lastShot = 0;
 
     private void update(double deltaTime, double time) {
-        //System.out.println(deltaTime);
+//        System.out.println(time);
         //Collision handeling
         GameObject.Collision collision;
 

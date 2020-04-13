@@ -36,6 +36,11 @@ public class Particle {
         x += velocity.getX()*deltaTime;
         y += velocity.getY()*deltaTime;
 
+        //Bounce off floor
+        if(y >= ApplicationStart.resolutionY - 20 - radius){
+            y = ApplicationStart.resolutionY - 20 - radius;
+            velocity = new Point2D(velocity.getX(), velocity.getY()*-Math.abs(Math.sin(velocity.getX()/velocity.distance(0,0))));
+        }
         life -= decay * deltaTime;
     }
 
