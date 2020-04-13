@@ -21,6 +21,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ApplicationStart extends Application {
@@ -42,6 +43,7 @@ public class ApplicationStart extends Application {
     static private List<GameObject> bullets = new ArrayList<>();
     static private List<GameObject> enemyBullets = new ArrayList<>();
     static private List<GameObject> enemies = new ArrayList<>();
+    static private List<Emitter> emitters = new ArrayList<>();
     Emitter playerThrust;
 
     //Floor ref
@@ -194,7 +196,8 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.12);
+        player.setVelocity(100,0);
+        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.2,-1, player);
 
 
         /***********************************************************
@@ -335,14 +338,24 @@ public class ApplicationStart extends Application {
         enemyBullets.removeIf(GameObject::isDead);
 
         gc.clearRect(0,0,resolutionX, resolutionY);
-        //Update player
+        //Update player, thrust emitter
         if(!player.isDead()) {
             player.update(deltaTime);
             if(forward) {
-                playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
+                playerThrust.emit(player.getRotation() - Math.PI, deltaTime);
             }
-            //playerThrust.emit(player.getX() - 5, player.getY() - 5, player.getRotation() - Math.PI, player.getVelocity(), deltaTime);
-            playerThrust.update();
+            playerThrust.update(deltaTime);
+        }
+
+        //Update emitters
+        for (Iterator<Emitter> it = emitters.iterator(); it.hasNext();) {
+            Emitter emitter = it.next();
+            emitter.emit(0, deltaTime);
+            emitter.update(deltaTime);
+
+            if(emitter.isDead()){
+                it.remove();
+            }
         }
 
         //Update bullet positions
@@ -362,7 +375,7 @@ public class ApplicationStart extends Application {
     }
 
     private void removeGameObject(GameObject object){
-        object.setDead(true);
+        object.setDead();
         for(Node view : object.getView()) {
             root.getChildren().remove(view);
         }
@@ -370,7 +383,7 @@ public class ApplicationStart extends Application {
 
     private void removeGameObjectAll(GameObject... objects){
         for (GameObject object : objects) {
-            object.setDead(true);
+            object.setDead();
 
             for(Node view : object.getView()) {
                 root.getChildren().remove(view);
@@ -385,6 +398,7 @@ public class ApplicationStart extends Application {
     public static List<GameObject> getBullets(){ return bullets; }
     public static List<GameObject> getEnemies(){ return enemies; }
     public static List<GameObject> getEnemyBullets(){ return enemyBullets; }
+    public static List<Emitter> getEmitters(){ return emitters; }
     public static double getMouseX(){ return mouseX; }
     public static double getMouseY(){ return mouseY; }
 }

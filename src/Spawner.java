@@ -16,16 +16,16 @@ public abstract class Spawner extends ApplicationStart{
 
     public static void spawnPass(double time){
         //Lander spawn logic
-//        if (time - previousTimeLander >= landerSpawnTime){
-//            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeLander = time;
-//        }
+        if (time - previousTimeLander >= landerSpawnTime){
+            addGameObject(new Lander(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeLander = time;
+        }
 
         //Kamikaze spawn logic
-//        if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5){
-//            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeKamikaze = time;
-//        }
+        if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5){
+            addGameObject(new Kamikaze(scale), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeKamikaze = time;
+        }
     }
 
     public static void addGameObject(GameObject object, double x, double y) {
@@ -102,6 +102,12 @@ public abstract class Spawner extends ApplicationStart{
             //Accelerate to player
             Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(getView()[0].getTranslateX(), getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), getVelocity(), getPlayer().getVelocity(), getMaxVelocity()).normalize();
             accelerate(interceptVec.multiply(acceleration*deltaTime));
+        }
+
+        @Override
+        public void setDead() {
+            super.setDead();
+            getEmitters().add(new Emitter(20000, 2000, Color.BLUE,1,Math.PI*2,0,0.3, 0.1, this));
         }
     }
 

@@ -107,7 +107,7 @@ public abstract class GameObject{
     public double getX(){ return view[0].getTranslateX(); }
     public double getY(){ return view[0].getTranslateY(); }
 
-    public void setDead(boolean alive) { this.dead = true; }
+    public void setDead() { this.dead = true; }
     public boolean isDead(){ return dead; }
 
     public void update(double deltaTime){
