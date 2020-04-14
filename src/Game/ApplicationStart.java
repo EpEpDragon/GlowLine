@@ -1,21 +1,25 @@
+package Game;
+
+import Game.Effects.Emitter;
+import Game.Layout.SceneSetup;
+import Game.Objects.Bullet;
+import Game.Objects.GameObject;
+import Game.Objects.Player;
+import Game.Objects.Spawner;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -28,32 +32,31 @@ import java.util.List;
 public class ApplicationStart extends Application {
     protected static int resolutionX = 1920;
     protected static int resolutionY = 1080;
-    static private boolean FULLSCREEN = false;
+    private static boolean FULLSCREEN = false;
 
     //Root of scene
-    static final private Pane root = new Pane();
+    private static final Pane root = new Pane();
     //Drawing canvas
     private static final Canvas canvas = new Canvas(resolutionX, resolutionY);
     private static final GraphicsContext gc = canvas.getGraphicsContext2D();
 
     //Scale for game objects 1920 by 1080 as base
-    static double scale = (double)resolutionY/1080;
+    private static double scale = (double)resolutionY/1080;
 
     //References
-    static private Scene mainMenu, gameplay;
-    static private Spawner.Player player = new Spawner.Player(scale);
-    static private List<GameObject> bullets = new ArrayList<>();
-    static private List<GameObject> enemyBullets = new ArrayList<>();
-    static private List<GameObject> enemies = new ArrayList<>();
-    static private List<Emitter> emitters = new ArrayList<>();
-    Emitter playerThrust;
+    private static Player player = new Player(scale);
+    private static List<GameObject> bullets = new ArrayList<>();
+    private static List<GameObject> enemyBullets = new ArrayList<>();
+    private static List<GameObject> enemies = new ArrayList<>();
+    private static List<Emitter> emitters = new ArrayList<>();
+    private static Emitter playerThrust;
 
     //Floor ref
-    Rectangle floor = new Rectangle(0,resolutionY-20, resolutionX, 20);
+    private static Rectangle floor = new Rectangle(0,resolutionY-20, resolutionX, 20);
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
-    Boolean forward = false;
-    Boolean shoot = false;
+    private static Boolean forward = false;
+    private static Boolean shoot = false;
     static double mouseX = 0;
     static double mouseY = 0;
 
@@ -69,7 +72,7 @@ public class ApplicationStart extends Application {
 
     /********************Resolution setup***********************/
     //Window JFrame initialization (This is needed to change the desktop resolution)
-    private void initWindow() {
+    private static void initWindow() {
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice devices = g.getScreenDevices()[0];
         //This is the application window
@@ -109,32 +112,12 @@ public class ApplicationStart extends Application {
 
     /********************Application start***********************/
     //Invoked on JavaFX thread, initiate JavaFX scene
-    private void initFX(JFXPanel fxPanel) {
-        //Main menu buttons
-        Button start = new Button("Start");
-        start.setOnAction(e -> {
-            //Gameplay setup
-            createRound();
-            fxPanel.setScene(gameplay);
-        });
-
-        //Main menu layout
-        BorderPane mainMenuLayout = new BorderPane(start);
-        mainMenuLayout.setStyle("-fx-background-color: black;");
-        mainMenu = new Scene(mainMenuLayout, resolutionX, resolutionY, Color.BLACK);
-
-        //Gameplay scene
-        root.setStyle("-fx-background-color: black;");
-        gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
-
-        //Initial scene
-        fxPanel.setScene(mainMenu);
-
-
-        gameplay.setCursor(Cursor.CROSSHAIR);
+    private static void initFX(JFXPanel fxPanel) {
+        Scene mainMenu = SceneSetup.createMainMenu(fxPanel);
+        Scene gameplay = SceneSetup.createGameplay(fxPanel, root);
 
         /***********************************************************
-         * Input handling
+         * Gameplay controls
          ***********************************************************/
         gameplay.setOnKeyPressed(e -> {
             switch (e.getCode()) {
@@ -151,7 +134,6 @@ public class ApplicationStart extends Application {
                     break;
             }
         });
-
 
         gameplay.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
@@ -178,7 +160,7 @@ public class ApplicationStart extends Application {
     }
 
     //Setup for game related content, game loop, spawning, etc.
-    private void createRound() {
+    public static void createRound() {
         root.getChildren().add(canvas);
         //root.setPrefSize(resolutionX, resolutionY);
 
@@ -223,8 +205,8 @@ public class ApplicationStart extends Application {
     }
 
     /*****************Game Loop update**************************/
-    double lastShot = 0;
-    private void update(double deltaTime, double time) {
+    private static double lastShot = 0;
+    private static void update(double deltaTime, double time) {
 //        System.out.println(time);
         //Collision handeling
         GameObject.Collision collision;
@@ -253,15 +235,15 @@ public class ApplicationStart extends Application {
 
             if (shoot && time - lastShot > 0.5) {
                 //System.out.println(time-lastShot);
-                Spawner.addGameObject(new Spawner.Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
+                Spawner.addGameObject(new Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
 
             //TODO wrap collisions into functions
             //Player collision
             collision = player.getCollision(floor);
-            if (collision.collided) {
-                double deltaY = collision.y - floor.getY();
+            if (collision.isCollided()) {
+                double deltaY = collision.getY() - floor.getY();
                 //For bounce
                 //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
                 //No bounce
@@ -270,7 +252,7 @@ public class ApplicationStart extends Application {
             }
             for (GameObject enemyBullet : enemyBullets) {
                 collision = player.getCollision(enemyBullet);
-                if (collision.collided) {
+                if (collision.isCollided()) {
                     removeGameObjectAll(enemyBullet, player);
                 }
             }
@@ -280,14 +262,14 @@ public class ApplicationStart extends Application {
         for (GameObject lander : enemies){
             //floor
             collision = lander.getCollision(floor);
-            if (collision.collided){
+            if (collision.isCollided()){
                 lander.setVelocity(0,0);
                 System.exit(1);
             }
             //bullet
             for (GameObject bullet : bullets) {
                 collision = lander.getCollision(bullet);
-                if (collision.collided){
+                if (collision.isCollided()){
                     removeGameObjectAll(lander, bullet);
                 }
             }
@@ -298,7 +280,7 @@ public class ApplicationStart extends Application {
             if (enemyBullet.getType().equals("kamikaze")) {
                 for (GameObject allyBullet : bullets){
                     collision = enemyBullet.getCollision(allyBullet);
-                    if (collision.collided){
+                    if (collision.isCollided()){
                         removeGameObjectAll(enemyBullet, allyBullet);
                     }
                 }
@@ -306,8 +288,8 @@ public class ApplicationStart extends Application {
                 //TODO add translate method tp game object to handle views, collision shape translation
                 //Kamikaze floor collision
                 collision = enemyBullet.getCollision(floor);
-                if (collision.collided) {
-                    double deltaY = collision.y - floor.getY();
+                if (collision.isCollided()) {
+                    double deltaY = collision.getY() - floor.getY();
                     enemyBullet.setVelocity(enemyBullet.getVelocity().getX(), 0);
                     enemyBullet.getCollisionShape().setTranslateY(enemyBullet.getCollisionShape().getTranslateY() - deltaY);
                 }
@@ -317,7 +299,7 @@ public class ApplicationStart extends Application {
         //Bullet collisions/clean
         for (GameObject bullet : bullets) {
             collision = bullet.getCollision(floor);
-            if (collision.collided) {
+            if (collision.isCollided()) {
                 removeGameObject(bullet);
             }
 
@@ -369,14 +351,14 @@ public class ApplicationStart extends Application {
         }
     }
 
-    private void removeGameObject(GameObject object){
+    private static void removeGameObject(GameObject object){
         object.setDead();
         for(Node view : object.getView()) {
             root.getChildren().remove(view);
         }
     }
 
-    private void removeGameObjectAll(GameObject... objects){
+    private static void removeGameObjectAll(GameObject... objects){
         for (GameObject object : objects) {
             object.setDead();
 
@@ -396,4 +378,7 @@ public class ApplicationStart extends Application {
     public static List<Emitter> getEmitters(){ return emitters; }
     public static double getMouseX(){ return mouseX; }
     public static double getMouseY(){ return mouseY; }
+    public static double getScale() { return scale; }
+    public static int getResolutionX() {return resolutionX; }
+    public static int getResolutionY() {return resolutionY; }
 }

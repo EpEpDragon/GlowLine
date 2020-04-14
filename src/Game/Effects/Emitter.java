@@ -1,3 +1,7 @@
+package Game.Effects;
+
+import Game.Objects.GameObject;
+import Game.Math.OwnMath;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
@@ -18,7 +22,7 @@ public class Emitter {
     double speedVariation;
     GameObject owner;
 
-    Emitter(int spawnRate, int particleSpeed, Color color, double particleLifetime, double spread, double taperRate, double speedVariation, double emitterLifetime, GameObject owner){
+    public Emitter(int spawnRate, int particleSpeed, Color color, double particleLifetime, double spread, double taperRate, double speedVariation, double emitterLifetime, GameObject owner){
         this.spawnRate = spawnRate;
         this.particleSpeed = particleSpeed;
         this.color = color;

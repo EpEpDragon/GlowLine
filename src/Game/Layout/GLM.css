@@ -1,0 +1,11 @@
+.root{
+    -fx-background-color: black;
+    -fx-font: 20pt sans-serif;
+}
+
+.button{
+    -fx-background-color: black;
+    -fx-border-style: solid;
+    -fx-border-color: white;
+    -fx-text-fill: white;
+}

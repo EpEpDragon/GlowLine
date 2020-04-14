@@ -1,3 +1,5 @@
+package Game.Math;
+
 import javafx.geometry.Point2D;
 
 public class OwnMath {

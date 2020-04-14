@@ -1,9 +1,12 @@
+package Game.Objects;
+
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
+import sun.font.CreatedFontTracker;
 
 public abstract class GameObject{
     //TODO use Math functions for rad degree conversion
@@ -190,11 +193,14 @@ public abstract class GameObject{
         double x;
         double y;
         boolean collided;
-        Collision(boolean collided, double x, double y){
+        public Collision(boolean collided, double x, double y){
             this.x = x;
             this.y = y;
             this.collided = collided;
         }
 
+        public boolean isCollided() { return collided; }
+        public double getX() { return x; }
+        public double getY() { return y; }
     }
 }

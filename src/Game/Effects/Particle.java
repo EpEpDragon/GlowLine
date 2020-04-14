@@ -1,3 +1,6 @@
+package Game.Effects;
+
+import Game.ApplicationStart;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -37,8 +40,8 @@ public class Particle {
         y += velocity.getY()*deltaTime;
 
         //Bounce off floor
-        if(y >= ApplicationStart.resolutionY - 20 - radius){
-            y = ApplicationStart.resolutionY - 20 - radius;
+        if(y >= ApplicationStart.getResolutionY() - 20 - radius){
+            y = ApplicationStart.getResolutionY() - 20 - radius;
             velocity = new Point2D(velocity.getX(), velocity.getY()*-Math.abs(Math.sin(velocity.getX()/velocity.distance(0,0))));
         }
 
