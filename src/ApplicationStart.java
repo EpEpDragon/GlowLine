@@ -4,17 +4,18 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import  javafx.scene.canvas.Canvas;
-
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -39,6 +40,7 @@ public class ApplicationStart extends Application {
     static double scale = (double)resolutionY/1080;
 
     //References
+    static private Scene mainMenu, gameplay;
     static private Spawner.Player player = new Spawner.Player(scale);
     static private List<GameObject> bullets = new ArrayList<>();
     static private List<GameObject> enemyBullets = new ArrayList<>();
@@ -51,15 +53,12 @@ public class ApplicationStart extends Application {
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     Boolean forward = false;
-    //    Boolean backwards = false;
-    //    Boolean left = false;
-    //    Boolean right = false;
     Boolean shoot = false;
     static double mouseX = 0;
     static double mouseY = 0;
 
 
-    /********************Launch***********************/
+    /********************Enter point***********************/
     public static void main(String[] args) {
         new ApplicationStart().initWindow();
     }
@@ -68,6 +67,7 @@ public class ApplicationStart extends Application {
     @Override
     public void start(Stage stage) {}
 
+    /********************Resolution setup***********************/
     //Window JFrame initialization (This is needed to change the desktop resolution)
     private void initWindow() {
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -107,78 +107,78 @@ public class ApplicationStart extends Application {
         Platform.runLater(() -> initFX(fxPanel));
     }
 
+    /********************Application start***********************/
     //Invoked on JavaFX thread, initiate JavaFX scene
     private void initFX(JFXPanel fxPanel) {
-        Scene scene = new Scene(createContent(), resolutionX, resolutionY, Color.BLACK);
-        fxPanel.setScene(scene);
-        fxPanel.setVisible(true);
+        //Main menu buttons
+        Button start = new Button("Start");
+        start.setOnAction(e -> {
+            //Gameplay setup
+            createRound();
+            fxPanel.setScene(gameplay);
+        });
 
-        scene.setCursor(Cursor.CROSSHAIR);
+        //Main menu layout
+        BorderPane mainMenuLayout = new BorderPane(start);
+        mainMenuLayout.setStyle("-fx-background-color: black;");
+        mainMenu = new Scene(mainMenuLayout, resolutionX, resolutionY, Color.BLACK);
+
+        //Gameplay scene
+        root.setStyle("-fx-background-color: black;");
+        gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
+
+        //Initial scene
+        fxPanel.setScene(mainMenu);
+
+
+        gameplay.setCursor(Cursor.CROSSHAIR);
 
         /***********************************************************
          * Input handling
          ***********************************************************/
-        scene.setOnKeyPressed(e -> {
+        gameplay.setOnKeyPressed(e -> {
             switch (e.getCode()) {
                 case W:
                     forward = true;
                     break;
-//                case S:
-//                    backwards = true;
-//                    break;
-//                case A:
-//                    left = true;
-//                    break;
-//                case D:
-//                    right = true;
-//                    break;
             }
         });
 
-        scene.setOnKeyReleased(e -> {
+        gameplay.setOnKeyReleased(e -> {
             switch (e.getCode()) {
                 case W:
                     forward = false;
                     break;
-//                case S:
-//                    backwards = false;
-//                    break;
-//                case A:
-//                    left = false;
-//                    break;
-//                case D:
-//                    right = false;
-//                    break;
             }
         });
 
 
-        scene.setOnMousePressed(e -> {
+        gameplay.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 shoot = true;
             }
         });
 
-        scene.setOnMouseReleased(e -> {
+        gameplay.setOnMouseReleased(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 shoot = false;
             }
         });
 
-        scene.setOnMouseMoved(e -> {
+        gameplay.setOnMouseMoved(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
         });
 
         //For when mouse is clicked
-        scene.setOnMouseDragged(e -> {
+        gameplay.setOnMouseDragged(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
         });
     }
 
     //Setup for game related content, game loop, spawning, etc.
-    private Parent createContent() {
+    private void createRound() {
         root.getChildren().add(canvas);
         //root.setPrefSize(resolutionX, resolutionY);
 
@@ -197,7 +197,7 @@ public class ApplicationStart extends Application {
         //Spawn Player
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
         player.setVelocity(100,0);
-        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.2,-1, player);
+        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.1,-1, player);
 
 
         /***********************************************************
@@ -220,15 +220,10 @@ public class ApplicationStart extends Application {
             }
         };
         timer.start();
-
-        return root;
     }
 
-    /***********************************************************
-     * Game Loop update
-     ***********************************************************/
+    /*****************Game Loop update**************************/
     double lastShot = 0;
-
     private void update(double deltaTime, double time) {
 //        System.out.println(time);
         //Collision handeling
