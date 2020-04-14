@@ -6,9 +6,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
-import sun.font.CreatedFontTracker;
 
-public abstract class GameObject{
+public abstract class GameObject {
     //TODO use Math functions for rad degree conversion
     //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
     final private double radToDegConst = 180/Math.PI;
@@ -29,7 +28,9 @@ public abstract class GameObject{
     GameObject (double maxVelocity, Color strokeColor, Color fillColor, String type, Node view){
         this.view = new Node[1];
         this.view[0] = view;
+        this.view[0].setMouseTransparent(true);
         this.collisionShape = (Shape)view;
+        this.collisionShape.setMouseTransparent(true);
 
         //if polygon
         if (view instanceof javafx.scene.shape.Polygon){
@@ -50,7 +51,9 @@ public abstract class GameObject{
     GameObject (double maxVelocity, String type, Node view){
         this.view = new Node[1];
         this.view[0] = view;
+        this.view[0].setMouseTransparent(true);
         this.collisionShape = (Shape)view;
+        this.collisionShape.setMouseTransparent(true);
         this.maxVelocity = maxVelocity;
         this.type = type;
     }
@@ -60,6 +63,7 @@ public abstract class GameObject{
         this.view = new Node[views.length];
         for (int i = 0; i < views.length; i++) {
             this.view[i] = views[i];
+            this.view[i].setMouseTransparent(true);
 
             //if polygon
             if (view[i] instanceof javafx.scene.shape.Polygon){
@@ -73,6 +77,7 @@ public abstract class GameObject{
             }
         }
         this.collisionShape = (Shape)collisionShape;
+        this.collisionShape.setMouseTransparent(true);
         this.maxVelocity = maxVelocity;
         this.type = type;
     }
@@ -82,8 +87,10 @@ public abstract class GameObject{
         this.view = new Node[views.length];
         for (int i = 0; i < views.length; i++) {
             this.view[i] = views[i];
+            this.view[i].setMouseTransparent(true);
         }
         this.collisionShape = (Shape)collisionShape;
+        this.collisionShape.setMouseTransparent(true);
         this.maxVelocity = maxVelocity;
         this.type = type;
     }

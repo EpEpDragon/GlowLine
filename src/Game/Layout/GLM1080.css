@@ -1,0 +1,17 @@
+.root{
+     -fx-background-color: black;
+     -fx-font: 30px FreeMono;
+ }
+
+.button{
+    -fx-background-color: black;
+    -fx-border-style: solid;
+    -fx-border-color: white;
+    -fx-text-fill: white;
+    -fx-max-width: 200px;
+}
+
+#title{
+    -fx-font-size: 100px;
+    -fx-text-fill: white;
+}

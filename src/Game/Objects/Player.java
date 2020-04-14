@@ -13,6 +13,9 @@ public class Player extends GameObject{
 
     public Player(double scale) {
         super(500, Color.WHEAT, Color.BLACK, "ally", new Polygon(20*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
+        for(Node view: getView()){
+            view.setViewOrder(1);
+        }
     }
 
     @Override

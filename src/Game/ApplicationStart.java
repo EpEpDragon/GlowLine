@@ -44,7 +44,8 @@ public class ApplicationStart extends Application {
     private static double scale = (double)resolutionY/1080;
 
     //References
-    private static Player player = new Player(scale);
+    protected static AnimationTimer timer;
+    private static Player player;
     private static List<GameObject> bullets = new ArrayList<>();
     private static List<GameObject> enemyBullets = new ArrayList<>();
     private static List<GameObject> enemies = new ArrayList<>();
@@ -63,7 +64,8 @@ public class ApplicationStart extends Application {
 
     /********************Enter point***********************/
     public static void main(String[] args) {
-        new ApplicationStart().initWindow();
+        initWindow();
+        System.out.println(javafx.scene.text.Font.getFamilies());
     }
 
     //This is not used, manually started later. Override needed for the program to function.
@@ -115,15 +117,23 @@ public class ApplicationStart extends Application {
     private static void initFX(JFXPanel fxPanel) {
         Scene mainMenu = SceneSetup.createMainMenu(fxPanel);
         Scene gameplay = SceneSetup.createGameplay(fxPanel, root);
+        fxPanel.setDoubleBuffered(true);
+
+        Scene controls = SceneSetup.createControls(fxPanel);
+        fxPanel.setScene(mainMenu);
 
         /***********************************************************
          * Gameplay controls
          ***********************************************************/
+
         gameplay.setOnKeyPressed(e -> {
             switch (e.getCode()) {
                 case W:
                     forward = true;
                     break;
+                case ESCAPE:
+                    timer.stop();
+                    root.getChildren().get(0).setVisible(true);
             }
         });
 
@@ -162,30 +172,44 @@ public class ApplicationStart extends Application {
     //Setup for game related content, game loop, spawning, etc.
     public static void createRound() {
         root.getChildren().add(canvas);
+        canvas.setMouseTransparent(true);
+        canvas.setViewOrder(3);
         //root.setPrefSize(resolutionX, resolutionY);
 
         //Background (atmosphere)
-        root.getChildren().add(new Circle(0.5 * resolutionX,4.2 * resolutionY,4*resolutionY,
-                Color.color(1,1,1, 0.1)));
-        root.getChildren().add(new Circle(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY,
-                Color.color(1,1,1, 0.15)));
-        root.getChildren().add(new Circle(0.5 * resolutionX,4.8 * resolutionY,4*resolutionY,
-                Color.color(1,1,1, 0.135)));
+        Node tempBackground;
+        tempBackground = new Circle(0.5 * resolutionX,4.2 * resolutionY,4*resolutionY,
+                Color.color(1,1,1, 0.1));
+        tempBackground.setMouseTransparent(true);
+        tempBackground.setViewOrder(4);
+        root.getChildren().add(tempBackground);
+
+        tempBackground = new Circle(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY,
+                Color.color(1,1,1, 0.15));
+        tempBackground.setMouseTransparent(true);
+        tempBackground.setViewOrder(4);
+        root.getChildren().add(tempBackground);
+
+        tempBackground = new Circle(0.5 * resolutionX,4.8 * resolutionY,4*resolutionY,
+                Color.color(1,1,1, 0.135));
+        tempBackground.setMouseTransparent(true);
+        tempBackground.setViewOrder(4);
+        root.getChildren().add(tempBackground);
 
         //floor
         floor.setFill(Color.color(1,1,1, 0.3));
         root.getChildren().add(floor);
 
         //Spawn Player
+        player = new Player(scale);
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        player.setVelocity(100,0);
         playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.1,-1, player);
 
 
         /***********************************************************
          * Game Loop
          ***********************************************************/
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             long previousTime = 0;
             //Time since last frame in seconds
             double deltaTime;
@@ -197,7 +221,6 @@ public class ApplicationStart extends Application {
                 previousTime = now;
                 if (!(deltaTime > 1)){
                     update(deltaTime, now *  0.000_000_001);
-                    System.out.println(now * 0.000_000_001);
                 }
             }
         };

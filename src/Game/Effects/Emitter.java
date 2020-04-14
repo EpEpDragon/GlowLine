@@ -41,7 +41,7 @@ public class Emitter {
     }
 
     public void emit(double direction, double deltaTime) {
-        if (!(emitterLife <= 0)) {
+        if (emitterLife >= 0 && !owner.isDead()) {
             for (int i = 0; i < spawnRate * deltaTime; i++) {
                 double offset = (Math.random() - 0.5) * spread * 2;
                 double rotation = direction + offset;
@@ -72,7 +72,7 @@ public class Emitter {
     }
 
     public boolean isDead(){
-        if(emitterLife <= 0 && particles.isEmpty()){
+        if((emitterLife <= 0 || owner.isDead()) && particles.isEmpty()){
             return true;
         }
         return false;

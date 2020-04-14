@@ -3,6 +3,7 @@ package Game.Objects;
 import Game.Effects.Emitter;
 import Game.Math.OwnMath;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -16,6 +17,9 @@ public class Kamikaze extends GameObject{
                 new Circle(20*scale, Color.TRANSPARENT),
                 new Circle(15*scale, Color.TRANSPARENT),
                 new Circle(10*scale, Color.TRANSPARENT));
+        for(Node view: getView()){
+            view.setViewOrder(2);
+        }
     }
 
     @Override
@@ -29,6 +33,6 @@ public class Kamikaze extends GameObject{
     @Override
     public void setDead() {
         super.setDead();
-        getEmitters().add(new Emitter(20000, 2000, Color.BLUE,1,Math.PI*2,0,0.3, 0.1, this));
+        getEmitters().add(new Emitter(20000, 2000, Color.LIGHTBLUE,1,Math.PI*2,0,0.3, 0.1, this));
     }
 }
