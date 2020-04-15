@@ -203,7 +203,7 @@ public class ApplicationStart extends Application {
         //Spawn Player
         player = new Player(scale);
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID, 0.15, Math.PI/8, 1, 0.1,-1, player);
+        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID,10, 0.15,"backwards", Math.PI/8, 1, 0.1,-1, player);
 
 
         /***********************************************************
@@ -342,7 +342,7 @@ public class ApplicationStart extends Application {
         if(!player.isDead()) {
             player.update(deltaTime);
             if(forward) {
-                playerThrust.emit(player.getRotation() - Math.PI, deltaTime);
+                playerThrust.emit(deltaTime);
             }
             playerThrust.update(deltaTime);
         }
@@ -350,7 +350,7 @@ public class ApplicationStart extends Application {
         //Update emitters
         for (Iterator<Emitter> it = emitters.iterator(); it.hasNext();) {
             Emitter emitter = it.next();
-            emitter.emit(0, deltaTime);
+            emitter.emit(deltaTime);
             emitter.update(deltaTime);
 
             if(emitter.isDead()){

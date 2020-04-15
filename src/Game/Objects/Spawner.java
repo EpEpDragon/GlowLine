@@ -22,10 +22,10 @@ public abstract class Spawner extends ApplicationStart {
 //        }
 
         //Kamikaze spawn logic
-//        if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5){
-//            addGameObject(new Kamikaze(getScale()), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeKamikaze = time;
-//        }
+        if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5){
+            addGameObject(new Kamikaze(getScale()), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeKamikaze = time;
+        }
     }
 
     public static void addGameObject(GameObject object, double x, double y) {

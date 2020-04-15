@@ -30,6 +30,31 @@ public class OwnMath {
         return rotDeg;
     }
 
+    public static double relativeDeltaAngle(Point2D from, Point2D to, boolean halfScale){
+        double rotDeg;
+        double deltaY = to.getY()-from.getY();
+        double deltaX = to.getX()-from.getX();
+
+        //System.out.println("DX: " + deltaX + " DY: " + deltaY);
+        rotDeg = Math.atan((deltaY) / (deltaX));
+        if(halfScale) {
+            if (deltaY < 0 && rotDeg > 0) {
+                rotDeg = rotDeg - Math.PI;
+            } else if (deltaY > 0 && rotDeg < 0) {
+                rotDeg = rotDeg + Math.PI;
+            }
+        }else{
+            if (deltaY < 0 && rotDeg < 0){
+                rotDeg = 2*Math.PI - Math.abs(rotDeg);
+            } else if (deltaY < 0 && rotDeg > 0) {
+                rotDeg = rotDeg + Math.PI;
+            } else if (deltaY > 0 && rotDeg < 0) {
+                rotDeg = Math.PI + Math.abs(rotDeg);
+            }
+        }
+        return rotDeg;
+    }
+
     public static Point2D unitVecTo(double xFrom, double yFrom, double xTo, double yTo){
         double deltaAngle = relativeDeltaAngle(xFrom, yFrom, xTo, yTo, true);
         return new Point2D(Math.cos(deltaAngle), Math.sin(deltaAngle));
