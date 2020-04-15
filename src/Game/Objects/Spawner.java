@@ -3,6 +3,7 @@ package Game.Objects;
 import Game.ApplicationStart;
 import Game.Math.OwnMath;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 
 public abstract class Spawner extends ApplicationStart {

@@ -2,6 +2,7 @@ package Game.Effects;
 
 import Game.Objects.GameObject;
 import Game.Math.OwnMath;
+import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
@@ -13,7 +14,8 @@ public class Emitter {
     List<Particle> particles = new ArrayList<>();
     int spawnRate;
     int particleSpeed;
-    Color color;
+    Color colorS;
+    Color colorE;
     double radius;
     double particleDecay;
     double emitterDecay;
@@ -24,10 +26,11 @@ public class Emitter {
     String direction;
     GameObject owner;
 
-    public Emitter(int spawnRate, int particleSpeed, Color color, double radius, double particleLifetime, String direction, double spread, double taperRate, double speedVariation, double emitterLifetime, GameObject owner){
+    public Emitter(int spawnRate, int particleSpeed, Color colorS, Color colorE, double radius, double particleLifetime, String direction, double spread, double taperRate, double speedVariation, double emitterLifetime, GameObject owner){
         this.spawnRate = spawnRate;
         this.particleSpeed = particleSpeed;
-        this.color = color;
+        this.colorS = colorS;
+        this.colorE = colorE;
         this.radius = radius;
         this.particleDecay = 1/particleLifetime;
 
@@ -76,7 +79,8 @@ public class Emitter {
                         - deltaSpeed * particleSpeed, 0, particleSpeed));
                 Point2D v = owner.getVelocity();
                 velocity = velocity.add(owner.getVelocity());
-                particles.add(new Particle(owner.getX() - radius/2, owner.getY() - radius/2 , (int)radius, color, velocity, particleDecay, deltaTime));
+
+                particles.add(new Particle(owner.getX() - radius/2, owner.getY() - radius/2 , (int)radius, colorS, colorE, velocity, particleDecay, deltaTime));
             }
         }
     }

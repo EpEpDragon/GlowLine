@@ -203,7 +203,7 @@ public class ApplicationStart extends Application {
         //Spawn Player
         player = new Player(scale);
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(30000, 2000, Color.DARKORCHID,10, 0.15,"backwards", Math.PI/8, 1, 0.1,-1, player);
+        playerThrust = new Emitter(30000, 2000, Color.hsb(300, 0.64, 0.76), Color.hsb(360, 1, 0.45),10, 0.15,"backwards", Math.PI/8, 1, 0.1,-1, player);
 
 
         /***********************************************************

@@ -1,6 +1,7 @@
 package Game.Math;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 
 public class OwnMath {
 
@@ -29,6 +30,25 @@ public class OwnMath {
         }
         return rotDeg;
     }
+
+    public static double lerp(double a, double b, double f)
+    {
+        return a + f * (b - a);
+    }
+
+    public static Color colorLerp(Color colorS, Color colorE, double f){
+        double sH = colorS.getHue();
+        double sS = colorS.getSaturation();
+        double sB = colorS.getBrightness();
+
+        double eH = colorE.getHue();
+        double eS = colorE.getSaturation();
+        double eB = colorE.getBrightness();
+
+        //return Color.hsb(clamp(lerp(sH,eH,f),0,360),clamp(lerp(sS,eS,f),0,1),clamp(lerp(sB,eB,f),0,1));
+        return Color.hsb(lerp(sH,eH,f), lerp(sS,eS,f), lerp(sB,eB,f));
+    }
+
 
     public static double relativeDeltaAngle(Point2D from, Point2D to, boolean halfScale){
         double rotDeg;
