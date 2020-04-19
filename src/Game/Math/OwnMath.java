@@ -31,12 +31,12 @@ public class OwnMath {
         return rotDeg;
     }
 
-    public static double lerp(double a, double b, double f)
+    public static double lerp(double start, double end, double fraction)
     {
-        return a + f * (b - a);
+        return start + fraction * (end - start);
     }
 
-    public static Color colorLerp(Color colorS, Color colorE, double f){
+    public static Color colorLerp(Color colorS, Color colorE, double fraction){
         double sH = colorS.getHue();
         double sS = colorS.getSaturation();
         double sB = colorS.getBrightness();
@@ -45,10 +45,8 @@ public class OwnMath {
         double eS = colorE.getSaturation();
         double eB = colorE.getBrightness();
 
-        //return Color.hsb(clamp(lerp(sH,eH,f),0,360),clamp(lerp(sS,eS,f),0,1),clamp(lerp(sB,eB,f),0,1));
-        return Color.hsb(lerp(sH,eH,f), lerp(sS,eS,f), lerp(sB,eB,f));
+        return Color.hsb(lerp(sH,eH,fraction), lerp(sS,eS,fraction), lerp(sB,eB,fraction));
     }
-
 
     public static double relativeDeltaAngle(Point2D from, Point2D to, boolean halfScale){
         double rotDeg;

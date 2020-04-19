@@ -8,10 +8,33 @@
     -fx-border-style: solid;
     -fx-border-color: white;
     -fx-text-fill: white;
+}
+
+.button:hover{
+    -fx-background-color: grey;
+}
+
+.label{
+    -fx-text-fill: white;
+}
+
+#menuButtons{
     -fx-max-width: 200px;
+}
+
+#controlLabel{
+    -fx-border-style: solid;
+    -fx-border-color: white;
+    -fx-padding: 10px 20px 10px 20px;
+    -fx-max-width: 150px;
+    -fx-alignment: CENTER;
 }
 
 #title{
     -fx-font-size: 100px;
-    -fx-text-fill: white;
 }
+
+#subTitle{
+    -fx-font-size: 65px;
+}
+

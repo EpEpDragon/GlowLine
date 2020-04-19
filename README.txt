@@ -22,3 +22,9 @@ Particles 2: https://www.youtube.com/watch?v=vLcJRm6Y72U
 Abstract: https://www.w3schools.com/java/java_abstract.asp
 Enclosing class: https://stackoverflow.com/questions/20252727/is-not-an-enclosing-class-java
 Iterators: https://www.geeksforgeeks.org/iterators-in-java/
+GUI 1: https://www.youtube.com/playlist?list=PL6gx4Cwl9DGBzfXLWLSYVy8EbTdpGbUIG
+GUI 2: https://docs.oracle.com/javafx/2/layout/builtin_layouts.htm
+Pane: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/layout/Pane.html
+CSS 1: https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm
+CSS 2: https://www.w3schools.com/css/default.asp
+CSS 3: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/doc-files/cssref.html#typecolor

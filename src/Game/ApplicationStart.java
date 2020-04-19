@@ -116,11 +116,11 @@ public class ApplicationStart extends Application {
     //Invoked on JavaFX thread, initiate JavaFX scene
     private static void initFX(JFXPanel fxPanel) {
         Scene mainMenu = SceneSetup.createMainMenu(fxPanel);
-        Scene gameplay = SceneSetup.createGameplay(fxPanel, root);
-        fxPanel.setDoubleBuffered(true);
-
         Scene controls = SceneSetup.createControls(fxPanel);
+        Scene gameplay = SceneSetup.createGameplay(fxPanel, root);
+
         fxPanel.setScene(mainMenu);
+        fxPanel.setDoubleBuffered(true);
 
         /***********************************************************
          * Gameplay controls
@@ -132,8 +132,13 @@ public class ApplicationStart extends Application {
                     forward = true;
                     break;
                 case ESCAPE:
-                    timer.stop();
-                    root.getChildren().get(0).setVisible(true);
+                    if(root.getChildren().get(0).isVisible()){
+                        timer.start();
+                        root.getChildren().get(0).setVisible(false);
+                    }else {
+                        timer.stop();
+                        root.getChildren().get(0).setVisible(true);
+                    }
             }
         });
 
@@ -203,7 +208,8 @@ public class ApplicationStart extends Application {
         //Spawn Player
         player = new Player(scale);
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        playerThrust = new Emitter(30000, 2000, Color.hsb(300, 0.64, 0.76), Color.hsb(360, 1, 0.45),10, 0.15,"backwards", Math.PI/8, 1, 0.1,-1, player);
+        //TODO fix color interpolation
+        playerThrust = new Emitter(30000, 2000, Color.hsb(360, 0.64, 0.76), Color.hsb(300, 1, 0.45),10, 0.15,"backwards", Math.PI/8, 1, 0.1,-1, player);
 
 
         /***********************************************************
