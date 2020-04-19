@@ -215,7 +215,9 @@ public class ApplicationStart extends Application {
         /***********************************************************
          * Game Loop
          ***********************************************************/
+
         timer = new AnimationTimer() {
+            double currentTime = 0;
             long previousTime = 0;
             //Time since last frame in seconds
             double deltaTime;
@@ -226,7 +228,8 @@ public class ApplicationStart extends Application {
                 deltaTime = (now - previousTime) * 0.000_000_001;
                 previousTime = now;
                 if (!(deltaTime > 1)){
-                    update(deltaTime, now *  0.000_000_001);
+                    currentTime += deltaTime;
+                    update(deltaTime, currentTime);
                 }
             }
         };
@@ -378,6 +381,11 @@ public class ApplicationStart extends Application {
         for (GameObject lander : enemies){
             lander.update(deltaTime);
         }
+
+        //Update HUD
+        String timeString = Integer.toString((int)time%60) + ":" + (int)(time - time%60*60);
+        SceneSetup.updateTime(timeString);
+
     }
 
     private static void removeGameObject(GameObject object){
