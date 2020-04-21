@@ -19,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 import javafx.util.Duration;
@@ -213,33 +214,46 @@ public class ApplicationStart extends Application {
 
         //Spawn Player
         player = new Player(scale);
-        Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
-        //TODO fix color interpolation
-        playerThrust = new Emitter(30000, 2000, Color.hsb(360, 0.64, 0.76), Color.hsb(300, 1, 0.45), 10, 0.15, "backwards", Math.PI / 8, 1, 0.1, -1, player);
+        Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.95);
+        player.setRotation(-Math.PI/2);
 
+        //Start anim
+        ScaleTransition startAnim = new ScaleTransition(Duration.seconds(2), player.getView()[0]);
+        startAnim.setCycleCount(1);
 
-        /***********************************************************
-         * Game Loop
-         ***********************************************************/
+        startAnim.setFromY(200);
+        startAnim.setFromX(200);
+        startAnim.setToX(1);
+        startAnim.setToY(1);
 
-        timer = new AnimationTimer() {
-            double currentTime = 0;
-            long previousTime = 0;
-            //Time since last frame in seconds
-            double deltaTime;
+        startAnim.play();
+        startAnim.setOnFinished(event -> {
+            //TODO fix color interpolation
+            playerThrust = new Emitter(30000, 2000, Color.hsb(360, 0.64, 0.76), Color.hsb(300, 1, 0.45), 10, 0.15, "backwards", Math.PI / 8, 1, 0.1, -1, player);
 
-            @Override
-            public void handle(long now) {
-                //now is in ns, convert to s
-                deltaTime = (now - previousTime) * 0.000_000_001;
-                previousTime = now;
-                if (!(deltaTime > 1)) {
-                    currentTime += deltaTime;
-                    update(deltaTime, currentTime);
+            /***********************************************************
+             * Game Loop
+             ***********************************************************/
+
+            timer = new AnimationTimer() {
+                double currentTime = 0;
+                long previousTime = 0;
+                //Time since last frame in seconds
+                double deltaTime;
+
+                @Override
+                public void handle(long now) {
+                    //now is in ns, convert to s
+                    deltaTime = (now - previousTime) * 0.000_000_001;
+                    previousTime = now;
+                    if (!(deltaTime > 1)) {
+                        currentTime += deltaTime;
+                        update(deltaTime, currentTime);
+                    }
                 }
-            }
-        };
-        timer.start();
+            };
+            timer.start();
+        });
     }
 
     /*****************Game Loop update**************************/
