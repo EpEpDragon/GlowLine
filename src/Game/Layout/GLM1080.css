@@ -10,10 +10,6 @@
     -fx-text-fill: white;
 }
 
-.button:hover{
-    -fx-background-color: grey;
-}
-
 .label{
     -fx-text-fill: white;
 }

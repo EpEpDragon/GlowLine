@@ -7,6 +7,7 @@ import Game.Objects.GameObject;
 import Game.Objects.Player;
 import Game.Objects.Spawner;
 import javafx.animation.AnimationTimer;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -20,6 +21,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
+import javafx.util.Duration;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -28,6 +31,8 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static Game.Math.OwnMath.getPlaceValue;
 
 public class ApplicationStart extends Application {
     protected static int resolutionX = 1920;
@@ -41,7 +46,7 @@ public class ApplicationStart extends Application {
     private static final GraphicsContext gc = canvas.getGraphicsContext2D();
 
     //Scale for game objects 1920 by 1080 as base
-    private static double scale = (double)resolutionY/1080;
+    private static double scale = (double) resolutionY / 1080;
 
     //References
     protected static AnimationTimer timer;
@@ -53,7 +58,7 @@ public class ApplicationStart extends Application {
     private static Emitter playerThrust;
 
     //Floor ref
-    private static Rectangle floor = new Rectangle(0,resolutionY-20, resolutionX, 20);
+    private static Rectangle floor = new Rectangle(0, resolutionY - 20, resolutionX, 20);
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     private static Boolean forward = false;
@@ -70,7 +75,8 @@ public class ApplicationStart extends Application {
 
     //This is not used, manually started later. Override needed for the program to function.
     @Override
-    public void start(Stage stage) {}
+    public void start(Stage stage) {
+    }
 
     /********************Resolution setup***********************/
     //Window JFrame initialization (This is needed to change the desktop resolution)
@@ -132,10 +138,10 @@ public class ApplicationStart extends Application {
                     forward = true;
                     break;
                 case ESCAPE:
-                    if(root.getChildren().get(0).isVisible()){
+                    if (root.getChildren().get(0).isVisible()) {
                         timer.start();
                         root.getChildren().get(0).setVisible(false);
-                    }else {
+                    } else {
                         timer.stop();
                         root.getChildren().get(0).setVisible(true);
                     }
@@ -183,33 +189,33 @@ public class ApplicationStart extends Application {
 
         //Background (atmosphere)
         Node tempBackground;
-        tempBackground = new Circle(0.5 * resolutionX,4.2 * resolutionY,4*resolutionY,
-                Color.color(1,1,1, 0.1));
+        tempBackground = new Circle(0.5 * resolutionX, 4.2 * resolutionY, 4 * resolutionY,
+                Color.color(1, 1, 1, 0.1));
         tempBackground.setMouseTransparent(true);
         tempBackground.setViewOrder(4);
         root.getChildren().add(tempBackground);
 
-        tempBackground = new Circle(0.5 * resolutionX,4.6 * resolutionY,4*resolutionY,
-                Color.color(1,1,1, 0.15));
+        tempBackground = new Circle(0.5 * resolutionX, 4.6 * resolutionY, 4 * resolutionY,
+                Color.color(1, 1, 1, 0.15));
         tempBackground.setMouseTransparent(true);
         tempBackground.setViewOrder(4);
         root.getChildren().add(tempBackground);
 
-        tempBackground = new Circle(0.5 * resolutionX,4.8 * resolutionY,4*resolutionY,
-                Color.color(1,1,1, 0.135));
+        tempBackground = new Circle(0.5 * resolutionX, 4.8 * resolutionY, 4 * resolutionY,
+                Color.color(1, 1, 1, 0.135));
         tempBackground.setMouseTransparent(true);
         tempBackground.setViewOrder(4);
         root.getChildren().add(tempBackground);
 
         //floor
-        floor.setFill(Color.color(1,1,1, 0.3));
+        floor.setFill(Color.color(1, 1, 1, 0.3));
         root.getChildren().add(floor);
 
         //Spawn Player
         player = new Player(scale);
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.5);
         //TODO fix color interpolation
-        playerThrust = new Emitter(30000, 2000, Color.hsb(360, 0.64, 0.76), Color.hsb(300, 1, 0.45),10, 0.15,"backwards", Math.PI/8, 1, 0.1,-1, player);
+        playerThrust = new Emitter(30000, 2000, Color.hsb(360, 0.64, 0.76), Color.hsb(300, 1, 0.45), 10, 0.15, "backwards", Math.PI / 8, 1, 0.1, -1, player);
 
 
         /***********************************************************
@@ -227,7 +233,7 @@ public class ApplicationStart extends Application {
                 //now is in ns, convert to s
                 deltaTime = (now - previousTime) * 0.000_000_001;
                 previousTime = now;
-                if (!(deltaTime > 1)){
+                if (!(deltaTime > 1)) {
                     currentTime += deltaTime;
                     update(deltaTime, currentTime);
                 }
@@ -238,6 +244,7 @@ public class ApplicationStart extends Application {
 
     /*****************Game Loop update**************************/
     private static double lastShot = 0;
+
     private static void update(double deltaTime, double time) {
 //        System.out.println(time);
         //Collision handeling
@@ -246,24 +253,12 @@ public class ApplicationStart extends Application {
         //Spawn stuff
         Spawner.spawnPass(time);
 
-        if(!player.isDead()) {
+        if (!player.isDead()) {
             //Accelerate player
             double playerAcceleration = player.getAcceleration() * deltaTime;
             if (forward) {
                 player.accelerate(player.getForwardVector().multiply(playerAcceleration));
             }
-
-//        if (backwards) {
-//            player.accelerate(player.getForwardVector().multiply(playerAcceleration * -1));
-//        }
-//
-//        if (left) {
-//            accelerate(player, player.getForwardVector().multiply(player.getAcceleration()));
-//        }
-//        if (right) {
-//            accelerate(player, accel, 0);
-//        }
-
 
             if (shoot && time - lastShot > 0.5) {
                 //System.out.println(time-lastShot);
@@ -291,28 +286,28 @@ public class ApplicationStart extends Application {
         }
 
         //Lander collision
-        for (GameObject lander : enemies){
+        for (GameObject lander : enemies) {
             //floor
             collision = lander.getCollision(floor);
-            if (collision.isCollided()){
-                lander.setVelocity(0,0);
+            if (collision.isCollided()) {
+                lander.setVelocity(0, 0);
                 System.exit(1);
             }
             //bullet
             for (GameObject bullet : bullets) {
                 collision = lander.getCollision(bullet);
-                if (collision.isCollided()){
+                if (collision.isCollided()) {
                     removeGameObjectAll(lander, bullet);
                 }
             }
         }
 
         //Enemy bullet collisions/clean
-        for (GameObject enemyBullet : enemyBullets){
+        for (GameObject enemyBullet : enemyBullets) {
             if (enemyBullet.getType().equals("kamikaze")) {
-                for (GameObject allyBullet : bullets){
+                for (GameObject allyBullet : bullets) {
                     collision = enemyBullet.getCollision(allyBullet);
-                    if (collision.isCollided()){
+                    if (collision.isCollided()) {
                         removeGameObjectAll(enemyBullet, allyBullet);
                     }
                 }
@@ -336,7 +331,7 @@ public class ApplicationStart extends Application {
             }
 
             if ((bullet.getView()[0].getTranslateX() < 0 || bullet.getView()[0].getTranslateX() > resolutionX) ||
-                    (bullet.getView()[0].getTranslateY() < 0 || bullet.getView()[0].getTranslateY() > resolutionY)){
+                    (bullet.getView()[0].getTranslateY() < 0 || bullet.getView()[0].getTranslateY() > resolutionY)) {
                 removeGameObject(bullet);
             }
         }
@@ -346,23 +341,23 @@ public class ApplicationStart extends Application {
         bullets.removeIf(GameObject::isDead);
         enemyBullets.removeIf(GameObject::isDead);
 
-        gc.clearRect(0,0,resolutionX, resolutionY);
+        gc.clearRect(0, 0, resolutionX, resolutionY);
         //Update player, thrust emitter
-        if(!player.isDead()) {
+        if (!player.isDead()) {
             player.update(deltaTime);
-            if(forward) {
+            if (forward) {
                 playerThrust.emit(deltaTime);
             }
             playerThrust.update(deltaTime);
         }
 
         //Update emitters
-        for (Iterator<Emitter> it = emitters.iterator(); it.hasNext();) {
+        for (Iterator<Emitter> it = emitters.iterator(); it.hasNext(); ) {
             Emitter emitter = it.next();
             emitter.emit(deltaTime);
             emitter.update(deltaTime);
 
-            if(emitter.isDead()){
+            if (emitter.isDead()) {
                 it.remove();
             }
         }
@@ -378,44 +373,81 @@ public class ApplicationStart extends Application {
         }
 
         //Update lander position
-        for (GameObject lander : enemies){
+        for (GameObject lander : enemies) {
             lander.update(deltaTime);
         }
 
         //Update HUD
-        String timeString = Integer.toString((int)time%60) + ":" + (int)(time - time%60*60);
+        int min = (int) time / 60;
+        int sec = (int) (time - (int) (time / 60) * 60);
+        String timeString = Integer.toString(getPlaceValue(min, 10)) + getPlaceValue(min, 1) + ":" + getPlaceValue(sec, 10 ) + getPlaceValue(sec, 1);
         SceneSetup.updateTime(timeString);
 
     }
 
-    private static void removeGameObject(GameObject object){
+    private static void removeGameObject(GameObject object) {
         object.setDead();
-        for(Node view : object.getView()) {
+        for (Node view : object.getView()) {
             root.getChildren().remove(view);
         }
     }
 
-    private static void removeGameObjectAll(GameObject... objects){
+    private static void removeGameObjectAll(GameObject... objects) {
         for (GameObject object : objects) {
             object.setDead();
 
-            for(Node view : object.getView()) {
+            for (Node view : object.getView()) {
                 root.getChildren().remove(view);
             }
         }
     }
 
     //Getters
-    public static GraphicsContext getGc() { return gc; }
-    public static Pane getRoot(){ return root; }
-    public static GameObject getPlayer(){ return player; }
-    public static List<GameObject> getBullets(){ return bullets; }
-    public static List<GameObject> getEnemies(){ return enemies; }
-    public static List<GameObject> getEnemyBullets(){ return enemyBullets; }
-    public static List<Emitter> getEmitters(){ return emitters; }
-    public static double getMouseX(){ return mouseX; }
-    public static double getMouseY(){ return mouseY; }
-    public static double getScale() { return scale; }
-    public static int getResolutionX() {return resolutionX; }
-    public static int getResolutionY() {return resolutionY; }
+    public static GraphicsContext getGc() {
+        return gc;
+    }
+
+    public static Pane getRoot() {
+        return root;
+    }
+
+    public static GameObject getPlayer() {
+        return player;
+    }
+
+    public static List<GameObject> getBullets() {
+        return bullets;
+    }
+
+    public static List<GameObject> getEnemies() {
+        return enemies;
+    }
+
+    public static List<GameObject> getEnemyBullets() {
+        return enemyBullets;
+    }
+
+    public static List<Emitter> getEmitters() {
+        return emitters;
+    }
+
+    public static double getMouseX() {
+        return mouseX;
+    }
+
+    public static double getMouseY() {
+        return mouseY;
+    }
+
+    public static double getScale() {
+        return scale;
+    }
+
+    public static int getResolutionX() {
+        return resolutionX;
+    }
+
+    public static int getResolutionY() {
+        return resolutionY;
+    }
 }

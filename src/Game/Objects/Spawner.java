@@ -3,7 +3,6 @@ package Game.Objects;
 import Game.ApplicationStart;
 import Game.Math.OwnMath;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 
 
 public abstract class Spawner extends ApplicationStart {
@@ -17,10 +16,10 @@ public abstract class Spawner extends ApplicationStart {
 
     public static void spawnPass(double time){
         //Lander spawn logic
-//        if (time - previousTimeLander >= landerSpawnTime){
-//            addGameObject(new Lander(getScale()), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-//            previousTimeLander = time;
-//        }
+        if (time - previousTimeLander >= landerSpawnTime){
+            addGameObject(new Lander(getScale()), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
+            previousTimeLander = time;
+        }
 
         //Kamikaze spawn logic
         if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5){

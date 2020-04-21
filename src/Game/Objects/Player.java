@@ -8,8 +8,6 @@ import javafx.scene.shape.Polygon;
 import static Game.ApplicationStart.*;
 
 public class Player extends GameObject{
-    //px/s
-    private int acceleration = 800;
 
     public Player(double scale) {
         super(500, Color.WHEAT, Color.BLACK, "ally", new Polygon(20*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
@@ -34,6 +32,7 @@ public class Player extends GameObject{
     }
 
     public int getAcceleration() {
-        return acceleration;
+        //px/s
+        return 800;
     }
 }
