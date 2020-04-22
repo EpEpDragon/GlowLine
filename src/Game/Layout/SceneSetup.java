@@ -1,31 +1,30 @@
 package Game.Layout;
 
 import Game.ApplicationStart;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Transition;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 public abstract class SceneSetup extends ApplicationStart {
     static private Scene mainMenu, gameplay, controlsMenu;
     static private Label time = new Label();
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
+        int buttonWidth = 200;
 
-        Label title = new Label("Glow Line");
+        TypingLabel title = new TypingLabel("Glow Line", 10);
         title.setId("title");
         title.setPadding(new Insets(0, 0, getResolutionY() * 0.5, 0));
 
         //Start button
-        GLButton start = new GLButton("Start");
+        SwellButton start = new SwellButton("Start", buttonWidth, true);
 
         start.setId("menuButtons");
         start.setOnAction(e -> {
@@ -35,14 +34,15 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         //Controls Button
-        GLButton controls = new GLButton("Controls");
+        SwellButton controls = new SwellButton("Controls", buttonWidth,true);
         controls.setId("menuButtons");
         controls.setOnAction(e -> {
             fxPanel.setScene(controlsMenu);
+            playAll((Pane) controlsMenu.getRoot());
         });
 
         //Quit Button
-        GLButton quit = new GLButton("Quit");
+        SwellButton quit = new SwellButton("Quit",buttonWidth,true);
         quit.setId("menuButtons");
         quit.setOnAction(e -> {
             System.exit(0);
@@ -63,7 +63,6 @@ public abstract class SceneSetup extends ApplicationStart {
         return mainMenu;
     }
 
-
     public static Scene createControls(JFXPanel fxPanel) {
         //Thrust
         Label thrustA = new Label("Thrust:");
@@ -81,7 +80,7 @@ public abstract class SceneSetup extends ApplicationStart {
         dilateB.setId("controlLabel");
 
         //Back button
-        GLButton back = new GLButton("Back");
+        SwellButton back = new SwellButton("Back", 0, false);
         back.setId("menuButtons");
         back.setOnAction(e -> {
             fxPanel.setScene(mainMenu);
@@ -115,8 +114,8 @@ public abstract class SceneSetup extends ApplicationStart {
 
     public static Scene createGameplay(JFXPanel fxPanel, Pane root) {
         /**Pause menu**/
-        GLButton resume = new GLButton("Resume");
-        GLButton toMain = new GLButton("Quit to main menu");
+        SwellButton resume = new SwellButton("Resume", 400,true);
+        SwellButton toMain = new SwellButton("Quit to main menu", 400,true);
 
         VBox pauseMenu = new VBox(resume, toMain);
         pauseMenu.setPadding(new Insets(resolutionY * 0.5 - 29, 0, 0, resolutionX * 0.5 - 158));
@@ -125,23 +124,26 @@ public abstract class SceneSetup extends ApplicationStart {
         pauseMenu.setVisible(false);
 
         toMain.setOnAction(e -> {
-            timer = null;
-            //Pause menu is index 0, HUD index 1
-            root.getChildren().remove(2, root.getChildren().size());
-            getBullets().clear();
-            getEnemies().clear();
-            getEnemyBullets().clear();
-            getEmitters().clear();
-            fxPanel.setScene(mainMenu);
-            pauseMenu.setVisible(false);
-            fxPanel.setScene(mainMenu);
+            if (resume.isFinished()) {
+                pauseMenu.setVisible(false);
+                timer.stop();
+                //Pause menu is index 0, HUD index 1
+                root.getChildren().remove(2, root.getChildren().size());
+                getBullets().clear();
+                getEnemies().clear();
+                getEnemyBullets().clear();
+                getEmitters().clear();
+                pauseMenu.setVisible(false);
+                fxPanel.setScene(mainMenu);
+                playAll((Pane) mainMenu.getRoot());
+            }
         });
 
         resume.setOnAction(e -> {
-            System.out.println(toMain.getWidth());
-            System.out.println(toMain.getHeight());
-            pauseMenu.setVisible(false);
-            timer.start();
+            if (resume.isFinished()) {
+                pauseMenu.setVisible(false);
+                timer.start();
+            }
         });
 
         /**HUD**/
@@ -157,11 +159,22 @@ public abstract class SceneSetup extends ApplicationStart {
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
         gameplay.setCursor(Cursor.CROSSHAIR);
 
-        System.out.println(toMain.getWidth());
-        System.out.println(toMain.getHeight());
-
         return gameplay;
     }
 
-    public static void updateTime(String time){ SceneSetup.time.setText(time); }
+    public static void playAll(Pane pane) {
+        for (Node node : pane.getChildren()) {
+            if (node instanceof Pane){
+                playAll((Pane) node);
+            }else if (node instanceof TypingLabel){
+                ((TypingLabel) node).play();
+            }else if (node instanceof SwellButton){
+                ((SwellButton) node).play();
+            }
+        }
+    }
+
+    public static void updateTime(String time) {
+        SceneSetup.time.setText(time);
+    }
 }

@@ -145,6 +145,7 @@ public class ApplicationStart extends Application {
                     } else {
                         timer.stop();
                         root.getChildren().get(0).setVisible(true);
+                        SceneSetup.playAll((Pane) gameplay.getRoot());
                     }
             }
         });
