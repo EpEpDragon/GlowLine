@@ -10,21 +10,40 @@ public abstract class Spawner extends ApplicationStart {
     static final int landerSpawnTime = 2;
     static double previousTimeLander = landerSpawnTime;
 
+    //LanderLevel1 spawn time
+    static final int landerL1SpawnTime = 4;
+    static final int landerL1Rows = 3; //if changed, update level upgrade kill count
+    static int landerL1Done = 0;
+    static double previousTimeLanderL1 = landerL1SpawnTime;
+
     //Kamikaze spawn time
     static final int kamikazeSpawnTime = 3;
     static double previousTimeKamikaze = kamikazeSpawnTime;
 
     public static void spawnPass(double time){
-        //Lander spawn logic
-        if (time - previousTimeLander >= landerSpawnTime){
-            addGameObject(new Lander(getScale()), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-            previousTimeLander = time;
-        }
+        //Level 2+
+        if (getLevel()>1) {
+            //Lander spawn logic
+            if (time - previousTimeLander >= landerSpawnTime) {
+                addGameObject(new Lander(getScale()), OwnMath.clamp(resolutionX * Math.random(), resolutionX * 0.1, resolutionX * 0.9), resolutionY * -0.1);
+                previousTimeLander = time;
+            }
 
-        //Kamikaze spawn logic
-        if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5){
-            addGameObject(new Kamikaze(getScale()), OwnMath.clamp(resolutionX * Math.random(),resolutionX * 0.1, resolutionX * 0.9),resolutionY * -0.1);
-            previousTimeKamikaze = time;
+            //Kamikaze spawn logic
+            if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5) {
+                addGameObject(new Kamikaze(getScale()), OwnMath.clamp(resolutionX * Math.random(), resolutionX * 0.1, resolutionX * 0.9), resolutionY * -0.1);
+                previousTimeKamikaze = time;
+            }
+        }
+        // level 1
+        else{
+            if (landerL1Done<landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
+                for (int i = 1; i < 8; i++) { // if number of loops changed, update level upgrade kill count
+                    addGameObject(new LanderLevel1(getScale()), resolutionX * 0.1 * i, resolutionY * -0.1);
+                    previousTimeLanderL1 = time;
+                }
+                landerL1Done++;
+            }
         }
     }
 

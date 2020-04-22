@@ -7,6 +7,9 @@ import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.WHEAT;
+
 public abstract class GameObject {
     //TODO use Math functions for rad degree conversion
     //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
@@ -166,6 +169,10 @@ public abstract class GameObject {
         return velocity;
     }
 
+    public void setMaxVelocity(double MaxVelocity){
+        this.maxVelocity = MaxVelocity;
+    }
+
     public double getMaxVelocity(){
         return maxVelocity;
     }
@@ -177,6 +184,10 @@ public abstract class GameObject {
     public double getRotation(){
         return Math.toRadians(view[0].getRotate());
     }
+
+    public void setPolygonFillColour(Color newColour) {
+                    ((Polygon) view[0]).setFill(newColour);
+            }
 
     public Collision getCollision(GameObject object){
         Shape resultShape = Shape.intersect(collisionShape, object.getCollisionShape());
