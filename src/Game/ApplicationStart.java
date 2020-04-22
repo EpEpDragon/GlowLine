@@ -63,9 +63,15 @@ public class ApplicationStart extends Application {
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     private static Boolean forward = false;
+    private static Boolean left = false;
+    private static Boolean right = false;
     private static Boolean shoot = false;
     static double mouseX = 0;
     static double mouseY = 0;
+    private static double rechargeTime = 0.5;
+    private static int enemiesKillCount = 0;
+    private static int level = 1;
+
 
 
     /********************Enter point***********************/
@@ -138,6 +144,12 @@ public class ApplicationStart extends Application {
                 case W:
                     forward = true;
                     break;
+                case A:
+                    left = true;
+                    break;
+                case D:
+                    right = true;
+                    break;
                 case ESCAPE:
                     if (root.getChildren().get(0).isVisible()) {
                         timer.start();
@@ -153,6 +165,12 @@ public class ApplicationStart extends Application {
             switch (e.getCode()) {
                 case W:
                     forward = false;
+                    break;
+                case A:
+                    left = false;
+                    break;
+                case D:
+                    right = false;
                     break;
             }
         });
@@ -260,8 +278,12 @@ public class ApplicationStart extends Application {
     private static double lastShot = 0;
 
     private static void update(double deltaTime, double time) {
+        if (enemiesKillCount>=21){
+           level = 2;
+        }
+
 //        System.out.println(time);
-        //Collision handeling
+        //Collision handling
         GameObject.Collision collision;
 
         //Spawn stuff
@@ -269,15 +291,52 @@ public class ApplicationStart extends Application {
 
         if (!player.isDead()) {
             //Accelerate player
+
             double playerAcceleration = player.getAcceleration() * deltaTime;
-            if (forward) {
-                player.accelerate(player.getForwardVector().multiply(playerAcceleration));
+
+            // Level 2+
+            if (getLevel() > 1) {
+                player.setMaxVelocity(500);
+                if (forward) {
+                    player.accelerate(player.getForwardVector().multiply(playerAcceleration));
+                }
+            }
+            // Level 1
+            else {
+                player.setMaxVelocity(300);
+                if (left) {
+                    player.accelerate(-playerAcceleration, 0);
+                }
+                if (right) {
+                    player.accelerate(playerAcceleration, 0);
+                }
+                if (!(left || right)) {
+                    // if moving right faster than 15
+                    if (player.getVelocity().getX()>15) {
+                        player.accelerate(-playerAcceleration, 0);
+                    }
+                    // if moving left faster than 15
+                    else if (player.getVelocity().getX()<-15) {
+                        player.accelerate(playerAcceleration, 0);
+                    }
+                    //if moving close to zero
+                    else {
+                        player.setVelocity(0,0);
+                    }
+                }
             }
 
-            if (shoot && time - lastShot > 0.5) {
+            if (shoot && time - lastShot > rechargeTime) {
                 //System.out.println(time-lastShot);
                 Spawner.addGameObject(new Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
+            }
+            // Show recharge
+            if ((time-lastShot)/rechargeTime>1) {
+                player.setPolygonFillColour(Color.WHEAT);
+            }
+            else {
+                player.setPolygonFillColour(Color.hsb(39, 0.77-((time - lastShot) / rechargeTime * 0.77), 0.83-((time - lastShot) / rechargeTime * 0.83)));
             }
 
             //TODO wrap collisions into functions
@@ -311,6 +370,7 @@ public class ApplicationStart extends Application {
             for (GameObject bullet : bullets) {
                 collision = lander.getCollision(bullet);
                 if (collision.isCollided()) {
+                    enemiesKillCount++;
                     removeGameObjectAll(lander, bullet);
                 }
             }
@@ -359,7 +419,7 @@ public class ApplicationStart extends Application {
         //Update player, thrust emitter
         if (!player.isDead()) {
             player.update(deltaTime);
-            if (forward) {
+            if (forward && !(getLevel()==1)) {
                 playerThrust.emit(deltaTime);
             }
             playerThrust.update(deltaTime);
@@ -416,6 +476,10 @@ public class ApplicationStart extends Application {
         }
     }
 
+    public static void settingsNewGame() {
+        lastShot = 0;
+    }
+
     //Getters
     public static GraphicsContext getGc() {
         return gc;
@@ -463,5 +527,9 @@ public class ApplicationStart extends Application {
 
     public static int getResolutionY() {
         return resolutionY;
+    }
+
+    public static int getLevel() {
+        return level;
     }
 }

@@ -20,7 +20,24 @@ public class Player extends GameObject{
     public void update(double deltaTime) {
         super.update(deltaTime);
         for(Node view : getView()) {
-            setRotation(OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true));
+            //Level 1 turret must not be able to aim below horizontal
+            if (getLevel()>1) {
+                setRotation(OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true));
+            }
+            else {
+                double newAngle = OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true);
+                if (newAngle<0) {
+                    setRotation(newAngle);
+                }
+                else {
+                    if (newAngle<(Math.PI/2) && newAngle>(-Math.PI/2)) {
+                        setRotation(0);
+                    }
+                    else{
+                        setRotation(Math.PI);
+                    }
+                }
+            }
 
             //Teleport player to other side of screen if off-screen
             if (view.getTranslateX() < getResolutionX() * -0.01) {

@@ -32,6 +32,7 @@ public abstract class SceneSetup extends ApplicationStart {
             //Gameplay setup
             createRound();
             fxPanel.setScene(gameplay);
+            settingsNewGame();
         });
 
         //Controls Button
