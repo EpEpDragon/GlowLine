@@ -8,17 +8,18 @@ import javafx.scene.Node;
 public abstract class Spawner extends ApplicationStart {
     //Lander spawn time
     static final int landerSpawnTime = 2;
-    static double previousTimeLander = landerSpawnTime;
+    static double previousTimeLander = landerSpawnTime; //if changed, change in resetSpawner as well
 
     //LanderLevel1 spawn time
     static final int landerL1SpawnTime = 4;
-    static final int landerL1Rows = 3; //if changed, update level upgrade kill count
-    static int landerL1Done = 0;
-    static double previousTimeLanderL1 = landerL1SpawnTime;
+    static final int landerL1Rows = 3;
+    static final int landerL1Columns = 5;
+    static int landerL1Done = 0; //if changed, change in resetSpawner as well
+    static double previousTimeLanderL1 = -landerL1SpawnTime;//if changed, change in resetSpawner as well
 
     //Kamikaze spawn time
     static final int kamikazeSpawnTime = 3;
-    static double previousTimeKamikaze = kamikazeSpawnTime;
+    static double previousTimeKamikaze = kamikazeSpawnTime;//if changed, change in resetSpawner as well
 
     public static void spawnPass(double time){
         //Level 2+
@@ -38,8 +39,8 @@ public abstract class Spawner extends ApplicationStart {
         // level 1
         else{
             if (landerL1Done<landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
-                for (int i = 1; i < 8; i++) { // if number of loops changed, update level upgrade kill count
-                    addGameObject(new LanderLevel1(getScale()), resolutionX * 0.1 * i, resolutionY * -0.1);
+                for (int i = 1; i <= landerL1Columns; i++) {
+                    addGameObject(new LanderLevel1(getScale()), (resolutionX/(float)(landerL1Columns + 1)) * i, resolutionY * -0.05);
                     previousTimeLanderL1 = time;
                 }
                 landerL1Done++;
@@ -73,4 +74,16 @@ public abstract class Spawner extends ApplicationStart {
         object.getCollisionShape().setTranslateX(x);
         object.getCollisionShape().setTranslateY(y);
     }
+
+    public static int getL1EnemyCount() {
+        return landerL1Columns*landerL1Rows;
+    }
+
+    public static void resetSpawner() {
+        landerL1Done = 0;
+        previousTimeLanderL1 = -landerL1SpawnTime;
+        previousTimeKamikaze = kamikazeSpawnTime;
+        previousTimeLander = landerSpawnTime;
+    }
+
 }

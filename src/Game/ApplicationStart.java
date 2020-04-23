@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static Game.Math.OwnMath.getPlaceValue;
+import static Game.Objects.Spawner.*;
 
 public class ApplicationStart extends Application {
     protected static int resolutionX = 1920;
@@ -279,7 +280,7 @@ public class ApplicationStart extends Application {
     private static double lastShot = 0;
 
     private static void update(double deltaTime, double time) {
-        if (enemiesKillCount>=21){
+        if (enemiesKillCount>=getL1EnemyCount()){
            level = 2;
         }
 
@@ -479,6 +480,9 @@ public class ApplicationStart extends Application {
 
     public static void settingsNewGame() {
         lastShot = 0;
+        enemiesKillCount = 0;
+        level = 1;
+        resetSpawner();
     }
 
     //Getters
