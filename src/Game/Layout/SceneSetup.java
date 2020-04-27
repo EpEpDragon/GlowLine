@@ -31,7 +31,6 @@ public abstract class SceneSetup extends ApplicationStart {
             //Gameplay setup
             createRound();
             fxPanel.setScene(gameplay);
-            settingsNewGame();
         });
 
         //Controls Button
@@ -129,12 +128,9 @@ public abstract class SceneSetup extends ApplicationStart {
                 pauseMenu.setVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1
-                root.getChildren().remove(2, root.getChildren().size());
-                getBullets().clear();
-                getEnemies().clear();
-                getEnemyBullets().clear();
-                getEmitters().clear();
-                pauseMenu.setVisible(false);
+                //Dont know why, but 2 didnt work below. If you quit to menu after using escape, the gameover menu wont come on the next time you play.
+                root.getChildren().remove(3, root.getChildren().size());
+                clearStuff();
                 fxPanel.setScene(mainMenu);
                 playAll((Pane) mainMenu.getRoot());
             }
@@ -147,6 +143,44 @@ public abstract class SceneSetup extends ApplicationStart {
             }
         });
 
+        /**GameOver menu**/
+        SwellButton restart = new SwellButton("Restart", 400,true);
+        SwellButton toMain2 = new SwellButton("Quit to main menu", 400,true);
+
+        //Dont know why just adding toMain also to this vbox gives a bug. So I just made a new toMain button, toMain2...
+        VBox gameOverMenu = new VBox(restart, toMain2);
+        gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 29, 0, 0, resolutionX * 0.5 - 158));
+        gameOverMenu.setSpacing(20);
+        gameOverMenu.setAlignment(Pos.CENTER);
+        gameOverMenu.setVisible(false);
+
+        toMain2.setOnAction(e -> {
+            if (restart.isFinished()) {
+                gameOverMenu.setVisible(false);
+                timer.stop();
+                //Pause menu is index 0, HUD index 1
+                //Dont know why 3, but 3 only one that works
+                root.getChildren().remove(3, root.getChildren().size());
+                clearStuff();
+                fxPanel.setScene(mainMenu);
+                playAll((Pane) mainMenu.getRoot());
+            }
+        });
+
+        restart.setOnAction(e -> {
+            if (restart.isFinished()) {
+                gameOverMenu.setVisible(false);
+                timer.stop();
+                //Pause menu is index 0, HUD index 1
+                //Dont know why 3, but 3 only one that works
+                root.getChildren().remove(3, root.getChildren().size());
+                clearStuff();
+                createRound();
+                fxPanel.setScene(gameplay);
+            }
+        });
+
+
         /**HUD**/
         //Timer
         time.setStyle("-fx-font-size: 50px;-fx-padding: 15px 0px 0px 15px;");
@@ -155,12 +189,20 @@ public abstract class SceneSetup extends ApplicationStart {
 
         root.getChildren().add(0, pauseMenu);
         root.getChildren().add(1, time);
+        root.getChildren().add(2, gameOverMenu);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
         gameplay.setCursor(Cursor.CROSSHAIR);
 
         return gameplay;
+    }
+
+    private static void clearStuff() {
+        getBullets().clear();
+        getEnemies().clear();
+        getEnemyBullets().clear();
+        getEmitters().clear();
     }
 
     public static void playAll(Pane pane) {

@@ -12,7 +12,6 @@ import static javafx.scene.paint.Color.WHEAT;
 
 public abstract class GameObject {
     //TODO use Math functions for rad degree conversion
-    //WHY THE FUCK DOES THE NODE'S ROTATE FUNCTION USE DEGREES?????!
     final private double radToDegConst = 180/Math.PI;
     final private double degToRadConst = Math.PI/180;
 

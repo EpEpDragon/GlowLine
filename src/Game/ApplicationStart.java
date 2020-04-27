@@ -69,9 +69,10 @@ public class ApplicationStart extends Application {
     private static Boolean shoot = false;
     static double mouseX = 0;
     static double mouseY = 0;
-    private static double rechargeTime = 0.5;
+    private static double timeSpeed = 0.000_000_001;
     private static int enemiesKillCount = 0;
     private static int level = 1;
+    private static boolean gameOverState = false;
 
 
 
@@ -151,11 +152,14 @@ public class ApplicationStart extends Application {
                 case D:
                     right = true;
                     break;
+                case Q:
+                    System.exit(1);
+                    break;
                 case ESCAPE:
-                    if (root.getChildren().get(0).isVisible()) {
+                    if (root.getChildren().get(0).isVisible() && !gameOverState) {
                         timer.start();
                         root.getChildren().get(0).setVisible(false);
-                    } else {
+                    } else if (!gameOverState){
                         timer.stop();
                         root.getChildren().get(0).setVisible(true);
                         SceneSetup.playAll((Pane) gameplay.getRoot());
@@ -207,6 +211,14 @@ public class ApplicationStart extends Application {
         canvas.setMouseTransparent(true);
         canvas.setViewOrder(3);
         //root.setPrefSize(resolutionX, resolutionY);
+
+        //not anymore a separate function run every time that createRound() is run
+        lastShot = 0;
+        enemiesKillCount = 0;
+        level = 1;
+        resetSpawner();
+        timeSpeed = 0.000_000_001;
+        gameOverState = false;
 
         //Background (atmosphere)
         Node tempBackground;
@@ -264,7 +276,7 @@ public class ApplicationStart extends Application {
                 @Override
                 public void handle(long now) {
                     //now is in ns, convert to s
-                    deltaTime = (now - previousTime) * 0.000_000_001;
+                    deltaTime = (now - previousTime) * timeSpeed;
                     previousTime = now;
                     if (!(deltaTime > 1)) {
                         currentTime += deltaTime;
@@ -328,13 +340,14 @@ public class ApplicationStart extends Application {
                 }
             }
 
+            double rechargeTime = 0.5;
             if (shoot && time - lastShot > rechargeTime) {
                 //System.out.println(time-lastShot);
                 Spawner.addGameObject(new Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
             // Show recharge
-            if ((time-lastShot)/rechargeTime>1) {
+            if ((time-lastShot)/rechargeTime > 1) {
                 player.setPolygonFillColour(Color.WHEAT);
             }
             else {
@@ -356,6 +369,7 @@ public class ApplicationStart extends Application {
                 collision = player.getCollision(enemyBullet);
                 if (collision.isCollided()) {
                     removeGameObjectAll(enemyBullet, player);
+                    gameOver();
                 }
             }
         }
@@ -366,7 +380,8 @@ public class ApplicationStart extends Application {
             collision = lander.getCollision(floor);
             if (collision.isCollided()) {
                 lander.setVelocity(0, 0);
-                System.exit(1);
+                timer.stop();
+                gameOver();
             }
             //bullet
             for (GameObject bullet : bullets) {
@@ -478,11 +493,11 @@ public class ApplicationStart extends Application {
         }
     }
 
-    public static void settingsNewGame() {
-        lastShot = 0;
-        enemiesKillCount = 0;
-        level = 1;
-        resetSpawner();
+    private static void gameOver(){
+        root.getChildren().get(2).setVisible(true);
+        timeSpeed = 0.000_000_0001;
+        gameOverState = true;
+        System.nanoTime();
     }
 
     //Getters
