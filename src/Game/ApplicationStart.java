@@ -210,6 +210,7 @@ public class ApplicationStart extends Application {
 
     //Setup for game related content, game loop, spawning, etc.
     public static void createRound() {
+        gc.clearRect(0, 0, resolutionX, resolutionY);
         root.getChildren().add(canvas);
         canvas.setMouseTransparent(true);
         canvas.setViewOrder(3);
