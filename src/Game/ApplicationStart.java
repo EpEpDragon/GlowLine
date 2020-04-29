@@ -157,9 +157,12 @@ public class ApplicationStart extends Application {
                     break;
                 case ESCAPE:
                     if (root.getChildren().get(0).isVisible() && !gameOverState) {
-                        timer.start();
-                        root.getChildren().get(0).setVisible(false);
+                        if(SceneSetup.isReadyToResume()) {
+                            timer.start();
+                            root.getChildren().get(0).setVisible(false);
+                        }
                     } else if (!gameOverState){
+                        SceneSetup.setReadyToResume(false);
                         timer.stop();
                         root.getChildren().get(0).setVisible(true);
                         SceneSetup.playAll((Pane) gameplay.getRoot());

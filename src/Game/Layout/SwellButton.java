@@ -13,9 +13,10 @@ public class SwellButton extends Button {
     private static double currentScale;
 
     private Transition unfold;
+    private Transition fade;
     private static boolean finished = false;
 
-    SwellButton(String text, int width, boolean shouldUnfold){
+    SwellButton(String text, int width, boolean shouldUnfold) {
         super(text);
 
         //Unfold
@@ -35,7 +36,7 @@ public class SwellButton extends Button {
             };
 
             //Fade in
-            Transition fade = new Transition() {
+            fade = new Transition() {
                 {
                     setCycleCount(1);
                     setCycleDuration(new Duration(getDurationMilliFade));
@@ -50,7 +51,9 @@ public class SwellButton extends Button {
             unfold.setOnFinished(e -> fade.play());
             fade.setOnFinished(e -> finished = true);
             unfold.play();
-        } else { finished = true; }
+        } else {
+            finished = true;
+        }
         //Swell on mouse move
         ScaleTransition grow = new ScaleTransition(Duration.millis(durationMilliGrow), this);
         grow.setCycleCount(1);
@@ -91,5 +94,8 @@ public class SwellButton extends Button {
         }
     }
 
-    public boolean isFinished(){ return finished; }
+    public boolean isFinished() {
+        return finished;
+    }
+    public Transition getFade() { return fade; }
 }

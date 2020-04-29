@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 public abstract class SceneSetup extends ApplicationStart {
     static private Scene mainMenu, gameplay, controlsMenu;
     static private Label time = new Label();
+    static private boolean readyToResume = false;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 200;
@@ -143,6 +144,10 @@ public abstract class SceneSetup extends ApplicationStart {
             }
         });
 
+        resume.getFade().setOnFinished(e -> {
+            readyToResume = true;
+        });
+
         /**GameOver menu**/
         SwellButton restart = new SwellButton("Restart", 400,true);
         SwellButton toMain2 = new SwellButton("Quit to main menu", 400,true);
@@ -220,4 +225,7 @@ public abstract class SceneSetup extends ApplicationStart {
     public static void updateTime(String time) {
         SceneSetup.time.setText(time);
     }
+
+    public static boolean isReadyToResume(){ return readyToResume; }
+    public static void setReadyToResume( boolean isResume){ readyToResume = isResume; }
 }
