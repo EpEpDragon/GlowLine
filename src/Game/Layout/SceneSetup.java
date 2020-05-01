@@ -128,8 +128,7 @@ public abstract class SceneSetup extends ApplicationStart {
             if (resume.isFinished()) {
                 pauseMenu.setVisible(false);
                 timer.stop();
-                //Pause menu is index 0, HUD index 1
-                //Dont know why, but 2 didnt work below. If you quit to menu after using escape, the gameover menu wont come on the next time you play.
+                //Pause menu is index 0, HUD index 1, gameOver menu index 2
                 root.getChildren().remove(3, root.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
@@ -152,7 +151,6 @@ public abstract class SceneSetup extends ApplicationStart {
         SwellButton restart = new SwellButton("Restart", 400,true);
         SwellButton toMain2 = new SwellButton("Quit to main menu", 400,true);
 
-        //Dont know why just adding toMain also to this vbox gives a bug. So I just made a new toMain button, toMain2...
         VBox gameOverMenu = new VBox(restart, toMain2);
         gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 29, 0, 0, resolutionX * 0.5 - 158));
         gameOverMenu.setSpacing(20);
@@ -163,8 +161,7 @@ public abstract class SceneSetup extends ApplicationStart {
             if (restart.isFinished()) {
                 gameOverMenu.setVisible(false);
                 timer.stop();
-                //Pause menu is index 0, HUD index 1
-                //Dont know why 3, but 3 only one that works
+                //Pause menu is index 0, HUD index 1, gameOver menu index 2
                 root.getChildren().remove(3, root.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
@@ -176,12 +173,11 @@ public abstract class SceneSetup extends ApplicationStart {
             if (restart.isFinished()) {
                 gameOverMenu.setVisible(false);
                 timer.stop();
-                //Pause menu is index 0, HUD index 1
-                //Dont know why 3, but 3 only one that works
+                //Pause menu is index 0, HUD index 1, gameOver menu index 2
                 root.getChildren().remove(3, root.getChildren().size());
                 clearStuff();
                 createRound();
-                fxPanel.setScene(gameplay);
+                //unnecessary: fxPanel.setScene(gameplay);
             }
         });
 
@@ -203,7 +199,7 @@ public abstract class SceneSetup extends ApplicationStart {
         return gameplay;
     }
 
-    private static void clearStuff() {
+    public static void clearStuff() {
         getBullets().clear();
         getEnemies().clear();
         getEnemyBullets().clear();

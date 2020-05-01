@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static Game.Math.OwnMath.colorLerp;
 import static Game.Math.OwnMath.getPlaceValue;
 import static Game.Objects.Spawner.*;
 
@@ -73,6 +74,7 @@ public class ApplicationStart extends Application {
     private static int enemiesKillCount = 0;
     private static int level = 1;
     private static boolean gameOverState = false;
+    private static double gameOverSince;
 
 
 
@@ -216,13 +218,13 @@ public class ApplicationStart extends Application {
         canvas.setViewOrder(3);
         //root.setPrefSize(resolutionX, resolutionY);
 
-        //not anymore a separate function run every time that createRound() is run
         lastShot = 0;
         enemiesKillCount = 0;
         level = 1;
         resetSpawner();
         timeSpeed = 0.000_000_001;
         gameOverState = false;
+        gameOverSince = -1;
 
         //Background (atmosphere)
         Node tempBackground;
@@ -346,7 +348,6 @@ public class ApplicationStart extends Application {
 
             double rechargeTime = 0.5;
             if (shoot && time - lastShot > rechargeTime) {
-                //System.out.println(time-lastShot);
                 Spawner.addGameObject(new Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
@@ -355,7 +356,7 @@ public class ApplicationStart extends Application {
                 player.setPolygonFillColour(Color.WHEAT);
             }
             else {
-                player.setPolygonFillColour(Color.hsb(39, 0.77-((time - lastShot) / rechargeTime * 0.77), 0.83-((time - lastShot) / rechargeTime * 0.83)));
+                player.setPolygonFillColour(colorLerp(Color.WHEAT,Color.BLACK,(time - lastShot) / rechargeTime));
             }
 
             //TODO wrap collisions into functions
@@ -384,7 +385,6 @@ public class ApplicationStart extends Application {
             collision = lander.getCollision(floor);
             if (collision.isCollided()) {
                 lander.setVelocity(0, 0);
-                timer.stop();
                 gameOver();
             }
             //bullet
@@ -478,6 +478,24 @@ public class ApplicationStart extends Application {
         String timeString = Integer.toString(getPlaceValue(min, 10)) + getPlaceValue(min, 1) + ":" + getPlaceValue(sec, 10 ) + getPlaceValue(sec, 1);
         SceneSetup.updateTime(timeString);
 
+        //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
+        //If gameover state was triggered somewhere during the current update
+        if (gameOverState) {
+            //store the earliest time that gameover was detected
+            if (gameOverSince == -1){
+                gameOverSince = time;
+            }
+            //if it's been gameover for more than 5 seconds, auto restart
+            if (time - gameOverSince > timeSpeed * 5 * 1000000000) {
+                root.getChildren().get(2).setVisible(false);
+                timer.stop();
+                //Pause menu is index 0, HUD index 1, gameOver menu index 2
+                root.getChildren().remove(3, root.getChildren().size());
+                gameOverState = false;
+                SceneSetup.clearStuff();
+                createRound();
+            }
+        }
     }
 
     private static void removeGameObject(GameObject object) {
@@ -501,7 +519,6 @@ public class ApplicationStart extends Application {
         root.getChildren().get(2).setVisible(true);
         timeSpeed = 0.000_000_0001;
         gameOverState = true;
-        System.nanoTime();
     }
 
     //Getters
