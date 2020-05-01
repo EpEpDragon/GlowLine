@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static Game.Layout.SceneSetup.resetHUD;
+import static Game.Layout.SceneSetup.rootChildren;
 import static Game.Math.OwnMath.colorLerp;
 import static Game.Math.OwnMath.getPlaceValue;
 import static Game.Objects.Spawner.*;
@@ -71,11 +73,15 @@ public class ApplicationStart extends Application {
     static double mouseX = 0;
     static double mouseY = 0;
     private static double timeSpeed = 0.000_000_001;
-    private static int enemiesKillCount = 0;
-    private static int level = 1;
+    private static int enemiesKillCount;
+    private static int level;
     private static boolean gameOverState = false;
     private static double gameOverSince;
-
+    private static int currentScore;
+    private static double lastShot;
+    private static double lastScoreUpdate;
+    private static double lastLanderUpdate;
+    private static boolean lighter;
 
 
     /********************Enter point***********************/
@@ -159,11 +165,11 @@ public class ApplicationStart extends Application {
                     break;
                 case ESCAPE:
                     if (root.getChildren().get(0).isVisible() && !gameOverState) {
-                        if(SceneSetup.isReadyToResume()) {
+                        if (SceneSetup.isReadyToResume()) {
                             timer.start();
                             root.getChildren().get(0).setVisible(false);
                         }
-                    } else if (!gameOverState){
+                    } else if (!gameOverState) {
                         SceneSetup.setReadyToResume(false);
                         timer.stop();
                         root.getChildren().get(0).setVisible(true);
@@ -225,6 +231,13 @@ public class ApplicationStart extends Application {
         timeSpeed = 0.000_000_001;
         gameOverState = false;
         gameOverSince = -1;
+        currentScore = 0;
+        lastScoreUpdate = -10;
+        lastLanderUpdate = -10;
+        lighter = false;
+        //mouseinfo given in case mouse not moved from when clicking start game till start animation finished and thus mouse info still refers to 0,0
+        mouseX = MouseInfo.getPointerInfo().getLocation().x;
+        mouseY = MouseInfo.getPointerInfo().getLocation().y;
 
         //Background (atmosphere)
         Node tempBackground;
@@ -253,7 +266,7 @@ public class ApplicationStart extends Application {
         //Spawn Player
         player = new Player(scale);
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.95);
-        player.setRotation(-Math.PI/2);
+        player.setRotation(-Math.PI / 2);
 
         //Start anim
         ScaleTransition startAnim = new ScaleTransition(Duration.seconds(2), player.getView()[0]);
@@ -295,11 +308,9 @@ public class ApplicationStart extends Application {
     }
 
     /*****************Game Loop update**************************/
-    private static double lastShot = 0;
-
     private static void update(double deltaTime, double time) {
-        if (enemiesKillCount>=getL1EnemyCount()){
-           level = 2;
+        if (enemiesKillCount >= getL1EnemyCount()) {
+            level = 2;
         }
 
 //        System.out.println(time);
@@ -332,31 +343,38 @@ public class ApplicationStart extends Application {
                 }
                 if (!(left || right)) {
                     // if moving right faster than 15
-                    if (player.getVelocity().getX()>15) {
+                    if (player.getVelocity().getX() > 15) {
                         player.accelerate(-playerAcceleration, 0);
                     }
                     // if moving left faster than 15
-                    else if (player.getVelocity().getX()<-15) {
+                    else if (player.getVelocity().getX() < -15) {
                         player.accelerate(playerAcceleration, 0);
                     }
                     //if moving close to zero
                     else {
-                        player.setVelocity(0,0);
+                        player.setVelocity(0, 0);
                     }
                 }
             }
 
             double rechargeTime = 0.5;
-            if (shoot && time - lastShot > rechargeTime) {
+            if (shoot && time - lastShot > rechargeTime && !gameOverState) {
                 Spawner.addGameObject(new Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
             // Show recharge
-            if ((time-lastShot)/rechargeTime > 1) {
+            if ((time - lastShot) / rechargeTime > 1) {
                 player.setPolygonFillColour(Color.WHEAT);
+            } else {
+                player.setPolygonFillColour(colorLerp(Color.WHEAT, Color.BLACK, (time - lastShot) / rechargeTime));
             }
-            else {
-                player.setPolygonFillColour(colorLerp(Color.WHEAT,Color.BLACK,(time - lastShot) / rechargeTime));
+
+            // Show score update
+            double timeUpdateTime = 0.3;
+            if ((time - lastScoreUpdate) / timeUpdateTime > 1) {
+                SceneSetup.updateScoreColour(Color.WHITE);
+            } else {
+                SceneSetup.updateScoreColour(colorLerp(Color.DARKBLUE, Color.LIGHTGREEN, (time - lastScoreUpdate) / timeUpdateTime));
             }
 
             //TODO wrap collisions into functions
@@ -385,14 +403,29 @@ public class ApplicationStart extends Application {
             collision = lander.getCollision(floor);
             if (collision.isCollided()) {
                 lander.setVelocity(0, 0);
-                gameOver();
+                if (!gameOverState) {
+                    gameOver();
+                }
+                // Show lander hit floor.
+                double landerUpdateTime = 0.03;
+                if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
+                    lastLanderUpdate = time;
+                    lighter = !lighter;
+                }
+                if (lighter) {
+                    lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
+                } else {
+                    lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                }
             }
             //bullet
             for (GameObject bullet : bullets) {
                 collision = lander.getCollision(bullet);
-                if (collision.isCollided()) {
+                if (collision.isCollided() && !gameOverState) {
                     enemiesKillCount++;
                     removeGameObjectAll(lander, bullet);
+                    currentScore += 20;
+                    lastScoreUpdate = time;
                 }
             }
         }
@@ -402,8 +435,10 @@ public class ApplicationStart extends Application {
             if (enemyBullet.getType().equals("kamikaze")) {
                 for (GameObject allyBullet : bullets) {
                     collision = enemyBullet.getCollision(allyBullet);
-                    if (collision.isCollided()) {
+                    if (collision.isCollided() && !gameOverState) {
                         removeGameObjectAll(enemyBullet, allyBullet);
+                        currentScore += 100;
+                        lastScoreUpdate = time;
                     }
                 }
 
@@ -440,7 +475,7 @@ public class ApplicationStart extends Application {
         //Update player, thrust emitter
         if (!player.isDead()) {
             player.update(deltaTime);
-            if (forward && !(getLevel()==1)) {
+            if (forward && !(getLevel() == 1)) {
                 playerThrust.emit(deltaTime);
             }
             playerThrust.update(deltaTime);
@@ -475,25 +510,29 @@ public class ApplicationStart extends Application {
         //Update HUD
         int min = (int) time / 60;
         int sec = (int) (time - (int) (time / 60) * 60);
-        String timeString = Integer.toString(getPlaceValue(min, 10)) + getPlaceValue(min, 1) + ":" + getPlaceValue(sec, 10 ) + getPlaceValue(sec, 1);
+        String timeString = Integer.toString(getPlaceValue(min, 10)) + getPlaceValue(min, 1) + ":" + getPlaceValue(sec, 10) + getPlaceValue(sec, 1);
         SceneSetup.updateTime(timeString);
+        //Update score
+        SceneSetup.updateScore("Score: " + Integer.toString(currentScore));
 
         //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
         //If gameover state was triggered somewhere during the current update
         if (gameOverState) {
             //store the earliest time that gameover was detected
-            if (gameOverSince == -1){
+            if (gameOverSince == -1) {
                 gameOverSince = time;
             }
             //if it's been gameover for more than 5 seconds, auto restart
             if (time - gameOverSince > timeSpeed * 5 * 1000000000) {
                 root.getChildren().get(2).setVisible(false);
-                timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(3, root.getChildren().size());
+                root.getChildren().remove(rootChildren, root.getChildren().size());
                 gameOverState = false;
                 SceneSetup.clearStuff();
+                //resets the time and score before the starting animation begins.
+                resetHUD();
                 createRound();
+                timer.stop();
             }
         }
     }
@@ -515,7 +554,7 @@ public class ApplicationStart extends Application {
         }
     }
 
-    private static void gameOver(){
+    private static void gameOver() {
         root.getChildren().get(2).setVisible(true);
         timeSpeed = 0.000_000_0001;
         gameOverState = true;

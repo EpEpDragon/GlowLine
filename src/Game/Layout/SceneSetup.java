@@ -14,8 +14,10 @@ import javafx.scene.paint.Color;
 
 public abstract class SceneSetup extends ApplicationStart {
     static private Scene mainMenu, gameplay, controlsMenu;
+    static private Label score = new Label();
     static private Label time = new Label();
     static private boolean readyToResume = false;
+    public static int rootChildren  = 4;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 200;
@@ -129,7 +131,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 pauseMenu.setVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(3, root.getChildren().size());
+                root.getChildren().remove(rootChildren, root.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
                 playAll((Pane) mainMenu.getRoot());
@@ -162,7 +164,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 gameOverMenu.setVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(3, root.getChildren().size());
+                root.getChildren().remove(rootChildren, root.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
                 playAll((Pane) mainMenu.getRoot());
@@ -174,7 +176,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 gameOverMenu.setVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(3, root.getChildren().size());
+                root.getChildren().remove(rootChildren, root.getChildren().size());
                 clearStuff();
                 createRound();
                 //unnecessary: fxPanel.setScene(gameplay);
@@ -184,13 +186,16 @@ public abstract class SceneSetup extends ApplicationStart {
 
         /**HUD**/
         //Timer
-        time.setStyle("-fx-font-size: 50px;-fx-padding: 15px 0px 0px 15px;");
+        time.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px "+Integer.toString(resolutionX-140)+"px;");
+        score.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px 15px;");
 
-        VBox hud = new VBox(time);
+        VBox hud = new VBox(time, score);
 
+        //Do not change order, if adding another one, change rootChildren
         root.getChildren().add(0, pauseMenu);
         root.getChildren().add(1, time);
         root.getChildren().add(2, gameOverMenu);
+        root.getChildren().add(3, score);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
@@ -220,6 +225,19 @@ public abstract class SceneSetup extends ApplicationStart {
 
     public static void updateTime(String time) {
         SceneSetup.time.setText(time);
+    }
+
+    public static void updateScore(String score) {
+        SceneSetup.score.setText(score);
+    }
+
+    public static void updateScoreColour(Color colour) {
+        SceneSetup.score.setTextFill(colour);
+    }
+
+    public static void resetHUD() {
+        SceneSetup.time.setText("00:00");
+        SceneSetup.score.setText("Score: 0");
     }
 
     public static boolean isReadyToResume(){ return readyToResume; }

@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 import static javafx.scene.paint.Color.BLACK;
@@ -185,8 +186,12 @@ public abstract class GameObject {
     }
 
     public void setPolygonFillColour(Color newColour) {
-                    ((Polygon) view[0]).setFill(newColour);
-            }
+        ((Polygon) view[0]).setFill(newColour);
+    }
+
+    public void setRectColour(Color newColour) {
+        ((Rectangle) view[0]).setFill(newColour);
+    }
 
     public Collision getCollision(GameObject object){
         Shape resultShape = Shape.intersect(collisionShape, object.getCollisionShape());
