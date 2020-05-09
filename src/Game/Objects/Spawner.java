@@ -12,8 +12,8 @@ public abstract class Spawner extends ApplicationStart {
 
     //LanderLevel1 spawn time
     static final int landerL1SpawnTime = 2;
-    static final int landerL1Rows = 2;
-    static final int landerL1Columns = 3;
+    static final int landerL1Rows = 4;
+    static final int landerL1Columns = 8;
     static int landerL1Done = 0; //if changed, change in resetSpawner as well
     static double previousTimeLanderL1 = -landerL1SpawnTime;//if changed, change in resetSpawner as well
 
@@ -38,10 +38,9 @@ public abstract class Spawner extends ApplicationStart {
         }
         // level 1
         else{
-            if (landerL1Done<landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
-                for (int i = 1; i <= landerL1Columns; i++) {
-                    addGameObject(new LanderLevel1(getScale()), (resolutionX/(float)(landerL1Columns + 1)) * i, resolutionY * -0.05);
-                    previousTimeLanderL1 = time;
+            if (landerL1Done<landerL1Columns && time - previousTimeLanderL1 >= landerL1SpawnTime) {
+                for (int i = 1; i <= landerL1Rows; i++) {
+                    addGameObject(new LanderLevel1(getScale()), resolutionX * -0.05, ((resolutionY/(float)(landerL1Rows + 1)) * i)/3+10);
                 }
                 landerL1Done++;
             }

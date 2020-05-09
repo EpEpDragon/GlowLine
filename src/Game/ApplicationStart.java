@@ -384,8 +384,20 @@ public class ApplicationStart extends Application {
             collision = lander.getCollision(floor);
             if (collision.isCollided()) {
                 lander.setVelocity(0, 0);
-                timer.stop();
-                gameOver();
+                if (!gameOverState) {
+                    gameOver();
+                }
+                // Show lander hit floor.
+                double landerUpdateTime = 0.02;
+                if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
+                    lastLanderUpdate = time;
+                    lighter = !lighter;
+                }
+                if (lighter) {
+                    lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
+                } else {
+                    lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                }
             }
             //bullet
             for (GameObject bullet : bullets) {
