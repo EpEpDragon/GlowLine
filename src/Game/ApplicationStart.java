@@ -2,10 +2,7 @@ package Game;
 
 import Game.Effects.Emitter;
 import Game.Layout.SceneSetup;
-import Game.Objects.Bullet;
-import Game.Objects.GameObject;
-import Game.Objects.Player;
-import Game.Objects.Spawner;
+import Game.Objects.*;
 import javafx.animation.AnimationTimer;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
@@ -33,8 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static Game.Layout.SceneSetup.resetHUD;
-import static Game.Layout.SceneSetup.rootChildren;
+import static Game.Layout.SceneSetup.*;
 import static Game.Math.OwnMath.colorLerp;
 import static Game.Math.OwnMath.getPlaceValue;
 import static Game.Objects.Spawner.*;
@@ -54,7 +50,7 @@ public class ApplicationStart extends Application {
     private static double scale = (double) resolutionY / 1080;
 
     //References
-    protected static AnimationTimer timer;
+    protected static StatusTimer timer;
     private static Player player;
     private static List<GameObject> bullets = new ArrayList<>();
     private static List<GameObject> enemyBullets = new ArrayList<>();
@@ -161,7 +157,20 @@ public class ApplicationStart extends Application {
                     right = true;
                     break;
                 case Q:
-                    System.exit(1);
+                    if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
+                        timer.stop();
+                        //Pause menu is index 0, HUD index 1, gameOver menu index 2
+                        root.getChildren().remove(rootChildren, root.getChildren().size());
+                        SceneSetup.clearStuff();
+                        fxPanel.setScene(mainMenu);
+                        playAll((Pane) mainMenu.getRoot());
+                        if (root.getChildren().get(2).isVisible()) {
+                            root.getChildren().get(2).setVisible(false);
+                        }
+                        if (root.getChildren().get(0).isVisible()) {
+                            root.getChildren().get(0).setVisible(false);
+                        }
+                    }
                     break;
                 case ESCAPE:
                     if (root.getChildren().get(0).isVisible() && !gameOverState) {
@@ -169,12 +178,13 @@ public class ApplicationStart extends Application {
                             timer.start();
                             root.getChildren().get(0).setVisible(false);
                         }
-                    } else if (!gameOverState) {
+                    } else if (!gameOverState && timer.isRunning()) {
                         SceneSetup.setReadyToResume(false);
                         timer.stop();
                         root.getChildren().get(0).setVisible(true);
-                        SceneSetup.playAll((Pane) gameplay.getRoot());
+                        playAll((Pane) gameplay.getRoot());
                     }
+                    break;
             }
         });
 
@@ -286,7 +296,7 @@ public class ApplicationStart extends Application {
              * Game Loop
              ***********************************************************/
 
-            timer = new AnimationTimer() {
+            timer = new StatusTimer() {
                 double currentTime = 0;
                 long previousTime = 0;
                 //Time since last frame in seconds
@@ -426,6 +436,26 @@ public class ApplicationStart extends Application {
                     removeGameObjectAll(lander, bullet);
                     currentScore += 20;
                     lastScoreUpdate = time;
+                }
+            }
+            if (level == 1) {
+                collision = lander.getCollision(player);
+                if (collision.isCollided()) {
+                    lander.setVelocity(0, 0);
+                    if (!gameOverState) {
+                        gameOver();
+                    }
+                    // Show lander hit player.
+                    double landerUpdateTime = 0.03;
+                    if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
+                        lastLanderUpdate = time;
+                        lighter = !lighter;
+                    }
+                    if (lighter) {
+                        lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
+                    } else {
+                        lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                    }
                 }
             }
         }

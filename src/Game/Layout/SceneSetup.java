@@ -152,9 +152,11 @@ public abstract class SceneSetup extends ApplicationStart {
         /**GameOver menu**/
         SwellButton restart = new SwellButton("Restart", 400,true);
         SwellButton toMain2 = new SwellButton("Quit to main menu", 400,true);
+        Label gameOver = new Label("GAME\nOVER");
+        gameOver.setId("gameOver");
 
-        VBox gameOverMenu = new VBox(restart, toMain2);
-        gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 29, 0, 0, resolutionX * 0.5 - 158));
+        VBox gameOverMenu = new VBox(gameOver, restart, toMain2);
+        gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 450, 0, 0, resolutionX*0.5-270));
         gameOverMenu.setSpacing(20);
         gameOverMenu.setAlignment(Pos.CENTER);
         gameOverMenu.setVisible(false);

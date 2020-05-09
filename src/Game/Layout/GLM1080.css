@@ -30,6 +30,13 @@
     -fx-font-size: 100px;
 }
 
+#gameOver{
+    -fx-font-size: 200px;
+    -fx-text-fill: white;
+    -fx-font-style: italic;
+//    -fx-background-color: red;
+}
+
 #subTitle{
     -fx-font-size: 65px;
 }
