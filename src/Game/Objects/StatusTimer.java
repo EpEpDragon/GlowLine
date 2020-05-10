@@ -2,6 +2,8 @@ package Game.Objects;
 
 import javafx.animation.AnimationTimer;
 
+import static Game.Layout.SceneSetup.printHighScores;
+
 public abstract class StatusTimer extends AnimationTimer {
 
     private static boolean isRunning;
@@ -16,6 +18,7 @@ public abstract class StatusTimer extends AnimationTimer {
     public void stop() {
         super.stop();
         isRunning = false;
+        printHighScores();
     }
 
     public boolean isRunning() {

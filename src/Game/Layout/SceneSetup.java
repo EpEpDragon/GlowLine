@@ -9,20 +9,28 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
+import javax.swing.*;
+import java.io.*;
 
 public abstract class SceneSetup extends ApplicationStart {
     static private Scene mainMenu, gameplay, controlsMenu;
     static private Label score = new Label();
     static private Label time = new Label();
+    static private Label highScores = new Label();
+    static private SwellButton restart = new SwellButton("Restart", 500,true);
+    static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
     public static int rootChildren  = 4;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 200;
 
-        TypingLabel title = new TypingLabel("Glow Line", 10);
+        TypingLabel title = new TypingLabel("Glow Line", 8);
         title.setId("title");
         title.setPadding(new Insets(0, 0, getResolutionY() * 0.5, 0));
 
@@ -51,11 +59,25 @@ public abstract class SceneSetup extends ApplicationStart {
             System.exit(0);
         });
 
+        highScores.setTextAlignment(TextAlignment.CENTER);
+        highScores.setAlignment(Pos.CENTER);
+        highScores.setMaxWidth(498);
+        highScores.setMinWidth(498);
+
+        ScrollPane highScoresPane = new ScrollPane();
+        highScoresPane.setContent(highScores);
+        highScoresPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        highScoresPane.setMaxWidth(500);
+        highScoresPane.setMinWidth(500);
+        highScoresPane.setMinHeight(315);
+        highScoresPane.setMaxHeight(315);
+
         //Main menu layout
-        VBox menuButtons = new VBox(start, controls, quit);
+        VBox menuButtons = new VBox(start, controls, quit, highScoresPane);
         menuButtons.setSpacing(resolutionY * 0.03);
         menuButtons.setFillWidth(true);
         menuButtons.setAlignment(Pos.CENTER);
+        menuButtons.setPadding(new Insets(280,0,0,0));
 
         StackPane menuLayout = new StackPane(title, menuButtons);
         menuLayout.setAlignment(Pos.CENTER);
@@ -150,12 +172,19 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         /**GameOver menu**/
-        SwellButton restart = new SwellButton("Restart", 400,true);
-        SwellButton toMain2 = new SwellButton("Quit to main menu", 400,true);
+        SwellButton toMain2 = new SwellButton("Quit to main menu", 500,true);
         Label gameOver = new Label("GAME\nOVER");
         gameOver.setId("gameOver");
 
-        VBox gameOverMenu = new VBox(gameOver, restart, toMain2);
+        enterName.setMaxWidth(500);
+        enterName.setOnMousePressed(e -> {
+            setEnteringName(true);
+        });
+        enterName.setOnAction(e -> {
+            saveScore();
+        });
+
+        VBox gameOverMenu = new VBox(gameOver, restart, toMain2, enterName);
         gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 450, 0, 0, resolutionX*0.5-270));
         gameOverMenu.setSpacing(20);
         gameOverMenu.setAlignment(Pos.CENTER);
@@ -206,6 +235,37 @@ public abstract class SceneSetup extends ApplicationStart {
         return gameplay;
     }
 
+    public static void resetNameEnter(){
+        enterName.setPromptText("Enter name here, then hit enter...");
+        enterName.setText("");
+        enterName.editableProperty().setValue(true);
+    }
+
+    public static void saveScore(){
+        if (enterName.getText().contains("^")) {
+            enterName.setText("");
+            enterName.setPromptText("^ not allowed, try again.");
+        } else {
+            try {
+                FileWriter writer = new FileWriter(highScoreFileName, true);
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                bufferedWriter.newLine();
+                if (enterName.getText().equals("")) {
+                    bufferedWriter.write("Unknown User" + "^" + getCurrentScore());
+                } else{
+                    bufferedWriter.write(enterName.getText() + "^" + getCurrentScore());
+                }
+                bufferedWriter.close();
+                enterName.setText("");
+                enterName.setPromptText("NAME SAVED!");
+                enterName.editableProperty().setValue(false);
+            } catch (IOException ignored) {
+                enterName.setText("");
+                enterName.setPromptText("Could not write to file");
+            }
+        }
+    }
+
     public static void clearStuff() {
         getBullets().clear();
         getEnemies().clear();
@@ -240,6 +300,55 @@ public abstract class SceneSetup extends ApplicationStart {
     public static void resetHUD() {
         SceneSetup.time.setText("00:00");
         SceneSetup.score.setText("Score: 0");
+    }
+
+    public static void updateRestartBtn(String newText){
+        restart.setText(newText);
+    }
+
+    public static void printHighScores(){
+        String[] names = new String[1000];
+        int[] scores = new int[1000];
+        try {
+            FileReader reader = new FileReader(highScoreFileName);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String currentLine;
+            int counter = 0;
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                if (currentLine.contains("^")){
+                    int indexer = currentLine.indexOf("^");
+                    names[counter] = currentLine.substring(0, indexer);
+                    String score = currentLine.substring(indexer+1);
+                    scores[counter] = Integer.parseInt(score);
+                    counter += 1;
+                }
+            }
+
+            //sort array
+            for (int j = 0; j < counter; j++){
+                for (int q = 0; q < counter-1; q++){
+                    if (scores[q]<scores[q+1]){
+                        int temp;
+                        temp = scores[q];
+                        scores[q] = scores[q+1];
+                        scores[q+1] = temp;
+                        String tempS;
+                        tempS = names[q];
+                        names[q] = names[q+1];
+                        names[q+1] = tempS;
+                    }
+                }
+            }
+
+            String highScores = "";
+            for (int i = 0; i < counter; i++) {
+                highScores = highScores+ "\n" + names[i] + " - " + scores[i];
+            }
+            reader.close();
+            SceneSetup.highScores.setText("High Scores:" + highScores);
+        } catch (IOException ignored){
+            SceneSetup.highScores.setText("File not found...");
+        }
     }
 
     public static boolean isReadyToResume(){ return readyToResume; }

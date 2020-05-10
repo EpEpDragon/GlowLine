@@ -38,6 +38,7 @@ import static Game.Objects.Spawner.*;
 public class ApplicationStart extends Application {
     protected static int resolutionX = 1920;
     protected static int resolutionY = 1080;
+    protected static String highScoreFileName = "src/Game/highScores.txt";
     private static boolean FULLSCREEN = false;
 
     //Root of scene
@@ -78,6 +79,7 @@ public class ApplicationStart extends Application {
     private static double lastScoreUpdate;
     private static double lastLanderUpdate;
     private static boolean lighter;
+    private static boolean enteringName = false;
 
 
     /********************Enter point***********************/
@@ -141,6 +143,8 @@ public class ApplicationStart extends Application {
         fxPanel.setScene(mainMenu);
         fxPanel.setDoubleBuffered(true);
 
+        printHighScores();
+
         /***********************************************************
          * Gameplay controls
          ***********************************************************/
@@ -157,18 +161,20 @@ public class ApplicationStart extends Application {
                     right = true;
                     break;
                 case Q:
-                    if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
-                        timer.stop();
-                        //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                        root.getChildren().remove(rootChildren, root.getChildren().size());
-                        SceneSetup.clearStuff();
-                        fxPanel.setScene(mainMenu);
-                        playAll((Pane) mainMenu.getRoot());
-                        if (root.getChildren().get(2).isVisible()) {
-                            root.getChildren().get(2).setVisible(false);
-                        }
-                        if (root.getChildren().get(0).isVisible()) {
-                            root.getChildren().get(0).setVisible(false);
+                    if (timer != null) {
+                        if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
+                            timer.stop();
+                            //Pause menu is index 0, HUD index 1, gameOver menu index 2
+                            root.getChildren().remove(rootChildren, root.getChildren().size());
+                            SceneSetup.clearStuff();
+                            fxPanel.setScene(mainMenu);
+                            playAll((Pane) mainMenu.getRoot());
+                            if (root.getChildren().get(2).isVisible()) {
+                                root.getChildren().get(2).setVisible(false);
+                            }
+                            if (root.getChildren().get(0).isVisible()) {
+                                root.getChildren().get(0).setVisible(false);
+                            }
                         }
                     }
                     break;
@@ -178,11 +184,13 @@ public class ApplicationStart extends Application {
                             timer.start();
                             root.getChildren().get(0).setVisible(false);
                         }
-                    } else if (!gameOverState && timer.isRunning()) {
-                        SceneSetup.setReadyToResume(false);
-                        timer.stop();
-                        root.getChildren().get(0).setVisible(true);
-                        playAll((Pane) gameplay.getRoot());
+                    } else if (timer != null){
+                        if (!gameOverState && timer.isRunning()) {
+                            SceneSetup.setReadyToResume(false);
+                            timer.stop();
+                            root.getChildren().get(0).setVisible(true);
+                            playAll((Pane) gameplay.getRoot());
+                        }
                     }
                     break;
             }
@@ -245,6 +253,7 @@ public class ApplicationStart extends Application {
         lastScoreUpdate = -10;
         lastLanderUpdate = -10;
         lighter = false;
+        resetNameEnter();
         //mouseinfo given in case mouse not moved from when clicking start game till start animation finished and thus mouse info still refers to 0,0
         mouseX = MouseInfo.getPointerInfo().getLocation().x;
         mouseY = MouseInfo.getPointerInfo().getLocation().y;
@@ -548,21 +557,28 @@ public class ApplicationStart extends Application {
         //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
         //If gameover state was triggered somewhere during the current update
         if (gameOverState) {
-            //store the earliest time that gameover was detected
-            if (gameOverSince == -1) {
-                gameOverSince = time;
-            }
-            //if it's been gameover for more than 5 seconds, auto restart
-            if (time - gameOverSince > timeSpeed * 5 * 1000000000) {
-                root.getChildren().get(2).setVisible(false);
-                //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(rootChildren, root.getChildren().size());
-                gameOverState = false;
-                SceneSetup.clearStuff();
-                //resets the time and score before the starting animation begins.
-                resetHUD();
-                createRound();
-                timer.stop();
+            if (!enteringName) {
+                //store the earliest time that gameover was detected
+                if (gameOverSince == -1) {
+                    gameOverSince = time;
+                }
+                double secSinceGameOver = (time - gameOverSince) / (timeSpeed * 1000000000);
+                int secBeforeRestart = 10;
+                if (secSinceGameOver > secBeforeRestart) {
+                    saveScore();
+                    root.getChildren().get(2).setVisible(false);
+                    root.getChildren().remove(rootChildren, root.getChildren().size());
+                    gameOverState = false;
+                    SceneSetup.clearStuff();
+                    //resets the time and score before the starting animation begins.
+                    resetHUD();
+                    createRound();
+                    timer.stop();
+                } else {
+                    updateRestartBtn("Restart (" + (int) (secBeforeRestart - secSinceGameOver + 1) + ")");
+                }
+            } else {
+                updateRestartBtn("Restart");
             }
         }
     }
@@ -588,6 +604,10 @@ public class ApplicationStart extends Application {
         root.getChildren().get(2).setVisible(true);
         timeSpeed = 0.000_000_0001;
         gameOverState = true;
+    }
+
+    public static void setEnteringName(boolean enteringNameValue){
+        enteringName = enteringNameValue;
     }
 
     //Getters
@@ -641,5 +661,9 @@ public class ApplicationStart extends Application {
 
     public static int getLevel() {
         return level;
+    }
+
+    public static int getCurrentScore() {
+        return currentScore;
     }
 }

@@ -14,6 +14,26 @@
     -fx-text-fill: white;
 }
 
+.text-field{
+    -fx-background-color: black;
+    -fx-prompt-text-fill: #717171;
+    -fx-text-fill: white;
+    -fx-border-style: solid;
+    -fx-border-color: white;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
 #menuButtons{
     -fx-max-width: 200px;
 }
@@ -27,14 +47,13 @@
 }
 
 #title{
-    -fx-font-size: 100px;
+    -fx-font-size: 150px;
 }
 
 #gameOver{
     -fx-font-size: 200px;
     -fx-text-fill: white;
     -fx-font-style: italic;
-//    -fx-background-color: red;
 }
 
 #subTitle{
