@@ -44,6 +44,7 @@ public abstract class SceneSetup extends ApplicationStart {
         start.setId("menuButtons");
         start.setOnAction(e -> {
             //Gameplay setup
+            stopMainMenuSong();
             createRound();
             fxPanel.setScene(gameplay);
         });
@@ -154,6 +155,7 @@ public abstract class SceneSetup extends ApplicationStart {
 
         toMain.setOnAction(e -> {
             if (resume.isFinished()) {
+                startMainMenuSong();
                 pauseMenu.setVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2
@@ -200,6 +202,7 @@ public abstract class SceneSetup extends ApplicationStart {
         toMain2.setFocusTraversable(false);
         toMain2.setOnAction(e -> {
             if (restart.isFinished()) {
+                startMainMenuSong();
                 gameOverMenu.setVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2

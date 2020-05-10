@@ -13,6 +13,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -26,6 +29,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,8 +42,16 @@ import static Game.Objects.Spawner.*;
 public class ApplicationStart extends Application {
     protected static int resolutionX = 1920;
     protected static int resolutionY = 1080;
-    protected static String highScoreFileName = "src/Game/highScores.txt";
     private static boolean FULLSCREEN = false;
+
+    //File locations
+    protected static String highScoreFileName = "src/Game/highScores.txt";
+    protected static String mainMenuSongFile = "src/Game/AudioFiles/mainMenu.mp3";
+    protected static String shooterFile = "src/Game/AudioFiles/shooter.mp3";
+    protected static String deadFile = "src/Game/AudioFiles/dead.mp3";
+    protected static String screamFile = "src/Game/AudioFiles/scream.mp3";
+    protected static String gameplaySongFile = "src/Game/AudioFiles/cantina.mp3";
+    protected static String level2SongFile = "src/Game/AudioFiles/level2.mp3";
 
     //Root of scene
     private static final Pane root = new Pane();
@@ -81,6 +93,14 @@ public class ApplicationStart extends Application {
     private static double lastLanderUpdate;
     private static boolean lighter;
     private static boolean enteringName = false;
+
+    //audio files
+    private static AudioClip mainMenuSong = new AudioClip(new File(mainMenuSongFile).toURI().toString());
+    private static AudioClip shooterSound = new AudioClip(new File(shooterFile).toURI().toString());
+    private static AudioClip deadSound = new AudioClip(new File(deadFile).toURI().toString());
+    private static AudioClip screamSound = new AudioClip(new File(screamFile).toURI().toString());
+    private static AudioClip gameplaySong = new AudioClip(new File(gameplaySongFile).toURI().toString());
+    private static AudioClip level2Song = new AudioClip(new File(level2SongFile).toURI().toString());
 
 
     /********************Enter point***********************/
@@ -137,13 +157,14 @@ public class ApplicationStart extends Application {
     /********************Application start***********************/
     //Invoked on JavaFX thread, initiate JavaFX scene
     private static void initFX(JFXPanel fxPanel) {
+        mainMenuSong.play();
+
         Scene mainMenu = SceneSetup.createMainMenu(fxPanel);
         Scene controls = SceneSetup.createControls(fxPanel);
         Scene gameplay = SceneSetup.createGameplay(fxPanel, root);
 
         fxPanel.setScene(mainMenu);
         fxPanel.setDoubleBuffered(true);
-
         printHighScores();
 
         /***********************************************************
@@ -167,6 +188,7 @@ public class ApplicationStart extends Application {
                 case Q:
                     if (timer != null) {
                         if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
+                            startMainMenuSong();
                             timer.stop();
                             //Pause menu is index 0, HUD index 1, gameOver menu index 2
                             root.getChildren().remove(rootChildren, root.getChildren().size());
@@ -243,6 +265,7 @@ public class ApplicationStart extends Application {
 
     //Setup for game related content, game loop, spawning, etc.
     public static void createRound() {
+        gameplaySong.play(0.7);
         gc.clearRect(0, 0, resolutionX, resolutionY);
         root.getChildren().add(canvas);
         canvas.setMouseTransparent(true);
@@ -338,6 +361,11 @@ public class ApplicationStart extends Application {
     /*****************Game Loop update**************************/
     private static void update(double deltaTime, double time) {
         if (enemiesKillCount >= getL1EnemyCount()) {
+            if (level == 1)
+            {
+                gameplaySong.stop();
+                level2Song.play();
+            }
             level = 2;
         }
 
@@ -386,6 +414,7 @@ public class ApplicationStart extends Application {
 
             double rechargeTime = 0.5;
             if (shoot && time - lastShot > rechargeTime && !gameOverState) {
+                shooterSound.play();
                 Spawner.addGameObject(new Bullet(scale, "bullet"), player.getView()[0].getTranslateX(), player.getView()[0].getTranslateY());
                 lastShot = time;
             }
@@ -453,6 +482,7 @@ public class ApplicationStart extends Application {
                     removeGameObjectAll(lander, bullet);
                     currentScore += 20;
                     lastScoreUpdate = time;
+                    screamSound.play();
                 }
             }
             if (level == 1) {
@@ -486,6 +516,7 @@ public class ApplicationStart extends Application {
                         removeGameObjectAll(enemyBullet, allyBullet);
                         currentScore += 100;
                         lastScoreUpdate = time;
+                        screamSound.play();
                     }
                 }
 
@@ -621,6 +652,9 @@ public class ApplicationStart extends Application {
     }
 
     private static void gameOver() {
+        gameplaySong.stop();
+        level2Song.stop();
+        deadSound.play();
         root.getChildren().get(2).setVisible(true);
         timeSpeed = 0.000_000_0001;
         gameOverState = true;
@@ -628,6 +662,14 @@ public class ApplicationStart extends Application {
 
     public static void setEnteringName(boolean enteringNameValue){
         enteringName = enteringNameValue;
+    }
+
+    public static void stopMainMenuSong(){
+        mainMenuSong.stop();
+    }
+
+    public static void startMainMenuSong(){
+        mainMenuSong.play();
     }
 
     //Getters
