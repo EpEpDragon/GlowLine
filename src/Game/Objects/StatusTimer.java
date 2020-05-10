@@ -18,6 +18,7 @@ public abstract class StatusTimer extends AnimationTimer {
     public void stop() {
         super.stop();
         isRunning = false;
+        //This way doesn't have to make sure that all the ways of going back to mainMenu has below command, as stop() is always called.
         printHighScores();
     }
 

@@ -13,9 +13,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
+
+import static javafx.scene.paint.Color.*;
 
 public abstract class SceneSetup extends ApplicationStart {
     static private Scene mainMenu, gameplay, controlsMenu;
@@ -25,7 +29,7 @@ public abstract class SceneSetup extends ApplicationStart {
     static private SwellButton restart = new SwellButton("Restart", 500,true);
     static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
-    public static int rootChildren  = 4;
+    public static int rootChildren  = 5;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 200;
@@ -222,11 +226,16 @@ public abstract class SceneSetup extends ApplicationStart {
 
         VBox hud = new VBox(time, score);
 
+        Rectangle timeDilation = new Rectangle(resolutionX, resolutionY, Color.valueOf("#CCFFCA"));
+        timeDilation.setOpacity(0.3);
+        timeDilation.setVisible(false);
+
         //Do not change order, if adding another one, change rootChildren
         root.getChildren().add(0, pauseMenu);
         root.getChildren().add(1, time);
         root.getChildren().add(2, gameOverMenu);
         root.getChildren().add(3, score);
+        root.getChildren().add(4, timeDilation);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");

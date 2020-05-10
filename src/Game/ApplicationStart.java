@@ -67,6 +67,7 @@ public class ApplicationStart extends Application {
     private static Boolean left = false;
     private static Boolean right = false;
     private static Boolean shoot = false;
+    private static Boolean space = false;
     static double mouseX = 0;
     static double mouseY = 0;
     private static double timeSpeed = 0.000_000_001;
@@ -160,6 +161,9 @@ public class ApplicationStart extends Application {
                 case D:
                     right = true;
                     break;
+                case SPACE:
+                    space = true;
+                    break;
                 case Q:
                     if (timer != null) {
                         if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
@@ -184,7 +188,7 @@ public class ApplicationStart extends Application {
                             timer.start();
                             root.getChildren().get(0).setVisible(false);
                         }
-                    } else if (timer != null){
+                    } else if (timer != null && !space){ //!space is necessary to prevent escape from working while time dilating, because this causes bug...
                         if (!gameOverState && timer.isRunning()) {
                             SceneSetup.setReadyToResume(false);
                             timer.stop();
@@ -206,6 +210,9 @@ public class ApplicationStart extends Application {
                     break;
                 case D:
                     right = false;
+                    break;
+                case SPACE:
+                    space = false;
                     break;
             }
         });
@@ -332,7 +339,6 @@ public class ApplicationStart extends Application {
             level = 2;
         }
 
-//        System.out.println(time);
         //Collision handling
         GameObject.Collision collision;
 
@@ -553,6 +559,15 @@ public class ApplicationStart extends Application {
         SceneSetup.updateTime(timeString);
         //Update score
         SceneSetup.updateScore("Score: " + Integer.toString(currentScore));
+
+        if (space) {
+            timeSpeed = 0.000_000_0003;
+            root.getChildren().get(4).setVisible(true);
+        }
+        else {
+            timeSpeed = 0.000_000_001;
+            root.getChildren().get(4).setVisible(false);
+        }
 
         //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
         //If gameover state was triggered somewhere during the current update
