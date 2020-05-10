@@ -82,17 +82,24 @@ public class ApplicationStart extends Application {
     private static Boolean space = false;
     static double mouseX = 0;
     static double mouseY = 0;
-    private static double timeSpeed = 0.000_000_001;
+    private static double timeSpeed;
     private static int enemiesKillCount;
     private static int level;
-    private static boolean gameOverState = false;
+    private static int livesLeft;
+    private static boolean gameOverState;
     private static double gameOverSince;
     private static int currentScore;
     private static double lastShot;
     private static double lastScoreUpdate;
     private static double lastLanderUpdate;
     private static boolean lighter;
-    private static boolean enteringName = false;
+    private static boolean enteringName;
+    //time Dilation variables...
+    private static double timeDilationLastUpdate;
+    private static double timeOfPenalty;
+    private static double timeDilationLeft;
+    final static double timeDilationMax = 0.8;
+    final static double penaltyTime = 1.6;
 
     //audio files
     private static AudioClip mainMenuSong = new AudioClip(new File(mainMenuSongFile).toURI().toString());
@@ -188,6 +195,7 @@ public class ApplicationStart extends Application {
                 case Q:
                     if (timer != null) {
                         if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
+                            stopGamePlaySongs();
                             startMainMenuSong();
                             timer.stop();
                             //Pause menu is index 0, HUD index 1, gameOver menu index 2
@@ -195,7 +203,7 @@ public class ApplicationStart extends Application {
                             SceneSetup.clearStuff();
                             fxPanel.setScene(mainMenu);
                             playAll((Pane) mainMenu.getRoot());
-                            if (root.getChildren().get(5).isVisible()) {
+                            if (root.getChildren().get(9).isVisible()) {
                                 setGameOverVisible(false);
                             }
                             if (root.getChildren().get(0).isVisible()) {
@@ -272,7 +280,13 @@ public class ApplicationStart extends Application {
         canvas.setViewOrder(3);
         //root.setPrefSize(resolutionX, resolutionY);
 
+        setLives(0);
+        setTimeDilationFraction(0);
+        livesLeft = 3;
         lastShot = 0;
+        timeDilationLeft = 0;
+        timeOfPenalty = -penaltyTime-1;
+        timeDilationLastUpdate = 0;
         space = false;
         enteringName = false;
         enemiesKillCount = 0;
@@ -286,7 +300,7 @@ public class ApplicationStart extends Application {
         lastLanderUpdate = -10;
         lighter = false;
         resetNameEnter();
-        //mouseinfo given in case mouse not moved from when clicking start game till start animation finished and thus mouse info still refers to 0,0
+        //mouse info given in case mouse not moved from when clicking start game till start animation finished and thus mouse info still refers to 0,0
         mouseX = MouseInfo.getPointerInfo().getLocation().x;
         mouseY = MouseInfo.getPointerInfo().getLocation().y;
 
@@ -369,6 +383,8 @@ public class ApplicationStart extends Application {
             level = 2;
         }
 
+        setLives(livesLeft);
+
         //Collision handling
         GameObject.Collision collision;
 
@@ -447,8 +463,14 @@ public class ApplicationStart extends Application {
             for (GameObject enemyBullet : enemyBullets) {
                 collision = player.getCollision(enemyBullet);
                 if (collision.isCollided()) {
-                    removeGameObjectAll(enemyBullet, player);
-                    gameOver();
+                    if (livesLeft == 0) {
+                        removeGameObjectAll(enemyBullet, player);
+                        gameOver();
+                    } else {
+                        livesLeft -= 1;
+                        enemiesKillCount += 1;
+                        removeGameObject(enemyBullet);
+                    }
                 }
             }
         }
@@ -458,20 +480,27 @@ public class ApplicationStart extends Application {
             //floor
             collision = lander.getCollision(floor);
             if (collision.isCollided()) {
-                lander.setVelocity(0, 0);
-                if (!gameOverState) {
-                    gameOver();
+                if (livesLeft == 0) {
+                    lander.setVelocity(0, 0);
+                    if (!gameOverState) {
+                        gameOver();
+                    }
+                    // Show lander hit floor.
+                    double landerUpdateTime = 0.03;
+                    if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
+                        lastLanderUpdate = time;
+                        lighter = !lighter;
+                    }
+                    if (lighter) {
+                        lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
+                    } else {
+                        lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                    }
                 }
-                // Show lander hit floor.
-                double landerUpdateTime = 0.03;
-                if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
-                    lastLanderUpdate = time;
-                    lighter = !lighter;
-                }
-                if (lighter) {
-                    lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
-                } else {
-                    lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                else {
+                    livesLeft -= 1;
+                    enemiesKillCount += 1;
+                    removeGameObject(lander);
                 }
             }
             //bullet
@@ -488,20 +517,26 @@ public class ApplicationStart extends Application {
             if (level == 1) {
                 collision = lander.getCollision(player);
                 if (collision.isCollided()) {
-                    lander.setVelocity(0, 0);
-                    if (!gameOverState) {
-                        gameOver();
-                    }
-                    // Show lander hit player.
-                    double landerUpdateTime = 0.03;
-                    if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
-                        lastLanderUpdate = time;
-                        lighter = !lighter;
-                    }
-                    if (lighter) {
-                        lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
+                    if (livesLeft == 0) {
+                        lander.setVelocity(0, 0);
+                        if (!gameOverState) {
+                            gameOver();
+                        }
+                        // Show lander hit player.
+                        double landerUpdateTime = 0.03;
+                        if ((time - lastLanderUpdate) / landerUpdateTime > 1) {
+                            lastLanderUpdate = time;
+                            lighter = !lighter;
+                        }
+                        if (lighter) {
+                            lander.setRectColour(colorLerp(Color.INDIANRED, Color.ORANGERED, (time - lastLanderUpdate) / landerUpdateTime));
+                        } else {
+                            lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                        }
                     } else {
-                        lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
+                        livesLeft -=1;
+                        enemiesKillCount += 1;
+                        removeGameObject(lander);
                     }
                 }
             }
@@ -603,7 +638,7 @@ public class ApplicationStart extends Application {
                 gameOverSince = time;
                 deadSound.play();
             }
-            root.getChildren().get(4).setVisible(false);
+            root.getChildren().get(8).setVisible(false);
             if (!enteringName) {
                 double secSinceGameOver = (time - gameOverSince) / (timeSpeed * 1000000000);
                 int secBeforeRestart = 10;
@@ -624,14 +659,35 @@ public class ApplicationStart extends Application {
                 updateRestartBtn("Restart");
             }
         } else {
-            if (space) {
-                timeSpeed = 0.000_000_0003;
-                root.getChildren().get(4).setVisible(true);
+            //speed is relative to 1
+            double increaseSpeed = 0.2;
+            double decreaseSpeed = 1;
+
+            //time dilation timer
+            //if still in penalty
+            if (time-timeOfPenalty<penaltyTime){
+                setTimeDilated(false);
+                timeDilationLeft += increaseSpeed * (time - timeDilationLastUpdate);
+                setTimeDilationColor(Color.INDIANRED);
+            } else {
+                setTimeDilationColor(Color.LIGHTGREEN);
+                if (space) {
+                    setTimeDilated(true);
+                    timeDilationLeft -= decreaseSpeed * (time - timeDilationLastUpdate);
+                } else {
+                     setTimeDilated(false);
+                     if (timeDilationLeft + time - timeDilationLastUpdate>timeDilationMax) {
+                         timeDilationLeft = timeDilationMax;
+                     } else {
+                         timeDilationLeft += increaseSpeed * (time - timeDilationLastUpdate);
+                     }
+                }
+                if (timeDilationLeft < 0.01) {
+                    timeOfPenalty = time;
+                }
             }
-            else {
-                timeSpeed = 0.000_000_001;
-                root.getChildren().get(4).setVisible(false);
-            }
+            setTimeDilationFraction(timeDilationLeft/timeDilationMax);
+            timeDilationLastUpdate = time;
         }
     }
 
@@ -660,11 +716,45 @@ public class ApplicationStart extends Application {
         gameOverState = true;
     }
 
-    private static void setGameOverVisible(boolean visible){
+    private static void setTimeDilated(boolean timeDilated){
+        if (timeDilated){
+            timeSpeed = 0.000_000_0003;
+        } else {
+            timeSpeed = 0.000_000_001;
+        }
+        root.getChildren().get(8).setVisible(timeDilated);
+    }
+
+    public static void setGameOverVisible(boolean visible){
         //set gameOverMenu to visible value
-        root.getChildren().get(5).setVisible(visible);
+        root.getChildren().get(9).setVisible(visible);
         //set gameOver Darken Rectangle to visible value
-        root.getChildren().get(3).setVisible(visible);
+        root.getChildren().get(7).setVisible(visible);
+    }
+
+    private static void setLives(int livesLeft){
+        switch (livesLeft) {
+            case 3:
+                root.getChildren().get(4).setVisible(true);
+                root.getChildren().get(5).setVisible(true);
+                root.getChildren().get(6).setVisible(true);
+                break;
+            case 2:
+                root.getChildren().get(4).setVisible(true);
+                root.getChildren().get(5).setVisible(true);
+                root.getChildren().get(6).setVisible(false);
+                break;
+            case 1:
+                root.getChildren().get(4).setVisible(true);
+                root.getChildren().get(5).setVisible(false);
+                root.getChildren().get(6).setVisible(false);
+                break;
+            case 0:
+                root.getChildren().get(4).setVisible(false);
+                root.getChildren().get(5).setVisible(false);
+                root.getChildren().get(6).setVisible(false);
+                break;
+        }
     }
 
     public static void setEnteringName(boolean enteringNameValue){
@@ -677,6 +767,11 @@ public class ApplicationStart extends Application {
 
     public static void startMainMenuSong(){
         mainMenuSong.play();
+    }
+
+    public static void stopGamePlaySongs(){
+        gameplaySong.stop();
+        level2Song.stop();
     }
 
     //Getters

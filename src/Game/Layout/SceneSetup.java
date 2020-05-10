@@ -8,11 +8,14 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 
@@ -27,10 +30,11 @@ public abstract class SceneSetup extends ApplicationStart {
     static private Label score = new Label();
     static private Label time = new Label();
     static private Label highScores = new Label();
+    static private Rectangle timeDilationBar = new Rectangle(170, 40, LIGHTGREEN);
     static private SwellButton restart = new SwellButton("Restart", 500, true);
     static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
-    public static int rootChildren = 6;
+    public static int rootChildren = 10;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 200;
@@ -156,6 +160,7 @@ public abstract class SceneSetup extends ApplicationStart {
 
         toMain.setOnAction(e -> {
             if (resume.isFinished()) {
+                stopGamePlaySongs();
                 startMainMenuSong();
                 pauseMenu.setVisible(false);
                 timer.stop();
@@ -203,8 +208,9 @@ public abstract class SceneSetup extends ApplicationStart {
         toMain2.setFocusTraversable(false);
         toMain2.setOnAction(e -> {
             if (restart.isFinished()) {
+                stopGamePlaySongs();
                 startMainMenuSong();
-                gameOverMenu.setVisible(false);
+                setGameOverVisible(false);
                 timer.stop();
                 //Pause menu is index 0, HUD index 1, gameOver menu index 2
                 root.getChildren().remove(rootChildren, root.getChildren().size());
@@ -218,7 +224,7 @@ public abstract class SceneSetup extends ApplicationStart {
         restart.setFocusTraversable(false);
         restart.setOnAction(e -> {
                     if (restart.isFinished()) {
-                        gameOverMenu.setVisible(false);
+                        setGameOverVisible(false);
                         timer.stop();
                         //Pause menu is index 0, HUD index 1, gameOver menu index 2
                         root.getChildren().remove(rootChildren, root.getChildren().size());
@@ -235,8 +241,7 @@ public abstract class SceneSetup extends ApplicationStart {
         time.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px " + Integer.toString(resolutionX - 140) + "px;");
         score.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px 15px;");
 
-        VBox hud = new VBox(time, score);
-
+        //time dilation and gameOverMenu rectangular transparent overlays
         Rectangle gameOverDarken = new Rectangle(resolutionX, resolutionY, Color.valueOf("#000000"));
         gameOverDarken.setOpacity(0.4);
         gameOverDarken.setVisible(false);
@@ -245,13 +250,34 @@ public abstract class SceneSetup extends ApplicationStart {
         timeDilation.setOpacity(0.3);
         timeDilation.setVisible(false);
 
+        //time dilation bar
+        timeDilationBar.setX(20);
+        timeDilationBar.setY(90);
+
+        //life hearts
+        SVGPath life1 = new SVGPath();
+        SVGPath life2 = new SVGPath();
+        SVGPath life3 = new SVGPath();
+        String SVGShape = "M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.6c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z";
+        life1.setContent(SVGShape);
+        life2.setContent(SVGShape);
+        life3.setContent(SVGShape);
+        String lifeStyle = "-fx-fill: indianred; -fx-stroke: transparent; -fx-translate-y: 150; -fx-translate-x: ";
+        life1.setStyle(lifeStyle + "20");
+        life2.setStyle(lifeStyle + "80");
+        life3.setStyle(lifeStyle + "140");
+
         //Do not change order, if adding another one, change rootChildren
         root.getChildren().add(0, pauseMenu);
         root.getChildren().add(1, time);
         root.getChildren().add(2, score);
-        root.getChildren().add(3, gameOverDarken);
-        root.getChildren().add(4, timeDilation);
-        root.getChildren().add(5, gameOverMenu);
+        root.getChildren().add(3, timeDilationBar);
+        root.getChildren().add(4, life1);
+        root.getChildren().add(5, life2);
+        root.getChildren().add(6, life3);
+        root.getChildren().add(7, gameOverDarken);
+        root.getChildren().add(8, timeDilation);
+        root.getChildren().add(9, gameOverMenu);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
@@ -296,6 +322,14 @@ public abstract class SceneSetup extends ApplicationStart {
         getEnemies().clear();
         getEnemyBullets().clear();
         getEmitters().clear();
+    }
+
+    public static void setTimeDilationFraction(double fraction){
+        timeDilationBar.setWidth(fraction*170);
+    }
+
+    public static void setTimeDilationColor(Color barColor){
+        timeDilationBar.setFill(barColor);
     }
 
     public static void playAll(Pane pane) {
