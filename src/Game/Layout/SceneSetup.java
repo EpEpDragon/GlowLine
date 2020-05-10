@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -26,10 +27,10 @@ public abstract class SceneSetup extends ApplicationStart {
     static private Label score = new Label();
     static private Label time = new Label();
     static private Label highScores = new Label();
-    static private SwellButton restart = new SwellButton("Restart", 500,true);
+    static private SwellButton restart = new SwellButton("Restart", 500, true);
     static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
-    public static int rootChildren  = 5;
+    public static int rootChildren = 6;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 200;
@@ -50,7 +51,7 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         //Controls Button
-        SwellButton controls = new SwellButton("Controls", buttonWidth,true);
+        SwellButton controls = new SwellButton("Controls", buttonWidth, true);
         controls.setId("menuButtons");
         controls.setOnAction(e -> {
             fxPanel.setScene(controlsMenu);
@@ -58,7 +59,7 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         //Quit Button
-        SwellButton quit = new SwellButton("Quit",buttonWidth,true);
+        SwellButton quit = new SwellButton("Quit", buttonWidth, true);
         quit.setId("menuButtons");
         quit.setOnAction(e -> {
             System.exit(0);
@@ -82,7 +83,7 @@ public abstract class SceneSetup extends ApplicationStart {
         menuButtons.setSpacing(resolutionY * 0.03);
         menuButtons.setFillWidth(true);
         menuButtons.setAlignment(Pos.CENTER);
-        menuButtons.setPadding(new Insets(280,0,0,0));
+        menuButtons.setPadding(new Insets(280, 0, 0, 0));
 
         StackPane menuLayout = new StackPane(title, menuButtons);
         menuLayout.setAlignment(Pos.CENTER);
@@ -144,8 +145,8 @@ public abstract class SceneSetup extends ApplicationStart {
 
     public static Scene createGameplay(JFXPanel fxPanel, Pane root) {
         /**Pause menu**/
-        SwellButton resume = new SwellButton("Resume", 400,true);
-        SwellButton toMain = new SwellButton("Quit to main menu", 400,true);
+        SwellButton resume = new SwellButton("Resume", 400, true);
+        SwellButton toMain = new SwellButton("Quit to main menu", 400, true);
 
         VBox pauseMenu = new VBox(resume, toMain);
         pauseMenu.setPadding(new Insets(resolutionY * 0.5 - 29, 0, 0, resolutionX * 0.5 - 158));
@@ -178,7 +179,7 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         /**GameOver menu**/
-        SwellButton toMain2 = new SwellButton("Quit to main menu", 500,true);
+        SwellButton toMain2 = new SwellButton("Quit to main menu", 500, true);
         Label gameOver = new Label("GAME\nOVER");
         gameOver.setId("gameOver");
 
@@ -193,7 +194,7 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         VBox gameOverMenu = new VBox(gameOver, restart, toMain2, enterName);
-        gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 450, 0, 0, resolutionX*0.5-270));
+        gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 450, 0, 0, resolutionX * 0.5 - 270));
         gameOverMenu.setSpacing(20);
         gameOverMenu.setAlignment(Pos.CENTER);
         gameOverMenu.setVisible(false);
@@ -216,24 +217,29 @@ public abstract class SceneSetup extends ApplicationStart {
         //remove focus from button so that it doesn't automatically press button if user was using time dilation when gameover
         restart.setFocusTraversable(false);
         restart.setOnAction(e -> {
-            if (restart.isFinished()) {
-                gameOverMenu.setVisible(false);
-                timer.stop();
-                //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(rootChildren, root.getChildren().size());
-                clearStuff();
-                createRound();
-                //unnecessary: fxPanel.setScene(gameplay);
-            }
-        });
+                    if (restart.isFinished()) {
+                        gameOverMenu.setVisible(false);
+                        timer.stop();
+                        //Pause menu is index 0, HUD index 1, gameOver menu index 2
+                        root.getChildren().remove(rootChildren, root.getChildren().size());
+                        clearStuff();
+                        createRound();
+                        //unnecessary: fxPanel.setScene(gameplay);
+                    }
+                }
+        );
 
 
         /**HUD**/
         //Timer
-        time.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px "+Integer.toString(resolutionX-140)+"px;");
+        time.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px " + Integer.toString(resolutionX - 140) + "px;");
         score.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px 15px;");
 
         VBox hud = new VBox(time, score);
+
+        Rectangle gameOverDarken = new Rectangle(resolutionX, resolutionY, Color.valueOf("#000000"));
+        gameOverDarken.setOpacity(0.4);
+        gameOverDarken.setVisible(false);
 
         Rectangle timeDilation = new Rectangle(resolutionX, resolutionY, Color.valueOf("#CCFFCA"));
         timeDilation.setOpacity(0.3);
@@ -242,9 +248,10 @@ public abstract class SceneSetup extends ApplicationStart {
         //Do not change order, if adding another one, change rootChildren
         root.getChildren().add(0, pauseMenu);
         root.getChildren().add(1, time);
-        root.getChildren().add(2, gameOverMenu);
-        root.getChildren().add(3, score);
+        root.getChildren().add(2, score);
+        root.getChildren().add(3, gameOverDarken);
         root.getChildren().add(4, timeDilation);
+        root.getChildren().add(5, gameOverMenu);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
@@ -253,13 +260,13 @@ public abstract class SceneSetup extends ApplicationStart {
         return gameplay;
     }
 
-    public static void resetNameEnter(){
+    public static void resetNameEnter() {
         enterName.setPromptText("Enter name here, then hit enter...");
         enterName.setText("");
         enterName.editableProperty().setValue(true);
     }
 
-    public static void saveScore(){
+    public static void saveScore() {
         if (enterName.getText().contains("^")) {
             enterName.setText("");
             enterName.setPromptText("^ not allowed, try again.");
@@ -270,7 +277,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 bufferedWriter.newLine();
                 if (enterName.getText().equals("")) {
                     bufferedWriter.write("Unknown User" + "^" + getCurrentScore());
-                } else{
+                } else {
                     bufferedWriter.write(enterName.getText() + "^" + getCurrentScore());
                 }
                 bufferedWriter.close();
@@ -293,11 +300,11 @@ public abstract class SceneSetup extends ApplicationStart {
 
     public static void playAll(Pane pane) {
         for (Node node : pane.getChildren()) {
-            if (node instanceof Pane){
+            if (node instanceof Pane) {
                 playAll((Pane) node);
-            }else if (node instanceof TypingLabel){
+            } else if (node instanceof TypingLabel) {
                 ((TypingLabel) node).play();
-            }else if (node instanceof SwellButton){
+            } else if (node instanceof SwellButton) {
                 ((SwellButton) node).play();
             }
         }
@@ -320,11 +327,11 @@ public abstract class SceneSetup extends ApplicationStart {
         SceneSetup.score.setText("Score: 0");
     }
 
-    public static void updateRestartBtn(String newText){
+    public static void updateRestartBtn(String newText) {
         restart.setText(newText);
     }
 
-    public static void printHighScores(){
+    public static void printHighScores() {
         String[] names = new String[1000];
         int[] scores = new int[1000];
         try {
@@ -333,42 +340,47 @@ public abstract class SceneSetup extends ApplicationStart {
             String currentLine;
             int counter = 0;
             while ((currentLine = bufferedReader.readLine()) != null) {
-                if (currentLine.contains("^")){
+                if (currentLine.contains("^")) {
                     int indexer = currentLine.indexOf("^");
                     names[counter] = currentLine.substring(0, indexer);
-                    String score = currentLine.substring(indexer+1);
+                    String score = currentLine.substring(indexer + 1);
                     scores[counter] = Integer.parseInt(score);
                     counter += 1;
                 }
             }
 
             //sort array
-            for (int j = 0; j < counter; j++){
-                for (int q = 0; q < counter-1; q++){
-                    if (scores[q]<scores[q+1]){
+            for (int j = 0; j < counter; j++) {
+                for (int q = 0; q < counter - 1; q++) {
+                    if (scores[q] < scores[q + 1]) {
                         int temp;
                         temp = scores[q];
-                        scores[q] = scores[q+1];
-                        scores[q+1] = temp;
+                        scores[q] = scores[q + 1];
+                        scores[q + 1] = temp;
                         String tempS;
                         tempS = names[q];
-                        names[q] = names[q+1];
-                        names[q+1] = tempS;
+                        names[q] = names[q + 1];
+                        names[q + 1] = tempS;
                     }
                 }
             }
 
             String highScores = "";
             for (int i = 0; i < counter; i++) {
-                highScores = highScores+ "\n" + names[i] + " - " + scores[i];
+                highScores = highScores + "\n" + names[i] + " - " + scores[i];
             }
             reader.close();
             SceneSetup.highScores.setText("High Scores:" + highScores);
-        } catch (IOException ignored){
+        } catch (IOException ignored) {
             SceneSetup.highScores.setText("File not found...");
         }
     }
 
-    public static boolean isReadyToResume(){ return readyToResume; }
-    public static void setReadyToResume( boolean isResume){ readyToResume = isResume; }
+    public static boolean isReadyToResume() {
+        return readyToResume;
+    }
+
+    public static void setReadyToResume(boolean isResume) {
+        readyToResume = isResume;
+    }
 }

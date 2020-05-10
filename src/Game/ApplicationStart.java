@@ -195,8 +195,8 @@ public class ApplicationStart extends Application {
                             SceneSetup.clearStuff();
                             fxPanel.setScene(mainMenu);
                             playAll((Pane) mainMenu.getRoot());
-                            if (root.getChildren().get(2).isVisible()) {
-                                root.getChildren().get(2).setVisible(false);
+                            if (root.getChildren().get(5).isVisible()) {
+                                setGameOverVisible(false);
                             }
                             if (root.getChildren().get(0).isVisible()) {
                                 root.getChildren().get(0).setVisible(false);
@@ -598,17 +598,18 @@ public class ApplicationStart extends Application {
         //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
         //If gameover state was triggered somewhere during the current update
         if (gameOverState) {
+            //store the earliest time that gameover was detected
+            if (gameOverSince == -1) {
+                gameOverSince = time;
+                deadSound.play();
+            }
             root.getChildren().get(4).setVisible(false);
             if (!enteringName) {
-                //store the earliest time that gameover was detected
-                if (gameOverSince == -1) {
-                    gameOverSince = time;
-                }
                 double secSinceGameOver = (time - gameOverSince) / (timeSpeed * 1000000000);
                 int secBeforeRestart = 10;
                 if (secSinceGameOver > secBeforeRestart) {
                     saveScore();
-                    root.getChildren().get(2).setVisible(false);
+                    setGameOverVisible(false);
                     root.getChildren().remove(rootChildren, root.getChildren().size());
                     gameOverState = false;
                     SceneSetup.clearStuff();
@@ -654,10 +655,16 @@ public class ApplicationStart extends Application {
     private static void gameOver() {
         gameplaySong.stop();
         level2Song.stop();
-        deadSound.play();
-        root.getChildren().get(2).setVisible(true);
+        setGameOverVisible(true);
         timeSpeed = 0.000_000_0001;
         gameOverState = true;
+    }
+
+    private static void setGameOverVisible(boolean visible){
+        //set gameOverMenu to visible value
+        root.getChildren().get(5).setVisible(visible);
+        //set gameOver Darken Rectangle to visible value
+        root.getChildren().get(3).setVisible(visible);
     }
 
     public static void setEnteringName(boolean enteringNameValue){
