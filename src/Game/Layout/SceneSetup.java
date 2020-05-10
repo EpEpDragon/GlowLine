@@ -181,6 +181,8 @@ public abstract class SceneSetup extends ApplicationStart {
         gameOver.setId("gameOver");
 
         enterName.setMaxWidth(500);
+        //remove focus from enterName so that it doesn't fill with spaces if user was using time dilation when gameover
+        enterName.setFocusTraversable(false);
         enterName.setOnMousePressed(e -> {
             setEnteringName(true);
         });
@@ -194,6 +196,8 @@ public abstract class SceneSetup extends ApplicationStart {
         gameOverMenu.setAlignment(Pos.CENTER);
         gameOverMenu.setVisible(false);
 
+        //remove focus from button so that it doesn't automatically press button if user was using time dilation when gameover
+        toMain2.setFocusTraversable(false);
         toMain2.setOnAction(e -> {
             if (restart.isFinished()) {
                 gameOverMenu.setVisible(false);
@@ -206,6 +210,8 @@ public abstract class SceneSetup extends ApplicationStart {
             }
         });
 
+        //remove focus from button so that it doesn't automatically press button if user was using time dilation when gameover
+        restart.setFocusTraversable(false);
         restart.setOnAction(e -> {
             if (restart.isFinished()) {
                 gameOverMenu.setVisible(false);

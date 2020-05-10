@@ -250,6 +250,8 @@ public class ApplicationStart extends Application {
         //root.setPrefSize(resolutionX, resolutionY);
 
         lastShot = 0;
+        space = false;
+        enteringName = false;
         enemiesKillCount = 0;
         level = 1;
         resetSpawner();
@@ -560,18 +562,12 @@ public class ApplicationStart extends Application {
         //Update score
         SceneSetup.updateScore("Score: " + Integer.toString(currentScore));
 
-        if (space) {
-            timeSpeed = 0.000_000_0003;
-            root.getChildren().get(4).setVisible(true);
-        }
-        else {
-            timeSpeed = 0.000_000_001;
-            root.getChildren().get(4).setVisible(false);
-        }
+
 
         //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
         //If gameover state was triggered somewhere during the current update
         if (gameOverState) {
+            root.getChildren().get(4).setVisible(false);
             if (!enteringName) {
                 //store the earliest time that gameover was detected
                 if (gameOverSince == -1) {
@@ -594,6 +590,15 @@ public class ApplicationStart extends Application {
                 }
             } else {
                 updateRestartBtn("Restart");
+            }
+        } else {
+            if (space) {
+                timeSpeed = 0.000_000_0003;
+                root.getChildren().get(4).setVisible(true);
+            }
+            else {
+                timeSpeed = 0.000_000_001;
+                root.getChildren().get(4).setVisible(false);
             }
         }
     }
