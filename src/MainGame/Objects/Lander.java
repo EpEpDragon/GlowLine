@@ -1,5 +1,6 @@
 package MainGame.Objects;
 
+import MainGame.Effects.Emitter;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -49,6 +50,7 @@ public class Lander extends GameObject {
                 setVelocity(0, 0);
                 if (!getGameOverState()) {
                     gameOver();
+                    getEmitters().add(new Emitter(20000, 2000, Color.RED, Color.LIGHTGREEN, 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
                 }
 
                 // Show lander hit floor with colour animation
@@ -65,6 +67,7 @@ public class Lander extends GameObject {
             } else {
                 //if not on last life, just lose a life
                 lostLife();
+                getEmitters().add(new Emitter(20000, 2000, Color.RED, Color.LIGHTGREEN, 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
                 removeGameObject(this);
             }
         }
