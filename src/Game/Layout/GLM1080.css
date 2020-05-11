@@ -42,10 +42,6 @@
     -fx-background-color: transparent;
 }
 
-#menuButtons{
-    -fx-max-width: 400px;
-}
-
 #controlLabel{
     -fx-border-style: solid;
     -fx-border-color: white;

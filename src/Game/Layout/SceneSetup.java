@@ -358,6 +358,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 enterName.setPromptText("Could not write to file");
             }
         }
+        printHighScores();
     }
 
     public static void clearStuff() {
