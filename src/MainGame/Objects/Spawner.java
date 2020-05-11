@@ -15,8 +15,8 @@ public abstract class Spawner {
 
     //LanderLevel1 spawn time
     static final int landerL1SpawnTime = 2;
-    static final int landerL1Rows = 2;
-    static final int landerL1Columns = 3;
+    static final int landerL1Rows = 3;
+    static final int landerL1Columns = 4;
     static int landerL1Done = 0; //if changed, change in resetSpawner as well
     static double previousTimeLanderL1 = -landerL1SpawnTime;//if changed, change in resetSpawner as well
 
