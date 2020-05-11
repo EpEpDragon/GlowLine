@@ -39,12 +39,7 @@ public class Player extends GameObject {
                 }
             }
 
-            //Teleport player to other side of screen if off-screen
-            if (view.getTranslateX() < getResolutionX() * -0.01) {
-                view.setTranslateX(getResolutionX() + getResolutionX() * 0.01);
-            } else if (view.getTranslateX() > getResolutionX() + getResolutionX() * 0.01) {
-                view.setTranslateX(getResolutionX() * -0.01);
-            }
+
 
             // Show recharge
             if ((getCurrentTime() - getLastShot()) / rechargeTime > 1) {
