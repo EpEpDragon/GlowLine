@@ -19,8 +19,7 @@ public class Bullet extends GameObject {
     @Override
     void handelCollisions(double deltaTime) {
         //Bullet collisions/clean
-        if ((getView()[0].getTranslateX() < 0 || getView()[0].getTranslateX() > getResolutionX()) ||
-                (getView()[0].getTranslateY() < 0 || getView()[0].getTranslateY() > getResolutionY())) {
+        if ((getView()[0].getTranslateY() < 0 || getView()[0].getTranslateY() > getResolutionY())) {
             removeGameObject(this);
         }
     }

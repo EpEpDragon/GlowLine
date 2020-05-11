@@ -8,6 +8,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
+import static MainGame.MainGame.getResolutionX;
 import static MainGame.Objects.CollisionHandler.Collision;
 
 public abstract class GameObject {
@@ -135,6 +136,15 @@ public abstract class GameObject {
         for (Node view : this.view) {
             view.setTranslateX(view.getTranslateX() + velocity.getX() * deltaTime);
             view.setTranslateY(view.getTranslateY() + velocity.getY() * deltaTime);
+
+            //Teleport to other side of screen if off-screen
+            if (view.getTranslateX() < getResolutionX() * -0.01) {
+                view.setTranslateX(getResolutionX() + getResolutionX() * 0.01);
+                collisionShape.setTranslateX(getResolutionX() + getResolutionX() * 0.01);
+            } else if (view.getTranslateX() > getResolutionX() + getResolutionX() * 0.01) {
+                view.setTranslateX(getResolutionX() * -0.01);
+                collisionShape.setTranslateX(getResolutionX() * -0.01);
+            }
         }
         collisionShape.setTranslateX(collisionShape.getTranslateX() + velocity.getX() * deltaTime);
         collisionShape.setTranslateY(collisionShape.getTranslateY() + velocity.getY() * deltaTime);
