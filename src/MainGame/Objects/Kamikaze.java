@@ -1,5 +1,6 @@
 package MainGame.Objects;
 
+import MainGame.Effects.Emitter;
 import MainGame.Math.OwnMath;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
