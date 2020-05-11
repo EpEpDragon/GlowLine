@@ -115,7 +115,7 @@ public abstract class Spawner {
         //tempBackground.setViewOrder(4);
         getGameplayElements().getChildren().add(tempBackground);
 
-        tempBackground = new Circle(0.5 * getResolutionX(), 4.6 * getResolutionY(), 4 * getResolutionY(),
+        tempBackground = new Circle(0.5 * getResolutionX(), 4.5 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.15));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);

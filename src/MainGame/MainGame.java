@@ -124,6 +124,7 @@ public class MainGame extends Application {
     /********************Application start***********************/
     //Invoked on JavaFX thread, initiate JavaFX scene
     private static void initFX(JFXPanel fxPanel) {
+        //get mainMenu background song to play early
         playMainMenuSong();
 
         Scene mainMenu = SceneSetup.createMainMenu(fxPanel);
@@ -231,7 +232,7 @@ public class MainGame extends Application {
         });
     }
 
-    //Setup for game related content, game loop, spawning, etc.
+    //Setup for game related content, game loop, spawning, etc. To be called at all begginings of games i.e. when restarting
     public static void createRound() {
         gc.clearRect(0, 0, resolutionX, resolutionY);
         gameplayElements.getChildren().add(canvas);
@@ -257,7 +258,7 @@ public class MainGame extends Application {
         Spawner.spawnGameObject(player, resolutionX * 0.5, resolutionY * 0.95);
         player.setRotation(-Math.PI / 2);
 
-        //Start animation
+        //Starting animation
         ScaleTransition startAnim = new ScaleTransition(Duration.seconds(2), player.getView()[0]);
         startAnim.setCycleCount(1);
 
@@ -303,7 +304,7 @@ public class MainGame extends Application {
         //Update lives left indicator
         updateLives();
 
-        //Spawn stuff
+        //Spawn necessary stuff
         Spawner.spawnPass(time);
 
         if (!player.isDead()) {
@@ -359,6 +360,7 @@ public class MainGame extends Application {
             lander.update(deltaTime);
         }
 
+        //(HUD is timer)
         updateHUDandScore(time);
 
         //(NB to be last in update, otherwise update method continues with current time variable after the restart executed)
@@ -382,9 +384,7 @@ public class MainGame extends Application {
         return forward;
     }
 
-    public static boolean getLeft() {
-        return left;
-    }
+    public static boolean getLeft() { return left; }
 
     public static boolean getRight() {
         return right;
