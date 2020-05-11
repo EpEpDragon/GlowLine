@@ -20,3 +20,5 @@ Unknown User, 50%^1180
 Unknown User, 50%^200
 Unknown User, 50%^360
 Unknown User, 50%^620
+Unknown User, 50%^780
+Unknown User, 50%^500

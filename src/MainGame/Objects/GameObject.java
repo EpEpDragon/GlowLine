@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 import static MainGame.MainGame.getResolutionX;
-import static MainGame.Objects.CollisionHandler.Collision;
+import MainGame.Objects.Collision;
 
 public abstract class GameObject {
     private Node[] view;
