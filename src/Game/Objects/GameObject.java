@@ -193,6 +193,10 @@ public abstract class GameObject {
         ((Rectangle) view[0]).setFill(newColour);
     }
 
+    public void setCircleBorder(){
+        view[0].setStyle("-fx-stroke: transparent; -fx-stroke-width: 40");
+    }
+
     public Collision getCollision(GameObject object){
         Shape resultShape = Shape.intersect(collisionShape, object.getCollisionShape());
 
