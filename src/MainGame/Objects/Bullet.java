@@ -30,7 +30,7 @@ public class Bullet extends GameObject {
     @Override
     public void setDead() {
         super.setDead();
-        getEmitters().add(new Emitter(20000, 500, Color.hsb(10, 0.6, 0.7), Color.hsb(180, 0.9, 0.5), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
+        getEmitters().add(new Emitter(10000, 500, Color.hsb(30, 1, 1), Color.hsb(55, 0.5, 0.8), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
     }
 
     @Override

@@ -4,7 +4,7 @@ import MainGame.Math.OwnMath;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-
+import MainGame.Effects.Emitter;
 import static MainGame.MainGame.*;
 import static MainGame.Objects.Spawner.removeGameObjectAll;
 import static MainGame.Objects.gameStateHandler.*;
@@ -33,7 +33,7 @@ public class Kamikaze extends GameObject {
     @Override
     public void setDead() {
         super.setDead();
-        getEmitters().add(new Emitter(10000, 1000, Color.hsb(10, 0.6, 0.7), Color.hsb(180, 0.9, 0.5), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.05, this));
+        getEmitters().add(new Emitter(40000, 2000, Color.hsb(10, 0.6, 0.7), Color.hsb(180, 0.9, 0.5), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
     }
 
     @Override
