@@ -379,9 +379,7 @@ public class ApplicationStart extends Application {
                 double difficultyChangeRate = 1.0/(getOriginalDifficulty()*60); //1 difficulty per 60 seconds if difficulty level set was 1
                 gameDifficulty = getOriginalDifficulty() + (time-timeOfLevel2-5)*difficultyChangeRate;
             }
-<<<<<<< HEAD
             forceThrust = time - timeOfLevel2 < 0.05;
-=======
 
             int messageTime = 5;
             if (time-timeOfLevel2 < messageTime){
@@ -397,7 +395,6 @@ public class ApplicationStart extends Application {
                     forceThrust = false;
                 }
             }
->>>>>>> 1c35a7287efa8ca226806926cf59f4ae6d738329
         }
 
 
