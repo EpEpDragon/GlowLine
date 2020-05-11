@@ -1,13 +1,14 @@
 package MainGame.Objects;
 
-import MainGame.ApplicationStart;
 import MainGame.Math.OwnMath;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import static MainGame.ApplicationStart.*;
 
-public abstract class Spawner extends ApplicationStart {
+
+public abstract class Spawner{
     //Lander spawn time
     static final int landerSpawnTime = 2;
     static double previousTimeLander = 0; //if changed, change in resetSpawner as well
@@ -28,13 +29,13 @@ public abstract class Spawner extends ApplicationStart {
         if (getLevel()>1) {
             //Lander spawn logic
             if (time - previousTimeLander >= landerSpawnTime) {
-                addGameObject(new Lander(getScale()), OwnMath.clamp(resolutionX * Math.random(), resolutionX * 0.1, resolutionX * 0.9), resolutionY * -0.1);
+                addGameObject(new Lander(getScale()), OwnMath.clamp(getResolutionX() * Math.random(), getResolutionX() * 0.1, getResolutionX() * 0.9), getResolutionY() * -0.1);
                 previousTimeLander = time;
             }
 
             //Kamikaze spawn logic
             if (time - previousTimeKamikaze >= kamikazeSpawnTime && time > 5) {
-                addGameObject(new Kamikaze(getScale()), OwnMath.clamp(resolutionX * Math.random(), resolutionX * 0.1, resolutionX * 0.9), resolutionY * -0.1);
+                addGameObject(new Kamikaze(getScale()), OwnMath.clamp(getResolutionX() * Math.random(), getResolutionX() * 0.1, getResolutionX() * 0.9), getResolutionY() * -0.1);
                 previousTimeKamikaze = time;
             }
         }
@@ -42,7 +43,7 @@ public abstract class Spawner extends ApplicationStart {
         else{
             if (landerL1Done<landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
                 for (int i = 1; i <= landerL1Columns; i++) {
-                    addGameObject(new LanderLevel1(getScale()), (resolutionX/(float)(landerL1Columns + 1)) * i - 50*getScale()/2, resolutionY * -0.05);
+                    addGameObject(new LanderLevel1(getScale()), (getResolutionX()/(float)(landerL1Columns + 1)) * i - 50*getScale()/2, getResolutionY() * -0.05);
                 }
                 previousTimeLanderL1 = time;
                 landerL1Done++;
@@ -108,19 +109,19 @@ public abstract class Spawner extends ApplicationStart {
     public static void spawnBackground(){
         //Background (atmosphere)
         Node tempBackground;
-        tempBackground = new Circle(0.5 * resolutionX, 4.2 * resolutionY, 4 * resolutionY,
+        tempBackground = new Circle(0.5 * getResolutionX(), 4.2 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.1));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
         gameplayElements.getChildren().add(tempBackground);
 
-        tempBackground = new Circle(0.5 * resolutionX, 4.6 * resolutionY, 4 * resolutionY,
+        tempBackground = new Circle(0.5 * getResolutionX(), 4.6 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.15));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
         gameplayElements.getChildren().add(tempBackground);
 
-        tempBackground = new Circle(0.5 * resolutionX, 4.8 * resolutionY, 4 * resolutionY,
+        tempBackground = new Circle(0.5 * getResolutionX(), 4.8 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.135));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);

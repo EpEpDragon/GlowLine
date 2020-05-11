@@ -1,6 +1,5 @@
 package MainGame.Layout;
 
-import MainGame.ApplicationStart;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,9 +20,10 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.*;
 
+import static MainGame.ApplicationStart.*;
 import static javafx.scene.paint.Color.*;
 
-public abstract class SceneSetup extends ApplicationStart {
+public abstract class SceneSetup {
     static private Scene mainMenu, gameplay, controlsMenu;
     static private Label score = new Label();
     static private Label time = new Label();
@@ -43,7 +43,6 @@ public abstract class SceneSetup extends ApplicationStart {
     }
 
     static private ImageView imageView = new ImageView(background);
-    public static int rootChildren = 10;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 400;
@@ -71,9 +70,7 @@ public abstract class SceneSetup extends ApplicationStart {
 
         //Quit Button
         SwellButton quit = new SwellButton("Quit", buttonWidth, true);
-        quit.setOnAction(e -> {
-            System.exit(0);
-        });
+        quit.setOnAction(e -> System.exit(0));
 
         Label highScoreLabel = new Label();
         highScoreLabel.setTextAlignment(TextAlignment.CENTER);
@@ -98,15 +95,15 @@ public abstract class SceneSetup extends ApplicationStart {
 
         //Main menu layout
         VBox menuButtons = new VBox(start, controls, quit, highScoreLabel, highScoresPane);
-        menuButtons.setSpacing(resolutionY * 0.02);
+        menuButtons.setSpacing(getResolutionY() * 0.02);
         menuButtons.setFillWidth(true);
         menuButtons.setAlignment(Pos.CENTER);
-        menuButtons.setPadding(new Insets(resolutionY/3.6, 0, 0, 0));
+        menuButtons.setPadding(new Insets(getResolutionY()/3.6, 0, 0, 0));
 
         StackPane menuLayout = new StackPane(imageView, title, menuButtons);
         menuLayout.setAlignment(Pos.CENTER);
 
-        mainMenu = new Scene(menuLayout, resolutionX, resolutionY, Color.BLACK);
+        mainMenu = new Scene(menuLayout, getResolutionX(), getResolutionY(), Color.BLACK);
         mainMenu.getStylesheets().add("MainGame/Layout/GLM1080.css");
 
         return mainMenu;
@@ -136,9 +133,7 @@ public abstract class SceneSetup extends ApplicationStart {
         //Back button
         SwellButton back = new SwellButton("Back", 0, false);
         back.setId("menuButtons");
-        back.setOnAction(e -> {
-            fxPanel.setScene(mainMenu);
-        });
+        back.setOnAction(e -> fxPanel.setScene(mainMenu));
 
         Label difficultyLabel = new Label("Set difficulty:");
         Label difficultyExplanation = new Label("This effects the starting difficulty, as well as the\nrate at which the difficulty increases in level 2.");
@@ -169,15 +164,13 @@ public abstract class SceneSetup extends ApplicationStart {
 
         difficulty.setMaxWidth(300);
         difficulty.setStyle("-fx-fill: black");
-        difficulty.setOnMouseReleased(e ->{
-            setOriginalDifficulty(difficulty.getValue());
-        });
+        difficulty.setOnMouseReleased(e -> setOriginalDifficulty(difficulty.getValue()));
 
         VBox difficultyLayout = new VBox(difficultyLabel, difficultyExplanation, difficulty);
         difficultyLayout.setSpacing(10);
         difficultyLayout.setAlignment(Pos.CENTER);
         VBox layout = new VBox(title, controls, difficultyLayout, back);
-        layout.setSpacing(resolutionY * 0.05);
+        layout.setSpacing(getResolutionY() * 0.05);
         layout.setAlignment(Pos.CENTER);
 
         controlsMenu = new Scene(layout);
@@ -193,8 +186,8 @@ public abstract class SceneSetup extends ApplicationStart {
         VBox pauseMenu = new VBox(resume, toMain);
         pauseMenu.setSpacing(20);
         pauseMenu.setAlignment(Pos.CENTER);
-        pauseMenu.setMinWidth(resolutionX);
-        pauseMenu.setMinHeight(resolutionY);
+        pauseMenu.setMinWidth(getResolutionX());
+        pauseMenu.setMinHeight(getResolutionY());
         pauseMenu.setVisible(false);
 
         toMain.setOnAction(e -> {
@@ -202,7 +195,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 stopGamePlaySongs();
                 startMainMenuSong();
                 pauseMenu.setVisible(false);
-                timer.stop();
+                getTimer().stop();
                 gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
@@ -213,13 +206,11 @@ public abstract class SceneSetup extends ApplicationStart {
         resume.setOnAction(e -> {
             if (resume.isFinished()) {
                 pauseMenu.setVisible(false);
-                timer.start();
+                getTimer().start();
             }
         });
 
-        resume.getFade().setOnFinished(e -> {
-            readyToResume = true;
-        });
+        resume.getFade().setOnFinished(e -> readyToResume = true);
 
         /**GameOver menu**/
         SwellButton toMain2 = new SwellButton("Quit to main menu", 500, true);
@@ -233,17 +224,15 @@ public abstract class SceneSetup extends ApplicationStart {
         enterName.setMaxWidth(500);
         //remove focus from enterName so that it doesn't fill with spaces if user was using time dilation when gameover
         enterName.setFocusTraversable(false);
-        enterName.setOnMousePressed(e -> {
-            setEnteringName(true);
-        });
+        enterName.setOnMousePressed(e -> setEnteringName(true));
         enterName.setOnAction(e -> {
             saveScore();
             setSavedScore(true);
         });
 
         VBox gameOverMenu = new VBox(gameOver, gameOver2, restart, toMain2, enterName);
-        gameOverMenu.setMinWidth(resolutionX);
-        gameOverMenu.setMinHeight(resolutionY);
+        gameOverMenu.setMinWidth(getResolutionX());
+        gameOverMenu.setMinHeight(getResolutionY());
         gameOverMenu.setSpacing(20);
         gameOverMenu.setAlignment(Pos.CENTER);
         gameOverMenu.setVisible(false);
@@ -258,7 +247,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 stopGamePlaySongs();
                 startMainMenuSong();
                 setGameOverVisible(false);
-                timer.stop();
+                getTimer().stop();
                 gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
@@ -274,7 +263,7 @@ public abstract class SceneSetup extends ApplicationStart {
                             saveScore();
                         }
                         setGameOverVisible(false);
-                        timer.stop();
+                        getTimer().stop();
                         gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                         clearStuff();
                         createRound();
@@ -289,23 +278,23 @@ public abstract class SceneSetup extends ApplicationStart {
         levelInfo.setStyle("-fx-font-size: 30px; -fx-text-alignment: center");
 
         VBox intermediateInfo = new VBox(intermediateLevelUp, levelInfo);
-        intermediateInfo.setMinWidth(resolutionX);
-        intermediateInfo.setMinHeight(resolutionY);
+        intermediateInfo.setMinWidth(getResolutionX());
+        intermediateInfo.setMinHeight(getResolutionY());
         intermediateInfo.setSpacing(20);
         intermediateInfo.setAlignment(Pos.CENTER);
         intermediateInfo.setVisible(false);
 
         /**HUD**/
         //Timer
-        time.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px " + Integer.toString(resolutionX - 140) + "px;");
+        time.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px " + Integer.toString(getResolutionX() - 140) + "px;");
         score.setStyle("-fx-font-size: 50px;-fx-padding: 10px 0px 0px 15px;");
 
         //time dilation and gameOverMenu rectangular transparent overlays
-        Rectangle gameOverDarken = new Rectangle(resolutionX, resolutionY, Color.valueOf("#000000"));
+        Rectangle gameOverDarken = new Rectangle(getResolutionX(), getResolutionY(), Color.valueOf("#000000"));
         gameOverDarken.setOpacity(0.4);
         gameOverDarken.setVisible(false);
 
-        Rectangle timeDilation = new Rectangle(resolutionX, resolutionY, Color.valueOf("#CCFFCA"));
+        Rectangle timeDilation = new Rectangle(getResolutionX(), getResolutionY(), Color.valueOf("#CCFFCA"));
         timeDilation.setOpacity(0.3);
         timeDilation.setVisible(false);
 
@@ -340,7 +329,7 @@ public abstract class SceneSetup extends ApplicationStart {
         root.getChildren().add(10, intermediateInfo);
         root.getChildren().add(11, pauseMenu);
 
-        gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
+        gameplay = new Scene(root, getResolutionX(), getResolutionY(), Color.BLACK);
         gameplay.getStylesheets().add("MainGame/Layout/GLM1080.css");
         gameplay.setCursor(Cursor.CROSSHAIR);
 
@@ -350,8 +339,8 @@ public abstract class SceneSetup extends ApplicationStart {
     private static void setupImage() {
         imageView.setX(0);
         imageView.setY(0);
-        imageView.setFitHeight(resolutionY);
-        imageView.setFitWidth(resolutionX);
+        imageView.setFitHeight(getResolutionY());
+        imageView.setFitWidth(getResolutionX());
     }
 
     public static void resetNameEnter() {
@@ -366,7 +355,7 @@ public abstract class SceneSetup extends ApplicationStart {
             enterName.setPromptText("^ not allowed, try again.");
         } else {
             try {
-                FileWriter writer = new FileWriter(highScoreFileName, true);
+                FileWriter writer = new FileWriter(getHighScoreFileName(), true);
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);
                 bufferedWriter.newLine();
                 int difficultyPercentage = (int) (100*((getOriginalDifficulty()-1+difficultyMaxDeviation)/(difficultyMaxDeviation*2)));
@@ -437,7 +426,7 @@ public abstract class SceneSetup extends ApplicationStart {
 
     public static void printHighScores() {
         try {
-            FileReader lineCounter = new FileReader(highScoreFileName);
+            FileReader lineCounter = new FileReader(getHighScoreFileName());
             BufferedReader bufferedCounter = new BufferedReader(lineCounter);
 
             int lines = 0;
@@ -447,7 +436,7 @@ public abstract class SceneSetup extends ApplicationStart {
             String[] names = new String[lines];
             int[] scores = new int[lines];
 
-            FileReader reader = new FileReader(highScoreFileName);
+            FileReader reader = new FileReader(getHighScoreFileName());
             BufferedReader bufferedReader = new BufferedReader(reader);
             String currentLine;
             int counter = 0;
@@ -477,9 +466,9 @@ public abstract class SceneSetup extends ApplicationStart {
                 }
             }
 
-            String highScores = "";
+            StringBuilder highScores = new StringBuilder();
             for (int i = 0; i < counter; i++) {
-                highScores = highScores + "\n" + names[i] + " - " + scores[i];
+                highScores.append("\n").append(names[i]).append(" - ").append(scores[i]);
             }
             reader.close();
             if (highScores.length() > 1) {

@@ -37,20 +37,20 @@ public class ApplicationStart extends Application {
     static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
     private static boolean FULLSCREEN = false;
-    protected static int resolutionX = gd.getDisplayMode().getWidth();
-    protected static int resolutionY = gd.getDisplayMode().getHeight();
+    private static int resolutionX = gd.getDisplayMode().getWidth();
+    private static int resolutionY = gd.getDisplayMode().getHeight();
 //    protected static int resolutionX = 1360;
 //    protected static int resolutionY = 768;
 
     //File locations
-    protected static String highScoreFileName = "src/MainGame/highScores.txt";
-    protected static String mainMenuSongFile = "src/MainGame/AudioFiles/mainMenu.mp3";
-    protected static String shooterFile = "src/MainGame/AudioFiles/shooter.mp3";
-    protected static String deadFile = "src/MainGame/AudioFiles/dead.mp3";
-    protected static String screamFile = "src/MainGame/AudioFiles/scream.mp3";
-    protected static String explosionFile = "src/MainGame/AudioFiles/explosion.mp3";
-    protected static String gameplaySongFile = "src/MainGame/AudioFiles/cantina.mp3";
-    protected static String level2SongFile = "src/MainGame/AudioFiles/level2.mp3";
+    private static String highScoreFileName = "src/MainGame/highScores.txt";
+    private static String mainMenuSongFile = "src/MainGame/AudioFiles/mainMenu.mp3";
+    private static String shooterFile = "src/MainGame/AudioFiles/shooter.mp3";
+    private static String deadFile = "src/MainGame/AudioFiles/dead.mp3";
+    private static String screamFile = "src/MainGame/AudioFiles/scream.mp3";
+    private static String explosionFile = "src/MainGame/AudioFiles/explosion.mp3";
+    private static String gameplaySongFile = "src/MainGame/AudioFiles/cantina.mp3";
+    private static String level2SongFile = "src/MainGame/AudioFiles/level2.mp3";
 
     //Root of scene
     private static final Pane root = new Pane();
@@ -396,8 +396,6 @@ public class ApplicationStart extends Application {
                 }
             }
         }
-
-
 
         setLives(livesLeft);
 
@@ -750,5 +748,13 @@ public class ApplicationStart extends Application {
 
     public static double getLastShot() {
         return lastShot;
+    }
+
+    public static StatusTimer getTimer() {
+        return timer;
+    }
+
+    public static String getHighScoreFileName() {
+        return highScoreFileName;
     }
 }
