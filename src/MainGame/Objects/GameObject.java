@@ -8,11 +8,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public abstract class GameObject {
-    //TODO use Math functions for rad degree conversion
-    final private double radToDegConst = 180/Math.PI;
-    final private double degToRadConst = Math.PI/180;
+import static MainGame.Objects.CollisionHandler.Collision;
 
+public abstract class GameObject {
     private Node[] view;
     private Shape collisionShape;
     private Point2D velocity = new Point2D(0,0);
@@ -106,11 +104,11 @@ public abstract class GameObject {
     public String getType(){ return type; }
 
     public Shape getCollisionShape(){
-        return (Shape)collisionShape;
+        return collisionShape;
     }
     public void setRotation(double angle){
         for (Node view : this.view) {
-            view.setRotate(angle*radToDegConst);
+            view.setRotate(Math.toDegrees(angle));
         }
     }
 
@@ -127,6 +125,8 @@ public abstract class GameObject {
         }
         collisionShape.setTranslateX(collisionShape.getTranslateX() + velocity.getX() * deltaTime);
         collisionShape.setTranslateY(collisionShape.getTranslateY() + velocity.getY() * deltaTime);
+
+        handelCollisions(deltaTime);
     }
 
     public void accelerate(Point2D acceleration){
@@ -175,7 +175,7 @@ public abstract class GameObject {
     }
 
     public Point2D getForwardVector(){
-        return new Point2D(Math.cos(view[0].getRotate() * degToRadConst), Math.sin(view[0].getRotate() * degToRadConst));
+        return new Point2D(Math.cos(Math.toRadians(view[0].getRotate())), Math.sin(Math.toRadians(view[0].getRotate())));
     }
 
     public double getRotation(){
@@ -196,34 +196,15 @@ public abstract class GameObject {
 
     public Collision getCollision(GameObject object){
         Shape resultShape = Shape.intersect(collisionShape, object.getCollisionShape());
-
-        Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
+        return new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
                 resultShape.getBoundsInLocal().getMaxY());
-
-        return collision;
     }
 
     public Collision getCollision(Shape shape){
         Shape resultShape = Shape.intersect(collisionShape,shape);
-
-        Collision collision = new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
+        return new Collision(!resultShape.getBoundsInLocal().isEmpty(), resultShape.getBoundsInLocal().getMaxX(),
                 resultShape.getBoundsInLocal().getMaxY());
-
-        return collision;
     }
 
-    public class Collision{
-        double x;
-        double y;
-        boolean collided;
-        public Collision(boolean collided, double x, double y){
-            this.x = x;
-            this.y = y;
-            this.collided = collided;
-        }
-
-        public boolean isCollided() { return collided; }
-        public double getX() { return x; }
-        public double getY() { return y; }
-    }
+    abstract void handelCollisions(double deltaTime);
 }

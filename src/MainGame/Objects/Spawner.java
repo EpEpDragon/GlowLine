@@ -3,6 +3,8 @@ package MainGame.Objects;
 import MainGame.ApplicationStart;
 import MainGame.Math.OwnMath;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 
 public abstract class Spawner extends ApplicationStart {
@@ -75,6 +77,23 @@ public abstract class Spawner extends ApplicationStart {
         object.getCollisionShape().setTranslateY(y);
     }
 
+    public static void removeGameObject(GameObject object) {
+        object.setDead();
+        for (Node view : object.getView()) {
+            gameplayElements.getChildren().remove(view);
+        }
+    }
+
+    public static void removeGameObjectAll(GameObject... objects) {
+        for (GameObject object : objects) {
+            object.setDead();
+
+            for (Node view : object.getView()) {
+                gameplayElements.getChildren().remove(view);
+            }
+        }
+    }
+
     public static int getL1EnemyCount() {
         return landerL1Columns*landerL1Rows;
     }
@@ -86,4 +105,25 @@ public abstract class Spawner extends ApplicationStart {
         previousTimeLander = 0;
     }
 
+    public static void spawnBackground(){
+        //Background (atmosphere)
+        Node tempBackground;
+        tempBackground = new Circle(0.5 * resolutionX, 4.2 * resolutionY, 4 * resolutionY,
+                Color.color(1, 1, 1, 0.1));
+        tempBackground.setMouseTransparent(true);
+        //tempBackground.setViewOrder(4);
+        gameplayElements.getChildren().add(tempBackground);
+
+        tempBackground = new Circle(0.5 * resolutionX, 4.6 * resolutionY, 4 * resolutionY,
+                Color.color(1, 1, 1, 0.15));
+        tempBackground.setMouseTransparent(true);
+        //tempBackground.setViewOrder(4);
+        gameplayElements.getChildren().add(tempBackground);
+
+        tempBackground = new Circle(0.5 * resolutionX, 4.8 * resolutionY, 4 * resolutionY,
+                Color.color(1, 1, 1, 0.135));
+        tempBackground.setMouseTransparent(true);
+        //tempBackground.setViewOrder(4);
+        gameplayElements.getChildren().add(tempBackground);
+    }
 }

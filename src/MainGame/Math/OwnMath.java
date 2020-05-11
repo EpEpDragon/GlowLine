@@ -31,6 +31,10 @@ public class OwnMath {
         return rotDeg;
     }
 
+    public static double relativeDeltaAngle(Point2D from, Point2D to, boolean halfScale) {
+        return relativeDeltaAngle(from.getX(), from.getY(), to.getX(), to.getY(), halfScale);
+    }
+
     public static double lerp(double start, double end, double fraction) {
         return start + fraction * (end - start);
     }
@@ -51,41 +55,12 @@ public class OwnMath {
         return (number % (place * 10) - number % place)/place;
     }
 
-    public static double relativeDeltaAngle(Point2D from, Point2D to, boolean halfScale) {
-        double rotDeg;
-        double deltaY = to.getY() - from.getY();
-        double deltaX = to.getX() - from.getX();
-
-        //System.out.println("DX: " + deltaX + " DY: " + deltaY);
-        rotDeg = Math.atan((deltaY) / (deltaX));
-        if (halfScale) {
-            if (deltaY < 0 && rotDeg > 0) {
-                rotDeg = rotDeg - Math.PI;
-            } else if (deltaY > 0 && rotDeg < 0) {
-                rotDeg = rotDeg + Math.PI;
-            }
-        } else {
-            if (deltaY < 0 && rotDeg < 0) {
-                rotDeg = 2 * Math.PI - Math.abs(rotDeg);
-            } else if (deltaY < 0 && rotDeg > 0) {
-                rotDeg = rotDeg + Math.PI;
-            } else if (deltaY > 0 && rotDeg < 0) {
-                rotDeg = Math.PI + Math.abs(rotDeg);
-            }
-        }
-        return rotDeg;
-    }
-
     public static Point2D rotateVec(double x, double y, double rad) {
         return new Point2D(x * Math.cos(rad) - y * Math.sin(rad), x * Math.sin(rad) + y * Math.cos(rad));
     }
 
     public static double lengthSqrd(Point2D vector) {
         return vector.getY() * vector.getY() + vector.getX() * vector.getX();
-    }
-
-    public static Point2D abs(Point2D vector) {
-        return new Point2D(Math.abs(vector.getX()), Math.abs(vector.getY()));
     }
 
     public static Point2D findInterceptVector(Point2D from, Point2D to, Point2D missileV, Point2D targetV, double missileS) {
@@ -123,17 +98,13 @@ public class OwnMath {
         }
 
         //rotate missile Vt and missile Vu to original axis system
-        Point2D rotated = rotateVec(missileVu, missileVt, rad);
-        return rotated;
+        return rotateVec(missileVu, missileVt, rad);
     }
 
     public static double clamp(double toClamp, double low, double high) {
         if (toClamp < low) {
             return low;
         }
-        if (toClamp > high) {
-            return high;
-        }
-        return toClamp;
+        return Math.min(toClamp, high);
     }
 }
