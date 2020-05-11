@@ -148,6 +148,7 @@ public abstract class SceneSetup extends ApplicationStart {
         //Layout
         Label title = new Label("Controls");
         title.setId("subTitle");
+        title.setPadding(new Insets(-30,0,0,0));
 
         GridPane controls = new GridPane();
         controls.setVgap(15);
@@ -176,7 +177,7 @@ public abstract class SceneSetup extends ApplicationStart {
         difficultyLayout.setSpacing(10);
         difficultyLayout.setAlignment(Pos.CENTER);
         VBox layout = new VBox(title, controls, difficultyLayout, back);
-        layout.setSpacing(50);
+        layout.setSpacing(resolutionY * 0.05);
         layout.setAlignment(Pos.CENTER);
 
         controlsMenu = new Scene(layout);
@@ -190,9 +191,10 @@ public abstract class SceneSetup extends ApplicationStart {
         SwellButton toMain = new SwellButton("Quit to main menu", 400, true);
 
         VBox pauseMenu = new VBox(resume, toMain);
-        pauseMenu.setPadding(new Insets(resolutionY * 0.5 - 29, 0, 0, resolutionX * 0.5 - 158));
         pauseMenu.setSpacing(20);
         pauseMenu.setAlignment(Pos.CENTER);
+        pauseMenu.setMinWidth(resolutionX);
+        pauseMenu.setMinHeight(resolutionY);
         pauseMenu.setVisible(false);
 
         toMain.setOnAction(e -> {
@@ -225,7 +227,7 @@ public abstract class SceneSetup extends ApplicationStart {
         Label gameOver2 = new Label("OVER");
         gameOver.setId("gameOver");
         gameOver2.setId("gameOver");
-        gameOver.setPadding(new Insets(0,0,-110,0));
+        gameOver.setPadding(new Insets(-100,0,-110,0));
         gameOver2.setPadding(new Insets(0,0,-40,0));
 
         enterName.setMaxWidth(500);
@@ -240,7 +242,8 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         VBox gameOverMenu = new VBox(gameOver, gameOver2, restart, toMain2, enterName);
-        gameOverMenu.setPadding(new Insets(resolutionY * 0.5-420, 0, 0, resolutionX * 0.5 - 250));
+        gameOverMenu.setMinWidth(resolutionX);
+        gameOverMenu.setMinHeight(resolutionY);
         gameOverMenu.setSpacing(20);
         gameOverMenu.setAlignment(Pos.CENTER);
         gameOverMenu.setVisible(false);
@@ -278,6 +281,9 @@ public abstract class SceneSetup extends ApplicationStart {
                     }
                 }
         );
+
+        /**Intermediate Info**/
+
 
 
         /**HUD**/
