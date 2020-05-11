@@ -17,9 +17,9 @@ public class Kamikaze extends GameObject{
                 new Circle(20*scale, Color.TRANSPARENT),
                 new Circle(15*scale, Color.TRANSPARENT),
                 new Circle(10*scale, Color.TRANSPARENT));
-        for(Node view: getView()){
-            view.setViewOrder(2);
-        }
+//        for(Node view: getView()){
+//            view.setViewOrder(2);
+//        }
     }
 
     @Override

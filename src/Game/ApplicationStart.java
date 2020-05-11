@@ -21,6 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import javafx.scene.canvas.Canvas;
 import javafx.util.Duration;
 
@@ -30,6 +31,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,8 +42,12 @@ import static Game.Math.OwnMath.getPlaceValue;
 import static Game.Objects.Spawner.*;
 
 public class ApplicationStart extends Application {
-    protected static int resolutionX = 1920;
-    protected static int resolutionY = 1080;
+    static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+    protected static int resolutionX = gd.getDisplayMode().getWidth();
+    protected static int resolutionY = gd.getDisplayMode().getHeight();
+
+
     private static boolean FULLSCREEN = false;
 
     //File locations
@@ -124,6 +130,7 @@ public class ApplicationStart extends Application {
     /********************Resolution setup***********************/
     //Window JFrame initialization (This is needed to change the desktop resolution)
     private static void initWindow() {
+        System.out.println(resolutionX);
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice devices = g.getScreenDevices()[0];
         //This is the application window
@@ -273,11 +280,11 @@ public class ApplicationStart extends Application {
 
     //Setup for game related content, game loop, spawning, etc.
     public static void createRound() {
-        gameplaySong.play(0.7);
+        gameplaySong.play();
         gc.clearRect(0, 0, resolutionX, resolutionY);
         root.getChildren().add(canvas);
         canvas.setMouseTransparent(true);
-        canvas.setViewOrder(3);
+        //canvas.setViewOrder(3);
         //root.setPrefSize(resolutionX, resolutionY);
 
         setLives(0);
@@ -285,7 +292,7 @@ public class ApplicationStart extends Application {
         livesLeft = 3;
         lastShot = 0;
         timeDilationLeft = 0;
-        timeOfPenalty = -penaltyTime-1;
+        timeOfPenalty = 0;
         timeDilationLastUpdate = 0;
         space = false;
         enteringName = false;
@@ -309,19 +316,19 @@ public class ApplicationStart extends Application {
         tempBackground = new Circle(0.5 * resolutionX, 4.2 * resolutionY, 4 * resolutionY,
                 Color.color(1, 1, 1, 0.1));
         tempBackground.setMouseTransparent(true);
-        tempBackground.setViewOrder(4);
+        //tempBackground.setViewOrder(4);
         root.getChildren().add(tempBackground);
 
         tempBackground = new Circle(0.5 * resolutionX, 4.6 * resolutionY, 4 * resolutionY,
                 Color.color(1, 1, 1, 0.15));
         tempBackground.setMouseTransparent(true);
-        tempBackground.setViewOrder(4);
+        //tempBackground.setViewOrder(4);
         root.getChildren().add(tempBackground);
 
         tempBackground = new Circle(0.5 * resolutionX, 4.8 * resolutionY, 4 * resolutionY,
                 Color.color(1, 1, 1, 0.135));
         tempBackground.setMouseTransparent(true);
-        tempBackground.setViewOrder(4);
+        //tempBackground.setViewOrder(4);
         root.getChildren().add(tempBackground);
 
         //floor

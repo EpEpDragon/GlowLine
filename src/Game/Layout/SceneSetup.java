@@ -8,11 +8,13 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -34,14 +36,23 @@ public abstract class SceneSetup extends ApplicationStart {
     static private SwellButton restart = new SwellButton("Restart", 500, true);
     static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
+    static private javafx.scene.image.Image background;
+    static {
+        try {
+            background = new Image(new FileInputStream("src/Game/menuBackground.jpg"));
+        } catch (FileNotFoundException ignore) {
+        }
+    }
+
+    static private ImageView imageView = new ImageView(background);
     public static int rootChildren = 10;
 
     public static Scene createMainMenu(JFXPanel fxPanel) {
-        int buttonWidth = 200;
+        int buttonWidth = 400;
 
-        TypingLabel title = new TypingLabel("Glow Line", 8);
+        TypingLabel title = new TypingLabel("Star Line", 8);
         title.setId("title");
-        title.setPadding(new Insets(0, 0, getResolutionY() * 0.5, 0));
+        title.setPadding(new Insets(0, 0, getResolutionY() * 0.5 + 150, 0));
 
         //Start button
         SwellButton start = new SwellButton("Start", buttonWidth, true);
@@ -55,7 +66,7 @@ public abstract class SceneSetup extends ApplicationStart {
         });
 
         //Controls Button
-        SwellButton controls = new SwellButton("Controls", buttonWidth, true);
+        SwellButton controls = new SwellButton("Controls & Settings", buttonWidth, true);
         controls.setId("menuButtons");
         controls.setOnAction(e -> {
             fxPanel.setScene(controlsMenu);
@@ -69,6 +80,12 @@ public abstract class SceneSetup extends ApplicationStart {
             System.exit(0);
         });
 
+        Label highScoreLabel = new Label();
+        highScoreLabel.setTextAlignment(TextAlignment.CENTER);
+        highScoreLabel.setAlignment(Pos.CENTER);
+        highScoreLabel.setText("High Scores:");
+        highScoreLabel.setStyle("-fx-font-size: 50px");
+
         highScores.setTextAlignment(TextAlignment.CENTER);
         highScores.setAlignment(Pos.CENTER);
         highScores.setMaxWidth(498);
@@ -79,17 +96,19 @@ public abstract class SceneSetup extends ApplicationStart {
         highScoresPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         highScoresPane.setMaxWidth(500);
         highScoresPane.setMinWidth(500);
-        highScoresPane.setMinHeight(315);
-        highScoresPane.setMaxHeight(315);
+        highScoresPane.setMinHeight(280);
+        highScoresPane.setMaxHeight(280);
+
+        setupImage();
 
         //Main menu layout
-        VBox menuButtons = new VBox(start, controls, quit, highScoresPane);
+        VBox menuButtons = new VBox(start, controls, quit, highScoreLabel, highScoresPane);
         menuButtons.setSpacing(resolutionY * 0.03);
         menuButtons.setFillWidth(true);
         menuButtons.setAlignment(Pos.CENTER);
-        menuButtons.setPadding(new Insets(280, 0, 0, 0));
+        menuButtons.setPadding(new Insets(300, 0, 0, 0));
 
-        StackPane menuLayout = new StackPane(title, menuButtons);
+        StackPane menuLayout = new StackPane(imageView, title, menuButtons);
         menuLayout.setAlignment(Pos.CENTER);
 
         mainMenu = new Scene(menuLayout, resolutionX, resolutionY, Color.BLACK);
@@ -100,7 +119,12 @@ public abstract class SceneSetup extends ApplicationStart {
 
     public static Scene createControls(JFXPanel fxPanel) {
         //Thrust
-        Label thrustA = new Label("Thrust:");
+        Label moveA = new Label("Left/right (level 1):");
+        Label moveB = new Label("A/D");
+        moveB.setId("controlLabel");
+
+        //Left, right
+        Label thrustA = new Label("Thrust (level 2):");
         Label thrustB = new Label("W");
         thrustB.setId("controlLabel");
 
@@ -110,7 +134,7 @@ public abstract class SceneSetup extends ApplicationStart {
         aimB.setId("controlLabel");
 
         //Time dilation
-        Label dilateA = new Label("Time dialation:");
+        Label dilateA = new Label("Time dilation:");
         Label dilateB = new Label("Space");
         dilateB.setId("controlLabel");
 
@@ -129,17 +153,29 @@ public abstract class SceneSetup extends ApplicationStart {
         controls.setVgap(15);
         controls.setHgap(20);
         controls.setAlignment(Pos.CENTER);
-        controls.add(thrustA, 0, 0);
-        controls.add(thrustB, 1, 0);
 
-        controls.add(aimA, 0, 1);
-        controls.add(aimB, 1, 1);
+        controls.add(moveA, 0, 0);
+        controls.add(moveB, 1, 0);
 
-        controls.add(dilateA, 0, 2);
-        controls.add(dilateB, 1, 2);
+        controls.add(thrustA, 0, 1);
+        controls.add(thrustB, 1, 1);
 
-        VBox layout = new VBox(title, controls, back);
-        layout.setSpacing(85);
+        controls.add(aimA, 0, 2);
+        controls.add(aimB, 1, 2);
+
+        controls.add(dilateA, 0, 3);
+        controls.add(dilateB, 1, 3);
+
+        Slider difficulty = new Slider(0, 100, 50);
+        difficulty.setAccessibleText("ksdjfh");
+        difficulty.setMaxWidth(300);
+        difficulty.setStyle("-fx-fill: black");
+        difficulty.setOnMouseReleased(e ->{
+
+        });
+
+        VBox layout = new VBox(title, controls, difficulty, back);
+        layout.setSpacing(70);
         layout.setAlignment(Pos.CENTER);
 
         controlsMenu = new Scene(layout);
@@ -286,6 +322,13 @@ public abstract class SceneSetup extends ApplicationStart {
         return gameplay;
     }
 
+    private static void setupImage() {
+        imageView.setX(0);
+        imageView.setY(0);
+        imageView.setFitHeight(resolutionY);
+        imageView.setFitWidth(resolutionX);
+    }
+
     public static void resetNameEnter() {
         enterName.setPromptText("Enter name here, then hit enter...");
         enterName.setText("");
@@ -404,7 +447,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 highScores = highScores + "\n" + names[i] + " - " + scores[i];
             }
             reader.close();
-            SceneSetup.highScores.setText("High Scores:" + highScores);
+            SceneSetup.highScores.setText(highScores.substring(1));
         } catch (IOException ignored) {
             SceneSetup.highScores.setText("File not found...");
         }

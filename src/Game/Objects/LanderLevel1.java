@@ -8,8 +8,8 @@ public class LanderLevel1 extends GameObject{
     public LanderLevel1(double scale){
         super(1000*scale,"enemy", new Rectangle(50*scale,50*scale, Color.INDIANRED));
         setVelocity(0,80);
-        for(Node view: getView()){
-            view.setViewOrder(2);
-        }
+//        for(Node view: getView()){
+//            view.setViewOrder(2);
+//        }
     }
 }

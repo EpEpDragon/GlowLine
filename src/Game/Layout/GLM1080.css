@@ -14,6 +14,14 @@
     -fx-text-fill: white;
 }
 
+.slider .track {
+    -fx-background-color: #7a7a7a;
+}
+
+.slider .thumb{
+     -fx-background-color: #f9f9f9;
+}
+
 .text-field{
     -fx-background-color: black;
     -fx-prompt-text-fill: #717171;
@@ -35,7 +43,7 @@
 }
 
 #menuButtons{
-    -fx-max-width: 200px;
+    -fx-max-width: 400px;
 }
 
 #controlLabel{
@@ -47,12 +55,12 @@
 }
 
 #title{
-    -fx-font-size: 150px;
+    -fx-font-size: 250px;
+    -fx-text-fill: #f4f4f4;
 }
 
 #gameOver{
     -fx-font-size: 200px;
-    -fx-text-fill: white;
     -fx-font-style: italic;
 }
 
