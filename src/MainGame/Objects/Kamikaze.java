@@ -31,11 +31,11 @@ public class Kamikaze extends GameObject {
         accelerate(interceptVec.multiply(acceleration * deltaTime));
     }
 
-    @Override
-    public void setDead() {
-        super.setDead();
-        getEmitters().add(new Emitter(40000, 2000, Color.hsb(10, 0.6, 0.7), Color.hsb(180, 0.9, 0.5), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
-    }
+//    @Override
+//    public void setDead() {
+//        super.setDead();
+//        getEmitters().add(new Emitter(40000, 2000, Color.hsb(10, 0.6, 0.7), Color.hsb(180, 0.9, 0.5), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
+//    }
 
     @Override
     void handelCollisions(double deltaTime) {

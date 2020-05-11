@@ -79,6 +79,7 @@ public class Player extends GameObject {
                     lostLife();
                     Spawner.removeGameObject(enemyBullet);
                 }
+                getEmitters().add(new Emitter(40000, 2000, Color.RED, Color.INDIANRED, 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
             }
         }
     }
