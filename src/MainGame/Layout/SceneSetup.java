@@ -39,6 +39,10 @@ public abstract class SceneSetup {
 
     static {
         try {
+            /*
+                The menuBackground jpg image has been sourced from the web, but was manipulated darker through powerpoint
+            */
+
             background = new Image(new FileInputStream("src/MainGame/menuBackground.jpg"));
         } catch (FileNotFoundException ignore) {
         }

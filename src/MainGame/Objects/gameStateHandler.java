@@ -40,6 +40,11 @@ public abstract class gameStateHandler {
     final static double penaltyTime = 1.6;
 
     //File locations
+
+    /*
+        The audio files have been sourced from YouTube, but have been manipulated to suite the need in Audacity
+     */
+
     private static String highScoreFileName = "src/MainGame/highScores.txt";
     private static String mainMenuSongFile = "src/MainGame/AudioFiles/mainMenu.mp3";
     private static String shooterFile = "src/MainGame/AudioFiles/shooter.mp3";

@@ -15,7 +15,7 @@ public class TypingLabel extends Label {
         this.text = text;
         int durationMilli = Math.round((float) text.length() / letterPerSecond * 1000);
 
-        //Typing anim
+        //Typing animation
         typing = new Transition() {
             {
                 setCycleCount(1);
