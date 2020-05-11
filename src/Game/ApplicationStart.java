@@ -11,6 +11,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
@@ -46,7 +47,8 @@ public class ApplicationStart extends Application {
 
     protected static int resolutionX = gd.getDisplayMode().getWidth();
     protected static int resolutionY = gd.getDisplayMode().getHeight();
-
+//    protected static int resolutionX = 1360;
+//    protected static int resolutionY = 768;
 
     private static boolean FULLSCREEN = false;
 

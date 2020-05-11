@@ -52,12 +52,11 @@ public abstract class SceneSetup extends ApplicationStart {
 
         TypingLabel title = new TypingLabel("Star Line", 8);
         title.setId("title");
-        title.setPadding(new Insets(0, 0, getResolutionY() * 0.5 + 150, 0));
+        title.setPadding(new Insets(0, 0, getResolutionY() * 0.5 + 140, 0));
 
         //Start button
         SwellButton start = new SwellButton("Start", buttonWidth, true);
 
-        start.setId("menuButtons");
         start.setOnAction(e -> {
             //Gameplay setup
             stopMainMenuSong();
@@ -67,7 +66,6 @@ public abstract class SceneSetup extends ApplicationStart {
 
         //Controls Button
         SwellButton controls = new SwellButton("Controls & Settings", buttonWidth, true);
-        controls.setId("menuButtons");
         controls.setOnAction(e -> {
             fxPanel.setScene(controlsMenu);
             playAll((Pane) controlsMenu.getRoot());
@@ -75,7 +73,6 @@ public abstract class SceneSetup extends ApplicationStart {
 
         //Quit Button
         SwellButton quit = new SwellButton("Quit", buttonWidth, true);
-        quit.setId("menuButtons");
         quit.setOnAction(e -> {
             System.exit(0);
         });
@@ -96,17 +93,17 @@ public abstract class SceneSetup extends ApplicationStart {
         highScoresPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         highScoresPane.setMaxWidth(500);
         highScoresPane.setMinWidth(500);
-        highScoresPane.setMinHeight(280);
-        highScoresPane.setMaxHeight(280);
+        highScoresPane.setMinHeight(140);
+        highScoresPane.setMaxHeight(140);
 
         setupImage();
 
         //Main menu layout
         VBox menuButtons = new VBox(start, controls, quit, highScoreLabel, highScoresPane);
-        menuButtons.setSpacing(resolutionY * 0.03);
+        menuButtons.setSpacing(resolutionY * 0.02);
         menuButtons.setFillWidth(true);
         menuButtons.setAlignment(Pos.CENTER);
-        menuButtons.setPadding(new Insets(300, 0, 0, 0));
+        menuButtons.setPadding(new Insets(resolutionY/3.6, 0, 0, 0));
 
         StackPane menuLayout = new StackPane(imageView, title, menuButtons);
         menuLayout.setAlignment(Pos.CENTER);
@@ -221,8 +218,12 @@ public abstract class SceneSetup extends ApplicationStart {
 
         /**GameOver menu**/
         SwellButton toMain2 = new SwellButton("Quit to main menu", 500, true);
-        Label gameOver = new Label("GAME\nOVER");
+        Label gameOver = new Label("GAME");
+        Label gameOver2 = new Label("OVER");
         gameOver.setId("gameOver");
+        gameOver2.setId("gameOver");
+        gameOver.setPadding(new Insets(0,0,-110,0));
+        gameOver2.setPadding(new Insets(0,0,-40,0));
 
         enterName.setMaxWidth(500);
         //remove focus from enterName so that it doesn't fill with spaces if user was using time dilation when gameover
@@ -234,8 +235,8 @@ public abstract class SceneSetup extends ApplicationStart {
             saveScore();
         });
 
-        VBox gameOverMenu = new VBox(gameOver, restart, toMain2, enterName);
-        gameOverMenu.setPadding(new Insets(resolutionY * 0.5 - 450, 0, 0, resolutionX * 0.5 - 270));
+        VBox gameOverMenu = new VBox(gameOver, gameOver2, restart, toMain2, enterName);
+        gameOverMenu.setPadding(new Insets(resolutionY * 0.5-420, 0, 0, resolutionX * 0.5 - 250));
         gameOverMenu.setSpacing(20);
         gameOverMenu.setAlignment(Pos.CENTER);
         gameOverMenu.setVisible(false);

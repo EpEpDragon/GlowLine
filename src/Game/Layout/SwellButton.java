@@ -3,6 +3,7 @@ package Game.Layout;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Transition;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
 public class SwellButton extends Button {
@@ -29,6 +30,8 @@ public class SwellButton extends Button {
 
                 @Override
                 protected void interpolate(double frac) {
+                    setScaleX(1);
+                    setScaleY(1);
                     setStyle("-fx-text-fill: rgba(255, 255, 255, 0)");
                     finished = false;
                     setMaxWidth(width * frac);
@@ -50,27 +53,32 @@ public class SwellButton extends Button {
 
             unfold.setOnFinished(e -> fade.play());
             fade.setOnFinished(e -> finished = true);
+            setScaleX(1);
+            setScaleY(1);
             unfold.play();
         } else {
             finished = true;
+            setScaleX(1);
+            setScaleY(1);
         }
         //Swell on mouse move
         ScaleTransition grow = new ScaleTransition(Duration.millis(durationMilliGrow), this);
         grow.setCycleCount(1);
 
         setOnMouseEntered(e -> {
-            currentScale = getScaleX();
-            grow.stop();
-            System.out.println("Enter: " + getScaleX());
+            if (finished) {
+                currentScale = getScaleX();
+                grow.stop();
+                System.out.println("Enter: " + getScaleX());
 
-            grow.setToX(growScale);
-            grow.setToY(growScale);
-            grow.setFromX(currentScale);
-            grow.setFromY(currentScale);
+                grow.setToX(growScale);
+                grow.setToY(growScale);
+                grow.setFromX(currentScale);
+                grow.setFromY(currentScale);
 
-            grow.play();
-            grow.setOnFinished(g -> grow.stop());
-
+                grow.play();
+                grow.setOnFinished(g -> grow.stop());
+            }
         });
 
         setOnMouseExited(e -> {
@@ -85,6 +93,11 @@ public class SwellButton extends Button {
 
             grow.play();
             grow.setOnFinished(g -> grow.stop());
+        });
+
+        setOnMouseClicked(e -> {
+            setScaleX(1);
+            setScaleY(1);
         });
     }
 
