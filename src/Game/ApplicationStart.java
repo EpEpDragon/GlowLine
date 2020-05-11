@@ -64,6 +64,7 @@ public class ApplicationStart extends Application {
 
     //Root of scene
     private static final Pane root = new Pane();
+    public static final Pane gameplayElements = new Pane();
     //Drawing canvas
     private static final Canvas canvas = new Canvas(resolutionX, resolutionY);
     private static final GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -211,7 +212,7 @@ public class ApplicationStart extends Application {
                     break;
                 case Q:
                     if (timer != null) {
-                        if (timer.isRunning() || root.getChildren().get(0).isVisible()) {
+                        if (timer.isRunning() || root.getChildren().get(10).isVisible()) {
                             stopGamePlaySongs();
                             startMainMenuSong();
                             timer.stop();
@@ -224,23 +225,23 @@ public class ApplicationStart extends Application {
                                 setGameOverVisible(false);
                                 saveScore();
                             }
-                            if (root.getChildren().get(0).isVisible()) {
-                                root.getChildren().get(0).setVisible(false);
+                            if (root.getChildren().get(10).isVisible()) {
+                                root.getChildren().get(10).setVisible(false);
                             }
                         }
                     }
                     break;
                 case ESCAPE:
-                    if (root.getChildren().get(0).isVisible() && !gameOverState) {
+                    if (root.getChildren().get(10).isVisible() && !gameOverState) {
                         if (SceneSetup.isReadyToResume()) {
                             timer.start();
-                            root.getChildren().get(0).setVisible(false);
+                            root.getChildren().get(10).setVisible(false);
                         }
                     } else if (timer != null && !space){ //!space is necessary to prevent escape from working while time dilating, because this causes bug...
                         if (!gameOverState && timer.isRunning()) {
                             SceneSetup.setReadyToResume(false);
                             timer.stop();
-                            root.getChildren().get(0).setVisible(true);
+                            root.getChildren().get(10).setVisible(true);
                             playAll((Pane) gameplay.getRoot());
                         }
                     }
@@ -293,7 +294,7 @@ public class ApplicationStart extends Application {
     public static void createRound() {
         gameplaySong.play();
         gc.clearRect(0, 0, resolutionX, resolutionY);
-        root.getChildren().add(canvas);
+        gameplayElements.getChildren().add(canvas);
         canvas.setMouseTransparent(true);
         //canvas.setViewOrder(3);
         //root.setPrefSize(resolutionX, resolutionY);
@@ -332,23 +333,23 @@ public class ApplicationStart extends Application {
                 Color.color(1, 1, 1, 0.1));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
-        root.getChildren().add(tempBackground);
+        gameplayElements.getChildren().add(tempBackground);
 
         tempBackground = new Circle(0.5 * resolutionX, 4.6 * resolutionY, 4 * resolutionY,
                 Color.color(1, 1, 1, 0.15));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
-        root.getChildren().add(tempBackground);
+        gameplayElements.getChildren().add(tempBackground);
 
         tempBackground = new Circle(0.5 * resolutionX, 4.8 * resolutionY, 4 * resolutionY,
                 Color.color(1, 1, 1, 0.135));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
-        root.getChildren().add(tempBackground);
+        gameplayElements.getChildren().add(tempBackground);
 
         //floor
         floor.setFill(Color.color(1, 1, 1, 0.3));
-        root.getChildren().add(floor);
+        gameplayElements.getChildren().add(floor);
 
         //Spawn Player
         player = new Player(scale);
@@ -679,7 +680,8 @@ public class ApplicationStart extends Application {
                 if (secSinceGameOver > secBeforeRestart) {
                     saveScore();
                     setGameOverVisible(false);
-                    root.getChildren().remove(rootChildren, root.getChildren().size());
+                    //root.getChildren().remove(rootChildren, root.getChildren().size());
+                    gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                     gameOverState = false;
                     SceneSetup.clearStuff();
                     //resets the time and score before the starting animation begins.
@@ -734,7 +736,7 @@ public class ApplicationStart extends Application {
     private static void removeGameObject(GameObject object) {
         object.setDead();
         for (Node view : object.getView()) {
-            root.getChildren().remove(view);
+            gameplayElements.getChildren().remove(view);
         }
     }
 
@@ -743,7 +745,7 @@ public class ApplicationStart extends Application {
             object.setDead();
 
             for (Node view : object.getView()) {
-                root.getChildren().remove(view);
+                gameplayElements.getChildren().remove(view);
             }
         }
     }
@@ -828,7 +830,7 @@ public class ApplicationStart extends Application {
     }
 
     public static Pane getRoot() {
-        return root;
+        return gameplayElements;
     }
 
     public static GameObject getPlayer() {

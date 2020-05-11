@@ -320,7 +320,7 @@ public abstract class SceneSetup extends ApplicationStart {
         life3.setStyle(lifeStyle + "140");
 
         //Do not change order, if adding another one, change rootChildren
-        root.getChildren().add(0, pauseMenu);
+        root.getChildren().add(0, gameplayElements);
         root.getChildren().add(1, time);
         root.getChildren().add(2, score);
         root.getChildren().add(3, timeDilationBar);
@@ -330,6 +330,7 @@ public abstract class SceneSetup extends ApplicationStart {
         root.getChildren().add(7, gameOverDarken);
         root.getChildren().add(8, timeDilation);
         root.getChildren().add(9, gameOverMenu);
+        root.getChildren().add(10, pauseMenu);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
