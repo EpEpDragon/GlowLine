@@ -409,9 +409,17 @@ public abstract class SceneSetup extends ApplicationStart {
     }
 
     public static void printHighScores() {
-        String[] names = new String[1000];
-        int[] scores = new int[1000];
         try {
+            FileReader lineCounter = new FileReader(highScoreFileName);
+            BufferedReader bufferedCounter = new BufferedReader(lineCounter);
+
+            int lines = 0;
+            while (bufferedCounter.readLine() != null) lines++;
+            lineCounter.close();
+
+            String[] names = new String[lines];
+            int[] scores = new int[lines];
+
             FileReader reader = new FileReader(highScoreFileName);
             BufferedReader bufferedReader = new BufferedReader(reader);
             String currentLine;
