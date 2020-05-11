@@ -82,6 +82,7 @@ public class ApplicationStart extends Application {
 
     //Floor ref
     private static Rectangle floor = new Rectangle(0, resolutionY - 20, resolutionX, 20);
+    private static Rectangle ceiling = new Rectangle(0,0, resolutionX, 30);
 
     //input variables to be used in game loop, this is used to make motion/all actions smooth
     private static Boolean forward = false;
@@ -103,6 +104,10 @@ public class ApplicationStart extends Application {
     private static double lastLanderUpdate;
     private static boolean lighter;
     private static boolean enteringName;
+    private static double gameDifficulty = 1;
+    private static double originalDifficulty = 1;
+    private static double timeOfLevel2;
+    private static boolean savedScore;
     //time Dilation variables...
     private static double timeDilationLastUpdate;
     private static double timeOfPenalty;
@@ -216,6 +221,7 @@ public class ApplicationStart extends Application {
                             playAll((Pane) mainMenu.getRoot());
                             if (root.getChildren().get(9).isVisible()) {
                                 setGameOverVisible(false);
+                                saveScore();
                             }
                             if (root.getChildren().get(0).isVisible()) {
                                 root.getChildren().get(0).setVisible(false);
@@ -293,11 +299,14 @@ public class ApplicationStart extends Application {
 
         setLives(0);
         setTimeDilationFraction(0);
+        gameDifficulty = originalDifficulty;
+        savedScore = false;
         livesLeft = 3;
         lastShot = 0;
         timeDilationLeft = 0;
         timeOfPenalty = 0;
         timeDilationLastUpdate = 0;
+        timeOfLevel2 = -1;
         space = false;
         enteringName = false;
         enemiesKillCount = 0;
@@ -390,9 +399,16 @@ public class ApplicationStart extends Application {
             {
                 gameplaySong.stop();
                 level2Song.play();
+                timeOfLevel2 = time;
             }
             level = 2;
+            if (time-timeOfLevel2 > 5) {
+                double difficultyChangeRate = 1.0/(getOriginalDifficulty()*60); //1 difficulty per 60 seconds if difficulty level set was 1
+                gameDifficulty = getOriginalDifficulty() + (time-timeOfLevel2-5)*difficultyChangeRate;
+            }
         }
+
+
 
         setLives(livesLeft);
 
@@ -409,14 +425,14 @@ public class ApplicationStart extends Application {
 
             // Level 2+
             if (getLevel() > 1) {
-                player.setMaxVelocity(500);
+                player.setMaxVelocity(scale*getDifficulty()*400);
                 if (forward) {
                     player.accelerate(player.getForwardVector().multiply(playerAcceleration));
                 }
             }
             // Level 1
             else {
-                player.setMaxVelocity(300);
+                player.setMaxVelocity(scale*getDifficulty()*300);
                 if (left) {
                     player.accelerate(-playerAcceleration, 0);
                 }
@@ -462,14 +478,21 @@ public class ApplicationStart extends Application {
 
             //TODO wrap collisions into functions
             //Player collision
+            double deltaY;
             collision = player.getCollision(floor);
             if (collision.isCollided()) {
-                double deltaY = collision.getY() - floor.getY();
+                deltaY = collision.getY() - floor.getY();
                 //For bounce
                 //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
                 //No bounce
                 player.setVelocity(player.getVelocity().getX(), 0);
                 player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() - deltaY);
+            }
+            collision = player.getCollision(ceiling);
+            if (collision.isCollided()){
+                deltaY = collision.getY() - ceiling.getHeight();
+                player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
+//                player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() + deltaY);
             }
             for (GameObject enemyBullet : enemyBullets) {
                 collision = player.getCollision(enemyBullet);
@@ -746,6 +769,10 @@ public class ApplicationStart extends Application {
         root.getChildren().get(7).setVisible(visible);
     }
 
+    public static void setSavedScore(boolean saved){
+        savedScore = saved;
+    }
+
     private static void setLives(int livesLeft){
         switch (livesLeft) {
             case 3:
@@ -769,6 +796,10 @@ public class ApplicationStart extends Application {
                 root.getChildren().get(6).setVisible(false);
                 break;
         }
+    }
+
+    public static void setOriginalDifficulty(double difficulty){
+        originalDifficulty = difficulty;
     }
 
     public static void setEnteringName(boolean enteringNameValue){
@@ -844,4 +875,10 @@ public class ApplicationStart extends Application {
     public static int getCurrentScore() {
         return currentScore;
     }
+
+    public static double getDifficulty() {return gameDifficulty; }
+
+    public static double getOriginalDifficulty() {return originalDifficulty; }
+
+    public static boolean getSavedScore() {return savedScore; }
 }

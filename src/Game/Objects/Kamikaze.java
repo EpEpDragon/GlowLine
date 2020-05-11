@@ -7,13 +7,12 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import static Game.ApplicationStart.getEmitters;
-import static Game.ApplicationStart.getPlayer;
+import static Game.ApplicationStart.*;
 
 public class Kamikaze extends GameObject{
     private int acceleration = 900;
     public Kamikaze(double scale){
-        super(900*scale, Color.WHITE, Color.BLACK, "kamikaze", new Circle(18*scale, Color.TRANSPARENT),
+        super(900*scale*getDifficulty(), Color.WHITE, Color.BLACK, "kamikaze", new Circle(18*scale, Color.TRANSPARENT),
                 new Circle(20*scale, Color.TRANSPARENT),
                 new Circle(15*scale, Color.TRANSPARENT),
                 new Circle(10*scale, Color.TRANSPARENT));

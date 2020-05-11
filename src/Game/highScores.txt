@@ -1,35 +1,5 @@
-Normal score^20
-Last^19
-Normal score^20
-Second^80
-Normal score^20
-Normal score^20
-Highest^90
-Unknown User^0
-Unknown User^100
-Unknown User^60
-Unknown User^0
-Unknown User^0
-Unknown User^80
-Unknown User^100
-Unknown User^1340
-Unknown User^20
-Unknown User^220
-Unknown User^740
-Unknown User^40
-Unknown User^120
-Unknown User^20
-Unknown User^0
-Unknown User^0
-Unknown User^0
-Unknown User^80
-Unknown User^5000
-Unknown User^1420
-Unknown User^820
-Unknown User^760
-Unknown User^320
-Unknown User^40
-Unknown User^60
-Unknown User^20
-Unknown User^1
-Unknown User^0
+
+trying, 50%^380
+pietie, 85%^40
+Unknown User, 50%^0
+Pietie, 50%^40

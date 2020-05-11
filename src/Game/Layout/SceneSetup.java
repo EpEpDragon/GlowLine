@@ -34,6 +34,8 @@ public abstract class SceneSetup extends ApplicationStart {
     static private Label highScores = new Label();
     static private Rectangle timeDilationBar = new Rectangle(170, 40, LIGHTGREEN);
     static private SwellButton restart = new SwellButton("Restart", 500, true);
+    static final double difficultyMaxDeviation = 0.6;
+    static private Slider difficulty = new Slider(1-difficultyMaxDeviation, 1+difficultyMaxDeviation, 1);
     static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
     static private javafx.scene.image.Image background;
@@ -142,6 +144,11 @@ public abstract class SceneSetup extends ApplicationStart {
             fxPanel.setScene(mainMenu);
         });
 
+        Label difficultyLabel = new Label("Set difficulty:");
+        Label difficultyExplanation = new Label("This effects the starting difficulty, as well as the\nrate at which the difficulty increases in level 2.");
+        difficultyExplanation.setStyle("-fx-font-size: 15px; -fx-text-alignment: center");
+        difficultyExplanation.setPadding(new Insets(-5,0,5,0));
+
         //Layout
         Label title = new Label("Controls");
         title.setId("subTitle");
@@ -163,16 +170,17 @@ public abstract class SceneSetup extends ApplicationStart {
         controls.add(dilateA, 0, 3);
         controls.add(dilateB, 1, 3);
 
-        Slider difficulty = new Slider(0, 100, 50);
-        difficulty.setAccessibleText("ksdjfh");
         difficulty.setMaxWidth(300);
         difficulty.setStyle("-fx-fill: black");
         difficulty.setOnMouseReleased(e ->{
-
+            setOriginalDifficulty(difficulty.getValue());
         });
 
-        VBox layout = new VBox(title, controls, difficulty, back);
-        layout.setSpacing(70);
+        VBox difficultyLayout = new VBox(difficultyLabel, difficultyExplanation, difficulty);
+        difficultyLayout.setSpacing(10);
+        difficultyLayout.setAlignment(Pos.CENTER);
+        VBox layout = new VBox(title, controls, difficultyLayout, back);
+        layout.setSpacing(50);
         layout.setAlignment(Pos.CENTER);
 
         controlsMenu = new Scene(layout);
@@ -233,6 +241,7 @@ public abstract class SceneSetup extends ApplicationStart {
         });
         enterName.setOnAction(e -> {
             saveScore();
+            setSavedScore(true);
         });
 
         VBox gameOverMenu = new VBox(gameOver, gameOver2, restart, toMain2, enterName);
@@ -245,6 +254,9 @@ public abstract class SceneSetup extends ApplicationStart {
         toMain2.setFocusTraversable(false);
         toMain2.setOnAction(e -> {
             if (restart.isFinished()) {
+                if (!getSavedScore()){
+                    saveScore();
+                }
                 stopGamePlaySongs();
                 startMainMenuSong();
                 setGameOverVisible(false);
@@ -261,6 +273,9 @@ public abstract class SceneSetup extends ApplicationStart {
         restart.setFocusTraversable(false);
         restart.setOnAction(e -> {
                     if (restart.isFinished()) {
+                        if (!getSavedScore()){
+                            saveScore();
+                        }
                         setGameOverVisible(false);
                         timer.stop();
                         //Pause menu is index 0, HUD index 1, gameOver menu index 2
@@ -345,10 +360,11 @@ public abstract class SceneSetup extends ApplicationStart {
                 FileWriter writer = new FileWriter(highScoreFileName, true);
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);
                 bufferedWriter.newLine();
+                int difficultyPercentage = (int) (100*((getOriginalDifficulty()-1+difficultyMaxDeviation)/(difficultyMaxDeviation*2)));
                 if (enterName.getText().equals("")) {
-                    bufferedWriter.write("Unknown User" + "^" + getCurrentScore());
+                    bufferedWriter.write("Unknown User, " + difficultyPercentage + "%^" + getCurrentScore());
                 } else {
-                    bufferedWriter.write(enterName.getText() + "^" + getCurrentScore());
+                    bufferedWriter.write(enterName.getText() + ", " + difficultyPercentage + "%^" + getCurrentScore());
                 }
                 bufferedWriter.close();
                 enterName.setText("");
@@ -457,7 +473,9 @@ public abstract class SceneSetup extends ApplicationStart {
                 highScores = highScores + "\n" + names[i] + " - " + scores[i];
             }
             reader.close();
-            SceneSetup.highScores.setText(highScores.substring(1));
+            if (highScores.length() > 1) {
+                SceneSetup.highScores.setText(highScores.substring(1));
+            }
         } catch (IOException ignored) {
             SceneSetup.highScores.setText("File not found...");
         }

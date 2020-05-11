@@ -8,7 +8,7 @@ import javafx.scene.Node;
 public abstract class Spawner extends ApplicationStart {
     //Lander spawn time
     static final int landerSpawnTime = 2;
-    static double previousTimeLander = landerSpawnTime; //if changed, change in resetSpawner as well
+    static double previousTimeLander = 0; //if changed, change in resetSpawner as well
 
     //LanderLevel1 spawn time
     static final int landerL1SpawnTime = 2;
@@ -18,8 +18,8 @@ public abstract class Spawner extends ApplicationStart {
     static double previousTimeLanderL1 = -landerL1SpawnTime;//if changed, change in resetSpawner as well
 
     //Kamikaze spawn time
-    static final int kamikazeSpawnTime = 3;
-    static double previousTimeKamikaze = kamikazeSpawnTime;//if changed, change in resetSpawner as well
+    static final int kamikazeSpawnTime = 5;
+    static double previousTimeKamikaze = 0;//if changed, change in resetSpawner as well
 
     public static void spawnPass(double time){
         //Level 2+
@@ -82,8 +82,8 @@ public abstract class Spawner extends ApplicationStart {
     public static void resetSpawner() {
         landerL1Done = 0;
         previousTimeLanderL1 = -landerL1SpawnTime;
-        previousTimeKamikaze = kamikazeSpawnTime;
-        previousTimeLander = landerSpawnTime;
+        previousTimeKamikaze = 0;
+        previousTimeLander = 0;
     }
 
 }
