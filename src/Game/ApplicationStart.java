@@ -58,6 +58,7 @@ public class ApplicationStart extends Application {
     protected static String shooterFile = "src/Game/AudioFiles/shooter.mp3";
     protected static String deadFile = "src/Game/AudioFiles/dead.mp3";
     protected static String screamFile = "src/Game/AudioFiles/scream.mp3";
+    protected static String explosionFile = "src/Game/AudioFiles/explosion.mp3";
     protected static String gameplaySongFile = "src/Game/AudioFiles/cantina.mp3";
     protected static String level2SongFile = "src/Game/AudioFiles/level2.mp3";
 
@@ -114,6 +115,7 @@ public class ApplicationStart extends Application {
     private static AudioClip shooterSound = new AudioClip(new File(shooterFile).toURI().toString());
     private static AudioClip deadSound = new AudioClip(new File(deadFile).toURI().toString());
     private static AudioClip screamSound = new AudioClip(new File(screamFile).toURI().toString());
+    private static AudioClip explosionSound = new AudioClip(new File(explosionFile).toURI().toString());
     private static AudioClip gameplaySong = new AudioClip(new File(gameplaySongFile).toURI().toString());
     private static AudioClip level2Song = new AudioClip(new File(level2SongFile).toURI().toString());
 
@@ -476,8 +478,7 @@ public class ApplicationStart extends Application {
                         removeGameObjectAll(enemyBullet, player);
                         gameOver();
                     } else {
-                        livesLeft -= 1;
-                        enemiesKillCount += 1;
+                        lostLife();
                         removeGameObject(enemyBullet);
                     }
                 }
@@ -507,8 +508,7 @@ public class ApplicationStart extends Application {
                     }
                 }
                 else {
-                    livesLeft -= 1;
-                    enemiesKillCount += 1;
+                    lostLife();
                     removeGameObject(lander);
                 }
             }
@@ -520,7 +520,7 @@ public class ApplicationStart extends Application {
                     removeGameObjectAll(lander, bullet);
                     currentScore += 20;
                     lastScoreUpdate = time;
-                    screamSound.play();
+                    explosionSound.play();
                 }
             }
             if (level == 1) {
@@ -543,8 +543,7 @@ public class ApplicationStart extends Application {
                             lander.setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (time - lastLanderUpdate) / landerUpdateTime));
                         }
                     } else {
-                        livesLeft -=1;
-                        enemiesKillCount += 1;
+                        lostLife();
                         removeGameObject(lander);
                     }
                 }
@@ -560,7 +559,7 @@ public class ApplicationStart extends Application {
                         removeGameObjectAll(enemyBullet, allyBullet);
                         currentScore += 100;
                         lastScoreUpdate = time;
-                        screamSound.play();
+                        explosionSound.play();
                     }
                 }
 
@@ -698,6 +697,12 @@ public class ApplicationStart extends Application {
             setTimeDilationFraction(timeDilationLeft/timeDilationMax);
             timeDilationLastUpdate = time;
         }
+    }
+
+    private static void lostLife(){
+        livesLeft -= 1;
+        screamSound.play();
+        enemiesKillCount += 1;
     }
 
     private static void removeGameObject(GameObject object) {
