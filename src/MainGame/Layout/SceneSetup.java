@@ -329,9 +329,9 @@ public abstract class SceneSetup {
         life2.setContent(SVGShape);
         life3.setContent(SVGShape);
         String lifeStyle = "-fx-fill: indianred; -fx-stroke: transparent; -fx-translate-y: 150; -fx-translate-x: ";
-        life1.setStyle(lifeStyle + "20");
-        life2.setStyle(lifeStyle + "80");
-        life3.setStyle(lifeStyle + "140");
+        life1.setStyle(lifeStyle + "27");
+        life2.setStyle(lifeStyle + "87");
+        life3.setStyle(lifeStyle + "147");
 
         //Do not change order, if adding another one, change rootChildren
         root.getChildren().add(0, gameplayElements);
