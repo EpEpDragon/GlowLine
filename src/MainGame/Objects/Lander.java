@@ -42,12 +42,6 @@ public class Lander extends GameObject {
         landerCollision(collision);
     }
 
-    @Override
-    public void setDead() {
-        super.setDead();
-        getEmitters().add(new Emitter(5000, 500, Color.hsb(0, 0.7, 0.7), Color.hsb(0, 0.7, 0.2), 10, 1, "0", Math.PI * 2, 0, 0.3, 0.1, this));
-    }
-
     private void landerCollision(Collision collision) {
         //if lander (collided with floor) or (collided with player)
         if (collision.isCollided()) {
