@@ -52,7 +52,7 @@ public class OwnMath {
     }
 
     public static int getPlaceValue(int number, int place) {
-        return (number % (place * 10) - number % place)/place;
+        return (number % (place * 10) - number % place) / place;
     }
 
     public static Point2D rotateVec(double x, double y, double rad) {

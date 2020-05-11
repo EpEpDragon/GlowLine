@@ -13,7 +13,7 @@ public class TypingLabel extends Label {
     TypingLabel(String text, int letterPerSecond) {
         super();
         this.text = text;
-        int durationMilli = Math.round((float) text.length()/letterPerSecond * 1000);
+        int durationMilli = Math.round((float) text.length() / letterPerSecond * 1000);
 
         //Typing anim
         typing = new Transition() {
@@ -35,6 +35,11 @@ public class TypingLabel extends Label {
         typing.play();
     }
 
-    public void play() { typing.playFrom(new Duration(0)); }
-    public boolean isFinished(){ return finished; }
+    public void play() {
+        typing.playFrom(new Duration(0));
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
 }

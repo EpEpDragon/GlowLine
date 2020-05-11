@@ -5,13 +5,15 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-import static MainGame.ApplicationStart.*;
+import static MainGame.MainGame.*;
 import static MainGame.Math.OwnMath.colorLerp;
+import static MainGame.Objects.gameStateHandler.*;
 
-public class Player extends GameObject{
+public class Player extends GameObject {
     private static double rechargeTime = 0.5;
+
     public Player(double scale) {
-        super(500, Color.WHEAT, Color.BLACK, "ally", new Polygon(20*scale, 0*scale, -18*scale, 18*scale, -18*scale, -18*scale));
+        super(500, Color.WHEAT, Color.BLACK, "ally", new Polygon(20 * scale, 0 * scale, -18 * scale, 18 * scale, -18 * scale, -18 * scale));
 //        for(Node view: getView()){
 //            view.setViewOrder(1);
 //        }
@@ -20,21 +22,18 @@ public class Player extends GameObject{
     @Override
     public void update(double deltaTime) {
         super.update(deltaTime);
-        for(Node view : getView()) {
+        for (Node view : getView()) {
             //Level 1 turret must not be able to aim below horizontal
-            if (getLevel()>1) {
+            if (getLevel() > 1) {
                 setRotation(OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true));
-            }
-            else {
+            } else {
                 double newAngle = OwnMath.relativeDeltaAngle(view.getTranslateX(), view.getTranslateY(), getMouseX(), getMouseY(), true);
-                if (newAngle<0) {
+                if (newAngle < 0) {
                     setRotation(newAngle);
-                }
-                else {
-                    if (newAngle<(Math.PI/2) && newAngle>(-Math.PI/2)) {
+                } else {
+                    if (newAngle < (Math.PI / 2) && newAngle > (-Math.PI / 2)) {
                         setRotation(0);
-                    }
-                    else{
+                    } else {
                         setRotation(Math.PI);
                     }
                 }
@@ -71,9 +70,9 @@ public class Player extends GameObject{
         }
 
         collision = getCollision(getCeiling());
-        if (collision.isCollided()){
+        if (collision.isCollided()) {
             deltaY = collision.getY() - getCeiling().getHeight();
-            setVelocity(getVelocity().getX(), getVelocity().getY() - deltaY/deltaTime);
+            setVelocity(getVelocity().getX(), getVelocity().getY() - deltaY / deltaTime);
 //                player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() + deltaY);
         }
         for (GameObject enemyBullet : getEnemyBullets()) {
@@ -91,7 +90,7 @@ public class Player extends GameObject{
     }
 
     public int getAcceleration() {
-        //px/s
+        //px.s
         return 800;
     }
 

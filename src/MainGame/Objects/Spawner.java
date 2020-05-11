@@ -5,10 +5,10 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import static MainGame.ApplicationStart.*;
+import static MainGame.MainGame.*;
+import static MainGame.Objects.gameStateHandler.getLevel;
 
-
-public abstract class Spawner{
+public abstract class Spawner {
     //Lander spawn time
     static final int landerSpawnTime = 2;
     static double previousTimeLander = 0; //if changed, change in resetSpawner as well
@@ -24,9 +24,9 @@ public abstract class Spawner{
     static final int kamikazeSpawnTime = 5;
     static double previousTimeKamikaze = 0;//if changed, change in resetSpawner as well
 
-    public static void spawnPass(double time){
+    public static void spawnPass(double time) {
         //Level 2+
-        if (getLevel()>1) {
+        if (getLevel() > 1) {
             //Lander spawn logic
             if (time - previousTimeLander >= landerSpawnTime) {
                 addGameObject(new Lander(getScale()), OwnMath.clamp(getResolutionX() * Math.random(), getResolutionX() * 0.1, getResolutionX() * 0.9), getResolutionY() * -0.1);
@@ -40,10 +40,10 @@ public abstract class Spawner{
             }
         }
         // level 1
-        else{
-            if (landerL1Done<landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
+        else {
+            if (landerL1Done < landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
                 for (int i = 1; i <= landerL1Columns; i++) {
-                    addGameObject(new LanderLevel1(getScale()), (getResolutionX()/(float)(landerL1Columns + 1)) * i - 50*getScale()/2, getResolutionY() * -0.05);
+                    addGameObject(new LanderLevel1(getScale()), (getResolutionX() / (float) (landerL1Columns + 1)) * i - 50 * getScale() / 2, getResolutionY() * -0.05);
                 }
                 previousTimeLanderL1 = time;
                 landerL1Done++;
@@ -68,11 +68,11 @@ public abstract class Spawner{
     }
 
     public static void spawnGameObject(GameObject object, double x, double y) {
-        for(Node view : object.getView()) {
+        for (Node view : object.getView()) {
             view.setTranslateX(x);
             view.setTranslateY(y);
 
-            getRoot().getChildren().add(view);
+            getGameplayElements().getChildren().add(view);
         }
         object.getCollisionShape().setTranslateX(x);
         object.getCollisionShape().setTranslateY(y);
@@ -81,7 +81,7 @@ public abstract class Spawner{
     public static void removeGameObject(GameObject object) {
         object.setDead();
         for (Node view : object.getView()) {
-            gameplayElements.getChildren().remove(view);
+            getGameplayElements().getChildren().remove(view);
         }
     }
 
@@ -90,13 +90,13 @@ public abstract class Spawner{
             object.setDead();
 
             for (Node view : object.getView()) {
-                gameplayElements.getChildren().remove(view);
+                getGameplayElements().getChildren().remove(view);
             }
         }
     }
 
     public static int getL1EnemyCount() {
-        return landerL1Columns*landerL1Rows;
+        return landerL1Columns * landerL1Rows;
     }
 
     public static void resetSpawner() {
@@ -106,25 +106,25 @@ public abstract class Spawner{
         previousTimeLander = 0;
     }
 
-    public static void spawnBackground(){
+    public static void spawnBackground() {
         //Background (atmosphere)
         Node tempBackground;
         tempBackground = new Circle(0.5 * getResolutionX(), 4.2 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.1));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
-        gameplayElements.getChildren().add(tempBackground);
+        getGameplayElements().getChildren().add(tempBackground);
 
         tempBackground = new Circle(0.5 * getResolutionX(), 4.6 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.15));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
-        gameplayElements.getChildren().add(tempBackground);
+        getGameplayElements().getChildren().add(tempBackground);
 
         tempBackground = new Circle(0.5 * getResolutionX(), 4.8 * getResolutionY(), 4 * getResolutionY(),
                 Color.color(1, 1, 1, 0.135));
         tempBackground.setMouseTransparent(true);
         //tempBackground.setViewOrder(4);
-        gameplayElements.getChildren().add(tempBackground);
+        getGameplayElements().getChildren().add(tempBackground);
     }
 }

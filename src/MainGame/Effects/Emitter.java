@@ -25,18 +25,18 @@ public class Emitter {
     String direction;
     GameObject owner;
 
-    public Emitter(int spawnRate, int particleSpeed, Color colorS, Color colorE, double radius, double particleLifetime, String direction, double spread, double taperRate, double speedVariation, double emitterLifetime, GameObject owner){
+    public Emitter(int spawnRate, int particleSpeed, Color colorS, Color colorE, double radius, double particleLifetime, String direction, double spread, double taperRate, double speedVariation, double emitterLifetime, GameObject owner) {
         this.spawnRate = spawnRate;
         this.particleSpeed = particleSpeed;
         this.colorS = colorS;
         this.colorE = colorE;
         this.radius = radius;
-        this.particleDecay = 1/particleLifetime;
+        this.particleDecay = 1 / particleLifetime;
 
-        if(emitterLifetime == -1){
+        if (emitterLifetime == -1) {
             this.emitterDecay = 0;
-        }else{
-            this.emitterDecay = 1/emitterLifetime;
+        } else {
+            this.emitterDecay = 1 / emitterLifetime;
         }
 
         this.direction = direction;
@@ -51,18 +51,18 @@ public class Emitter {
             for (int i = 0; i < spawnRate * deltaTime; i++) {
                 double offset = (Math.random() - 0.5) * spread * 2;
                 double rotation = 0;
-                switch (direction){
+                switch (direction) {
                     case "forward":
                         rotation = owner.getRotation();
                         break;
                     case "backwards":
-                        rotation = owner.getRotation()-Math.PI;
+                        rotation = owner.getRotation() - Math.PI;
                         break;
                     case "velocity":
-                        rotation = OwnMath.relativeDeltaAngle(new Point2D(0,0), owner.getVelocity().normalize(), true);
+                        rotation = OwnMath.relativeDeltaAngle(new Point2D(0, 0), owner.getVelocity().normalize(), true);
                         break;
                     case "-velocity":
-                        rotation = OwnMath.relativeDeltaAngle(new Point2D(0,0), owner.getVelocity().normalize(), true) - Math.PI;
+                        rotation = OwnMath.relativeDeltaAngle(new Point2D(0, 0), owner.getVelocity().normalize(), true) - Math.PI;
                         break;
                     case "0":
                         rotation = 0;
@@ -79,25 +79,25 @@ public class Emitter {
                 Point2D v = owner.getVelocity();
                 velocity = velocity.add(owner.getVelocity());
 
-                particles.add(new Particle(owner.getX() - radius/2, owner.getY() - radius/2 , (int)radius, colorS, colorE, velocity, particleDecay, deltaTime));
+                particles.add(new Particle(owner.getX() - radius / 2, owner.getY() - radius / 2, (int) radius, colorS, colorE, velocity, particleDecay, deltaTime));
             }
         }
     }
 
-    public void update(double deltaTime){
-        for(Iterator<Particle> it = particles.iterator(); it.hasNext();){
+    public void update(double deltaTime) {
+        for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
             Particle p = it.next();
             p.update();
             p.render();
-            if(p.isDead()){
+            if (p.isDead()) {
                 it.remove();
             }
         }
-        emitterLife -= emitterDecay*deltaTime;
+        emitterLife -= emitterDecay * deltaTime;
     }
 
-    public boolean isDead(){
-        if((emitterLife <= 0 || owner.isDead()) && particles.isEmpty()){
+    public boolean isDead() {
+        if ((emitterLife <= 0 || owner.isDead()) && particles.isEmpty()) {
             return true;
         }
         return false;

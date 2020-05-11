@@ -1,6 +1,6 @@
 package MainGame.Effects;
 
-import MainGame.ApplicationStart;
+import MainGame.MainGame;
 import MainGame.Math.OwnMath;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,32 +29,32 @@ public class Particle {
         this.decay = decay;
         this.deltaTime = deltaTime;
 
-        gc = ApplicationStart.getGc();
+        gc = MainGame.getGc();
     }
 
-    public void render(){
-        gc.setFill(OwnMath.colorLerp(colorS, colorE, OwnMath.clamp(1-life,0,1)));
+    public void render() {
+        gc.setFill(OwnMath.colorLerp(colorS, colorE, OwnMath.clamp(1 - life, 0, 1)));
         gc.setGlobalAlpha(life);
-        gc.fillOval(x,y,radius,radius);
+        gc.fillOval(x, y, radius, radius);
     }
 
-    public void update(){
-        x += velocity.getX()*deltaTime;
-        y += velocity.getY()*deltaTime;
+    public void update() {
+        x += velocity.getX() * deltaTime;
+        y += velocity.getY() * deltaTime;
 
         //Bounce off floor
-        if(y >= ApplicationStart.getResolutionY() - 20 - radius){
-            y = ApplicationStart.getResolutionY() - 20 - radius;
-            velocity = new Point2D(velocity.getX(), velocity.getY()*-Math.abs(Math.sin(velocity.getX()/velocity.distance(0,0))));
+        if (y >= MainGame.getResolutionY() - 20 - radius) {
+            y = MainGame.getResolutionY() - 20 - radius;
+            velocity = new Point2D(velocity.getX(), velocity.getY() * -Math.abs(Math.sin(velocity.getX() / velocity.distance(0, 0))));
         }
 
         life -= decay * deltaTime;
     }
 
-    public boolean isDead(){
-        if (life <= 0){
+    public boolean isDead() {
+        if (life <= 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

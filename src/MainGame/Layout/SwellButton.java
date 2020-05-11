@@ -107,5 +107,8 @@ public class SwellButton extends Button {
     public boolean isFinished() {
         return finished;
     }
-    public Transition getFade() { return fade; }
+
+    public Transition getFade() {
+        return fade;
+    }
 }

@@ -3,10 +3,11 @@ package MainGame.Objects;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static MainGame.ApplicationStart.*;
+import static MainGame.MainGame.*;
 import static MainGame.Math.OwnMath.colorLerp;
 import static MainGame.Objects.Spawner.removeGameObject;
 import static MainGame.Objects.Spawner.removeGameObjectAll;
+import static MainGame.Objects.gameStateHandler.*;
 
 public class Lander extends GameObject{
     private static boolean lighter;

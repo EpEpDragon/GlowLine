@@ -20,7 +20,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.*;
 
-import static MainGame.ApplicationStart.*;
+import static MainGame.MainGame.*;
+import static MainGame.Objects.gameStateHandler.*;
 import static javafx.scene.paint.Color.*;
 
 public abstract class SceneSetup {
@@ -31,10 +32,11 @@ public abstract class SceneSetup {
     static private Rectangle timeDilationBar = new Rectangle(170, 40, LIGHTGREEN);
     static private SwellButton restart = new SwellButton("Restart", 500, true);
     static final double difficultyMaxDeviation = 0.6;
-    static private Slider difficulty = new Slider(1-difficultyMaxDeviation, 1+difficultyMaxDeviation, 1);
+    static private Slider difficulty = new Slider(1 - difficultyMaxDeviation, 1 + difficultyMaxDeviation, 1);
     static private TextField enterName = new TextField();
     static private boolean readyToResume = false;
     static private javafx.scene.image.Image background;
+
     static {
         try {
             background = new Image(new FileInputStream("src/MainGame/menuBackground.jpg"));
@@ -98,7 +100,7 @@ public abstract class SceneSetup {
         menuButtons.setSpacing(getResolutionY() * 0.02);
         menuButtons.setFillWidth(true);
         menuButtons.setAlignment(Pos.CENTER);
-        menuButtons.setPadding(new Insets(getResolutionY()/3.6, 0, 0, 0));
+        menuButtons.setPadding(new Insets(getResolutionY() / 3.6, 0, 0, 0));
 
         StackPane menuLayout = new StackPane(imageView, title, menuButtons);
         menuLayout.setAlignment(Pos.CENTER);
@@ -143,12 +145,12 @@ public abstract class SceneSetup {
         Label difficultyLabel = new Label("Set difficulty:");
         Label difficultyExplanation = new Label("This effects the starting difficulty, as well as the\nrate at which the difficulty increases in level 2.");
         difficultyExplanation.setStyle("-fx-font-size: 15px; -fx-text-alignment: center");
-        difficultyExplanation.setPadding(new Insets(-5,0,5,0));
+        difficultyExplanation.setPadding(new Insets(-5, 0, 5, 0));
 
         //Layout
         Label title = new Label("Controls");
         title.setId("subTitle");
-        title.setPadding(new Insets(-30,0,0,0));
+        title.setPadding(new Insets(-30, 0, 0, 0));
 
         GridPane controls = new GridPane();
         controls.setVgap(15);
@@ -172,7 +174,7 @@ public abstract class SceneSetup {
 
         difficulty.setMaxWidth(300);
         difficulty.setStyle("-fx-fill: black");
-        difficulty.setOnMouseReleased(e ->{
+        difficulty.setOnMouseReleased(e -> {
             setOriginalDifficulty(difficulty.getValue());
         });
         difficulty.setOnMouseReleased(e -> setOriginalDifficulty(difficulty.getValue()));
@@ -230,8 +232,8 @@ public abstract class SceneSetup {
         Label gameOver2 = new Label("OVER");
         gameOver.setId("gameOver");
         gameOver2.setId("gameOver");
-        gameOver.setPadding(new Insets(-100,0,-110,0));
-        gameOver2.setPadding(new Insets(0,0,-40,0));
+        gameOver.setPadding(new Insets(-100, 0, -110, 0));
+        gameOver2.setPadding(new Insets(0, 0, -40, 0));
 
         enterName.setMaxWidth(500);
         //remove focus from enterName so that it doesn't fill with spaces if user was using time dilation when gameover
@@ -253,7 +255,7 @@ public abstract class SceneSetup {
         toMain2.setFocusTraversable(false);
         toMain2.setOnAction(e -> {
             if (restart.isFinished()) {
-                if (!getSavedScore()){
+                if (!getSavedScore()) {
                     saveScore();
                 }
                 stopGamePlaySongs();
@@ -271,7 +273,7 @@ public abstract class SceneSetup {
         restart.setFocusTraversable(false);
         restart.setOnAction(e -> {
                     if (restart.isFinished()) {
-                        if (!getSavedScore()){
+                        if (!getSavedScore()) {
                             saveScore();
                         }
                         setGameOverVisible(false);
@@ -370,7 +372,7 @@ public abstract class SceneSetup {
                 FileWriter writer = new FileWriter(getHighScoreFileName(), true);
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);
                 bufferedWriter.newLine();
-                int difficultyPercentage = (int) (100*((getOriginalDifficulty()-1+difficultyMaxDeviation)/(difficultyMaxDeviation*2)));
+                int difficultyPercentage = (int) (100 * ((getOriginalDifficulty() - 1 + difficultyMaxDeviation) / (difficultyMaxDeviation * 2)));
                 if (enterName.getText().equals("")) {
                     bufferedWriter.write("Unknown User, " + difficultyPercentage + "%^" + getCurrentScore());
                 } else {
@@ -395,11 +397,11 @@ public abstract class SceneSetup {
         getEmitters().clear();
     }
 
-    public static void setTimeDilationFraction(double fraction){
-        timeDilationBar.setWidth(fraction*170);
+    public static void setTimeDilationFraction(double fraction) {
+        timeDilationBar.setWidth(fraction * 170);
     }
 
-    public static void setTimeDilationColor(Color barColor){
+    public static void setTimeDilationColor(Color barColor) {
         timeDilationBar.setFill(barColor);
     }
 

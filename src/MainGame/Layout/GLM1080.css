@@ -1,16 +1,16 @@
-.root{
-     -fx-background-color: black;
-     -fx-font: 30px FreeMono;
- }
+.root {
+    -fx-background-color: black;
+    -fx-font: 30px FreeMono;
+}
 
-.button{
+.button {
     -fx-background-color: black;
     -fx-border-style: solid;
     -fx-border-color: white;
     -fx-text-fill: white;
 }
 
-.label{
+.label {
     -fx-text-fill: white;
 }
 
@@ -18,11 +18,11 @@
     -fx-background-color: #7a7a7a;
 }
 
-.slider .thumb{
-     -fx-background-color: #f9f9f9;
+.slider .thumb {
+    -fx-background-color: #f9f9f9;
 }
 
-.text-field{
+.text-field {
     -fx-background-color: black;
     -fx-prompt-text-fill: #717171;
     -fx-text-fill: white;
@@ -34,15 +34,15 @@
     -fx-background-color: transparent;
 }
 
-.scroll-pane .viewport{
+.scroll-pane .viewport {
     -fx-background-color: transparent;
 }
 
-.scroll-pane .content{
+.scroll-pane .content {
     -fx-background-color: transparent;
 }
 
-#controlLabel{
+#controlLabel {
     -fx-border-style: solid;
     -fx-border-color: white;
     -fx-padding: 10px 20px 10px 20px;
@@ -50,16 +50,16 @@
     -fx-alignment: CENTER;
 }
 
-#title{
+#title {
     -fx-font-size: 250px;
     -fx-text-fill: #f4f4f4;
 }
 
-#gameOver{
+#gameOver {
     -fx-font-size: 200px;
     -fx-font-style: italic;
 }
 
-#subTitle{
+#subTitle {
     -fx-font-size: 65px;
 }
