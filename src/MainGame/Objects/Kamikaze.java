@@ -11,7 +11,7 @@ import static MainGame.Objects.Spawner.removeGameObjectAll;
 import static MainGame.Objects.gameStateHandler.*;
 
 public class Kamikaze extends GameObject {
-    private int acceleration = 900;
+    private int acceleration = 1300;
 
     public Kamikaze(double scale) {
         super(900 * scale * getDifficulty(), Color.WHITE, Color.BLACK, "kamikaze", new Circle(18 * scale, Color.TRANSPARENT),
@@ -25,6 +25,9 @@ public class Kamikaze extends GameObject {
         super.update(deltaTime);
         //Accelerate to player
         Point2D interceptVec = OwnMath.findInterceptVector(new Point2D(getView()[0].getTranslateX(), getView()[0].getTranslateY()), new Point2D(getPlayer().getView()[0].getTranslateX(), getPlayer().getView()[0].getTranslateY()), getVelocity(), getPlayer().getVelocity(), getMaxVelocity()).normalize();
+        if (interceptVec.getX() > (float)getResolutionX()/4){
+            interceptVec = new Point2D(-interceptVec.getX(), interceptVec.getY());
+        }
         accelerate(interceptVec.multiply(acceleration * deltaTime));
     }
 
