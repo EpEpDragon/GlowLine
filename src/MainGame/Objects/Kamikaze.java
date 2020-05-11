@@ -1,13 +1,12 @@
-package Game.Objects;
+package MainGame.Objects;
 
-import Game.Effects.Emitter;
-import Game.Math.OwnMath;
+import MainGame.Effects.Emitter;
+import MainGame.Math.OwnMath;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import static Game.ApplicationStart.*;
+import static MainGame.ApplicationStart.*;
 
 public class Kamikaze extends GameObject{
     private int acceleration = 900;

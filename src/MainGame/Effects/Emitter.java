@@ -1,8 +1,7 @@
-package Game.Effects;
+package MainGame.Effects;
 
-import Game.Objects.GameObject;
-import Game.Math.OwnMath;
-import javafx.animation.Interpolator;
+import MainGame.Objects.GameObject;
+import MainGame.Math.OwnMath;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 

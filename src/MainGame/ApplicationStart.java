@@ -1,9 +1,8 @@
-package Game;
+package MainGame;
 
-import Game.Effects.Emitter;
-import Game.Layout.SceneSetup;
-import Game.Objects.*;
-import javafx.animation.AnimationTimer;
+import MainGame.Effects.Emitter;
+import MainGame.Layout.SceneSetup;
+import MainGame.Objects.*;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -11,18 +10,13 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import javafx.stage.Screen;
 import javafx.scene.canvas.Canvas;
 import javafx.util.Duration;
 
@@ -32,15 +26,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static Game.Layout.SceneSetup.*;
-import static Game.Math.OwnMath.colorLerp;
-import static Game.Math.OwnMath.getPlaceValue;
-import static Game.Objects.Spawner.*;
+import static MainGame.Layout.SceneSetup.*;
+import static MainGame.Math.OwnMath.colorLerp;
+import static MainGame.Math.OwnMath.getPlaceValue;
+import static MainGame.Objects.Spawner.*;
 
 public class ApplicationStart extends Application {
     static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -53,14 +46,14 @@ public class ApplicationStart extends Application {
     private static boolean FULLSCREEN = false;
 
     //File locations
-    protected static String highScoreFileName = "src/Game/highScores.txt";
-    protected static String mainMenuSongFile = "src/Game/AudioFiles/mainMenu.mp3";
-    protected static String shooterFile = "src/Game/AudioFiles/shooter.mp3";
-    protected static String deadFile = "src/Game/AudioFiles/dead.mp3";
-    protected static String screamFile = "src/Game/AudioFiles/scream.mp3";
-    protected static String explosionFile = "src/Game/AudioFiles/explosion.mp3";
-    protected static String gameplaySongFile = "src/Game/AudioFiles/cantina.mp3";
-    protected static String level2SongFile = "src/Game/AudioFiles/level2.mp3";
+    protected static String highScoreFileName = "src/MainGame/highScores.txt";
+    protected static String mainMenuSongFile = "src/MainGame/AudioFiles/mainMenu.mp3";
+    protected static String shooterFile = "src/MainGame/AudioFiles/shooter.mp3";
+    protected static String deadFile = "src/MainGame/AudioFiles/dead.mp3";
+    protected static String screamFile = "src/MainGame/AudioFiles/scream.mp3";
+    protected static String explosionFile = "src/MainGame/AudioFiles/explosion.mp3";
+    protected static String gameplaySongFile = "src/MainGame/AudioFiles/cantina.mp3";
+    protected static String level2SongFile = "src/MainGame/AudioFiles/level2.mp3";
 
     //Root of scene
     private static final Pane root = new Pane();
@@ -216,8 +209,7 @@ public class ApplicationStart extends Application {
                             stopGamePlaySongs();
                             startMainMenuSong();
                             timer.stop();
-                            //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                            root.getChildren().remove(rootChildren, root.getChildren().size());
+                            gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                             SceneSetup.clearStuff();
                             fxPanel.setScene(mainMenu);
                             playAll((Pane) mainMenu.getRoot());
@@ -680,7 +672,6 @@ public class ApplicationStart extends Application {
                 if (secSinceGameOver > secBeforeRestart) {
                     saveScore();
                     setGameOverVisible(false);
-                    //root.getChildren().remove(rootChildren, root.getChildren().size());
                     gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                     gameOverState = false;
                     SceneSetup.clearStuff();

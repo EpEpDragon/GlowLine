@@ -1,11 +1,11 @@
-package Game.Objects;
+package MainGame.Objects;
 
-import Game.Math.OwnMath;
+import MainGame.Math.OwnMath;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-import static Game.ApplicationStart.*;
+import static MainGame.ApplicationStart.*;
 
 public class Player extends GameObject{
 

@@ -1,15 +1,13 @@
-package Game.Layout;
+package MainGame.Layout;
 
-import Game.ApplicationStart;
+import MainGame.ApplicationStart;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -21,8 +19,6 @@ import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 
 import static javafx.scene.paint.Color.*;
@@ -41,7 +37,7 @@ public abstract class SceneSetup extends ApplicationStart {
     static private javafx.scene.image.Image background;
     static {
         try {
-            background = new Image(new FileInputStream("src/Game/menuBackground.jpg"));
+            background = new Image(new FileInputStream("src/MainGame/menuBackground.jpg"));
         } catch (FileNotFoundException ignore) {
         }
     }
@@ -111,7 +107,7 @@ public abstract class SceneSetup extends ApplicationStart {
         menuLayout.setAlignment(Pos.CENTER);
 
         mainMenu = new Scene(menuLayout, resolutionX, resolutionY, Color.BLACK);
-        mainMenu.getStylesheets().add("Game/Layout/GLM1080.css");
+        mainMenu.getStylesheets().add("MainGame/Layout/GLM1080.css");
 
         return mainMenu;
     }
@@ -184,7 +180,7 @@ public abstract class SceneSetup extends ApplicationStart {
         layout.setAlignment(Pos.CENTER);
 
         controlsMenu = new Scene(layout);
-        controlsMenu.getStylesheets().add("Game/Layout/GLM1080.css");
+        controlsMenu.getStylesheets().add("MainGame/Layout/GLM1080.css");
         return controlsMenu;
     }
 
@@ -205,8 +201,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 startMainMenuSong();
                 pauseMenu.setVisible(false);
                 timer.stop();
-                //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(rootChildren, root.getChildren().size());
+                gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
                 playAll((Pane) mainMenu.getRoot());
@@ -261,8 +256,7 @@ public abstract class SceneSetup extends ApplicationStart {
                 startMainMenuSong();
                 setGameOverVisible(false);
                 timer.stop();
-                //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                root.getChildren().remove(rootChildren, root.getChildren().size());
+                gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                 clearStuff();
                 fxPanel.setScene(mainMenu);
                 playAll((Pane) mainMenu.getRoot());
@@ -278,11 +272,9 @@ public abstract class SceneSetup extends ApplicationStart {
                         }
                         setGameOverVisible(false);
                         timer.stop();
-                        //Pause menu is index 0, HUD index 1, gameOver menu index 2
-                        root.getChildren().remove(rootChildren, root.getChildren().size());
+                        gameplayElements.getChildren().remove(0, gameplayElements.getChildren().size());
                         clearStuff();
                         createRound();
-                        //unnecessary: fxPanel.setScene(gameplay);
                     }
                 }
         );
@@ -333,7 +325,7 @@ public abstract class SceneSetup extends ApplicationStart {
         root.getChildren().add(10, pauseMenu);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
-        gameplay.getStylesheets().add("Game/Layout/GLM1080.css");
+        gameplay.getStylesheets().add("MainGame/Layout/GLM1080.css");
         gameplay.setCursor(Cursor.CROSSHAIR);
 
         return gameplay;

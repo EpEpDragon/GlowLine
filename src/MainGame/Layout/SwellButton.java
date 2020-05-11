@@ -1,9 +1,8 @@
-package Game.Layout;
+package MainGame.Layout;
 
 import javafx.animation.ScaleTransition;
 import javafx.animation.Transition;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
 public class SwellButton extends Button {

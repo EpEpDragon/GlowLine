@@ -1,4 +1,4 @@
-package Game.Math;
+package MainGame.Math;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;

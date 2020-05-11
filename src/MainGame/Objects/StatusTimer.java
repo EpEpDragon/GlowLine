@@ -1,8 +1,8 @@
-package Game.Objects;
+package MainGame.Objects;
 
 import javafx.animation.AnimationTimer;
 
-import static Game.Layout.SceneSetup.printHighScores;
+import static MainGame.Layout.SceneSetup.printHighScores;
 
 public abstract class StatusTimer extends AnimationTimer {
 

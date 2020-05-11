@@ -1,10 +1,9 @@
-package Game.Objects;
+package MainGame.Objects;
 
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static Game.ApplicationStart.getDifficulty;
+import static MainGame.ApplicationStart.getDifficulty;
 
 public class Lander extends GameObject{
     public Lander(double scale){

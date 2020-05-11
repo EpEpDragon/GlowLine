@@ -1,11 +1,11 @@
-package Game.Objects;
+package MainGame.Objects;
 
-import Game.Effects.Emitter;
+import MainGame.Effects.Emitter;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import static Game.ApplicationStart.getEmitters;
-import static Game.ApplicationStart.getPlayer;
+import static MainGame.ApplicationStart.getEmitters;
+import static MainGame.ApplicationStart.getPlayer;
 
 public class Bullet extends GameObject{
     public Bullet(double scale, String type) {

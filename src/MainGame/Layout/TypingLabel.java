@@ -1,4 +1,4 @@
-package Game.Layout;
+package MainGame.Layout;
 
 import javafx.animation.Transition;
 import javafx.scene.control.Label;

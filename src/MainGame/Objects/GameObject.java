@@ -1,4 +1,4 @@
-package Game.Objects;
+package MainGame.Objects;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -7,9 +7,6 @@ import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.WHEAT;
 
 public abstract class GameObject {
     //TODO use Math functions for rad degree conversion

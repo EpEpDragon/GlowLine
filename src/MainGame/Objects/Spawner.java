@@ -1,7 +1,7 @@
-package Game.Objects;
+package MainGame.Objects;
 
-import Game.ApplicationStart;
-import Game.Math.OwnMath;
+import MainGame.ApplicationStart;
+import MainGame.Math.OwnMath;
 import javafx.scene.Node;
 
 
