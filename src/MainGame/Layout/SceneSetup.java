@@ -283,8 +283,17 @@ public abstract class SceneSetup extends ApplicationStart {
         );
 
         /**Intermediate Info**/
+        Label intermediateLevelUp = new Label("LEVEL UP");
+        intermediateLevelUp.setStyle("-fx-font-size: 250px; -fx-text-alignment: center");
+        Label levelInfo = new Label("You are now free to move anywhere: aim with your mouse and use <W> to go there...\nOh, and don't forget to use <SPACEBAR> to help you! ;)");
+        levelInfo.setStyle("-fx-font-size: 30px; -fx-text-alignment: center");
 
-
+        VBox intermediateInfo = new VBox(intermediateLevelUp, levelInfo);
+        intermediateInfo.setMinWidth(resolutionX);
+        intermediateInfo.setMinHeight(resolutionY);
+        intermediateInfo.setSpacing(20);
+        intermediateInfo.setAlignment(Pos.CENTER);
+        intermediateInfo.setVisible(false);
 
         /**HUD**/
         //Timer
@@ -328,7 +337,8 @@ public abstract class SceneSetup extends ApplicationStart {
         root.getChildren().add(7, gameOverDarken);
         root.getChildren().add(8, timeDilation);
         root.getChildren().add(9, gameOverMenu);
-        root.getChildren().add(10, pauseMenu);
+        root.getChildren().add(10, intermediateInfo);
+        root.getChildren().add(11, pauseMenu);
 
         gameplay = new Scene(root, resolutionX, resolutionY, Color.BLACK);
         gameplay.getStylesheets().add("MainGame/Layout/GLM1080.css");
