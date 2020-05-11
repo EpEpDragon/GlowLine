@@ -31,7 +31,7 @@ import static MainGame.Objects.gameStateHandler.*;
 public class MainGame extends Application {
     static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
-    private static boolean FULLSCREEN = false;
+    private static boolean FULLSCREEN = true;
     private static int resolutionX = gd.getDisplayMode().getWidth();
     private static int resolutionY = gd.getDisplayMode().getHeight();
 //    protected static int resolutionX = 1360;
