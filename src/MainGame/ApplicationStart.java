@@ -540,7 +540,7 @@ public class ApplicationStart extends Application {
             double decreaseSpeed = 1;
 
             //time dilation timer
-            //if still in penalty
+            //if still in penalty don't run
             if (time-timeOfPenalty<penaltyTime){
                 setTimeDilated(false);
                 timeDilationLeft += increaseSpeed * (time - timeDilationLastUpdate);
