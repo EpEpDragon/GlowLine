@@ -43,7 +43,7 @@ public abstract class Spawner {
         else {
             if (landerL1Done < landerL1Rows && time - previousTimeLanderL1 >= landerL1SpawnTime) {
                 for (int i = 1; i <= landerL1Columns; i++) {
-                    addGameObject(new LanderLevel1(getScale()), (getResolutionX() / (float) (landerL1Columns + 1)) * i - 50 * getScale() / 2, getResolutionY() * -0.05);
+                    addGameObject(new Lander(getScale()), (getResolutionX() / (float) (landerL1Columns + 1)) * i - 50 * getScale() / 2, getResolutionY() * -0.05);
                 }
                 previousTimeLanderL1 = time;
                 landerL1Done++;

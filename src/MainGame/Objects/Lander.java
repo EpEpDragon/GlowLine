@@ -9,23 +9,23 @@ import static MainGame.Objects.Spawner.removeGameObject;
 import static MainGame.Objects.Spawner.removeGameObjectAll;
 import static MainGame.Objects.gameStateHandler.*;
 
-public class Lander extends GameObject{
+public class Lander extends GameObject {
     private static boolean lighter;
-    public Lander(double scale){
-        super(80*scale*getDifficulty(),"enemy", new Rectangle(30*scale,40*scale, Color.INDIANRED));
-        setVelocity(0,80*scale*getDifficulty());
+
+    public Lander(double scale) {
+        super(80 * scale * getDifficulty(), "enemy", new Rectangle(30 * scale, 40 * scale, Color.INDIANRED));
+        setVelocity(0, 80 * scale * getDifficulty());
         lighter = false;
     }
 
     @Override
     void handelCollisions(double deltaTime) {
-        //Lander collision
         CollisionHandler.Collision collision;
 
-        //floor
+        //lander, floor collision; lose life
         collision = this.getCollision(getFloor());
         landerCollision(collision);
-        //bullet
+        //lander, bullet collision; kill lander
         for (GameObject bullet : getBullets()) {
             collision = getCollision(bullet);
             if (collision.isCollided() && !getGameOverState()) {
@@ -36,18 +36,22 @@ public class Lander extends GameObject{
                 getExplosionSound().play();
             }
         }
+        //lander, player collision; lose life
         collision = getCollision(getPlayer());
         landerCollision(collision);
     }
 
     private void landerCollision(CollisionHandler.Collision collision) {
+        //if lander (collided with floor) or (collided with player)
         if (collision.isCollided()) {
+            //if on last life and gameOver ensues
             if (getLivesLeft() == 0) {
                 setVelocity(0, 0);
                 if (!getGameOverState()) {
                     gameOver();
                 }
-                // Show lander hit floor.
+
+                // Show lander hit floor with colour animation
                 double landerUpdateTime = 0.03;
                 if ((getCurrentTime() - getLastLanderUpdate()) / landerUpdateTime > 1) {
                     setLastLanderUpdate(getCurrentTime());
@@ -58,8 +62,8 @@ public class Lander extends GameObject{
                 } else {
                     setRectColour(colorLerp(Color.ORANGERED, Color.INDIANRED, (getCurrentTime() - getLastLanderUpdate()) / landerUpdateTime));
                 }
-            }
-            else {
+            } else {
+                //if not on last life, just lose a life
                 lostLife();
                 removeGameObject(this);
             }

@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -22,15 +21,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import static MainGame.Layout.SceneSetup.*;
-import static MainGame.Math.OwnMath.colorLerp;
-import static MainGame.Math.OwnMath.getPlaceValue;
-import static MainGame.Objects.Spawner.*;
 import static MainGame.Objects.gameStateHandler.*;
 
 public class MainGame extends Application {

@@ -1,7 +1,6 @@
 package MainGame.Objects;
 
 import MainGame.Layout.SceneSetup;
-import MainGame.MainGame;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 
@@ -14,7 +13,6 @@ import static MainGame.Math.OwnMath.colorLerp;
 import static MainGame.Math.OwnMath.getPlaceValue;
 import static MainGame.Objects.Spawner.getL1EnemyCount;
 import static MainGame.Objects.Spawner.resetSpawner;
-import static MainGame.Objects.Player.*;
 
 public abstract class gameStateHandler {
     private static double timeSpeed;

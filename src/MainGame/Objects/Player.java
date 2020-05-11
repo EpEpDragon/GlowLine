@@ -59,6 +59,7 @@ public class Player extends GameObject {
     void handelCollisions(double deltaTime) {
         CollisionHandler.Collision collision;
         double deltaY;
+        //player, floor collision; keep above floor
         collision = getCollision(getFloor());
         if (collision.isCollided()) {
             deltaY = collision.getY() - getFloor().getY();
@@ -69,12 +70,14 @@ public class Player extends GameObject {
             getView()[0].setTranslateY(getView()[0].getTranslateY() - deltaY);
         }
 
+        //player, ceiling collision; bounce
         collision = getCollision(getCeiling());
         if (collision.isCollided()) {
             deltaY = collision.getY() - getCeiling().getHeight();
             setVelocity(getVelocity().getX(), getVelocity().getY() - deltaY / deltaTime);
-//                player.getView()[0].setTranslateY(player.getView()[0].getTranslateY() + deltaY);
         }
+
+        //player, enemyBullet collision; lose life
         for (GameObject enemyBullet : getEnemyBullets()) {
             collision = getCollision(enemyBullet);
             if (collision.isCollided()) {
