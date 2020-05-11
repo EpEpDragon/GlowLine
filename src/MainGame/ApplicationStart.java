@@ -133,7 +133,6 @@ public class ApplicationStart extends Application {
     /********************Resolution setup***********************/
     //Window JFrame initialization (This is needed to change the desktop resolution)
     private static void initWindow() {
-        System.out.println(resolutionX);
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice devices = g.getScreenDevices()[0];
         //This is the application window
@@ -374,12 +373,11 @@ public class ApplicationStart extends Application {
                 level2Song.play();
                 timeOfLevel2 = time;
             }
-            level = 2;
+
             if (time-timeOfLevel2 > 5) {
                 double difficultyChangeRate = 1.0/(getOriginalDifficulty()*60); //1 difficulty per 60 seconds if difficulty level set was 1
                 gameDifficulty = getOriginalDifficulty() + (time-timeOfLevel2-5)*difficultyChangeRate;
             }
-            forceThrust = time - timeOfLevel2 < 0.05;
 
             int messageTime = 5;
             if (time-timeOfLevel2 < messageTime){
@@ -538,7 +536,7 @@ public class ApplicationStart extends Application {
             double decreaseSpeed = 1;
 
             //time dilation timer
-            //if still in penalty
+            //if still in penalty don't run
             if (time-timeOfPenalty<penaltyTime){
                 setTimeDilated(false);
                 timeDilationLeft += increaseSpeed * (time - timeDilationLastUpdate);

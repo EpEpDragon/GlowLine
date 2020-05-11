@@ -130,6 +130,11 @@ public abstract class SceneSetup {
         Label dilateB = new Label("Space");
         dilateB.setId("controlLabel");
 
+        //Pause menu
+        Label pauseA = new Label("Pause game:");
+        Label pauseB = new Label("Escape");
+        pauseB.setId("controlLabel");
+
         //Back button
         SwellButton back = new SwellButton("Back", 0, false);
         back.setId("menuButtons");
@@ -162,8 +167,14 @@ public abstract class SceneSetup {
         controls.add(dilateA, 0, 3);
         controls.add(dilateB, 1, 3);
 
+        controls.add(pauseA, 0, 4);
+        controls.add(pauseB, 1, 4);
+
         difficulty.setMaxWidth(300);
         difficulty.setStyle("-fx-fill: black");
+        difficulty.setOnMouseReleased(e ->{
+            setOriginalDifficulty(difficulty.getValue());
+        });
         difficulty.setOnMouseReleased(e -> setOriginalDifficulty(difficulty.getValue()));
 
         VBox difficultyLayout = new VBox(difficultyLabel, difficultyExplanation, difficulty);
@@ -171,6 +182,7 @@ public abstract class SceneSetup {
         difficultyLayout.setAlignment(Pos.CENTER);
         VBox layout = new VBox(title, controls, difficultyLayout, back);
         layout.setSpacing(getResolutionY() * 0.05);
+        layout.setSpacing(getResolutionY() * 0.03);
         layout.setAlignment(Pos.CENTER);
 
         controlsMenu = new Scene(layout);
