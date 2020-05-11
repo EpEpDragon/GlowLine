@@ -108,6 +108,7 @@ public class ApplicationStart extends Application {
     private static double originalDifficulty = 1;
     private static double timeOfLevel2;
     private static boolean savedScore;
+    private static boolean forceThrust;
     //time Dilation variables...
     private static double timeDilationLastUpdate;
     private static double timeOfPenalty;
@@ -311,6 +312,7 @@ public class ApplicationStart extends Application {
         enteringName = false;
         enemiesKillCount = 0;
         level = 1;
+        forceThrust = false;
         resetSpawner();
         timeSpeed = 0.000_000_001;
         gameOverState = false;
@@ -406,6 +408,12 @@ public class ApplicationStart extends Application {
                 double difficultyChangeRate = 1.0/(getOriginalDifficulty()*60); //1 difficulty per 60 seconds if difficulty level set was 1
                 gameDifficulty = getOriginalDifficulty() + (time-timeOfLevel2-5)*difficultyChangeRate;
             }
+            if (time-timeOfLevel2 < 0.05)
+            {
+                forceThrust = true;
+            } else {
+                forceThrust = false;
+            }
         }
 
 
@@ -426,7 +434,7 @@ public class ApplicationStart extends Application {
             // Level 2+
             if (getLevel() > 1) {
                 player.setMaxVelocity(scale*getDifficulty()*400);
-                if (forward) {
+                if (forward || forceThrust) {
                     player.accelerate(player.getForwardVector().multiply(playerAcceleration));
                 }
             }
@@ -599,11 +607,6 @@ public class ApplicationStart extends Application {
 
         //Bullet collisions/clean
         for (GameObject bullet : bullets) {
-            collision = bullet.getCollision(floor);
-            if (collision.isCollided()) {
-                removeGameObject(bullet);
-            }
-
             if ((bullet.getView()[0].getTranslateX() < 0 || bullet.getView()[0].getTranslateX() > resolutionX) ||
                     (bullet.getView()[0].getTranslateY() < 0 || bullet.getView()[0].getTranslateY() > resolutionY)) {
                 removeGameObject(bullet);
@@ -619,7 +622,7 @@ public class ApplicationStart extends Application {
         //Update player, thrust emitter
         if (!player.isDead()) {
             player.update(deltaTime);
-            if (forward && !(getLevel() == 1)) {
+            if ((forward || forceThrust) && !(getLevel() == 1)) {
                 playerThrust.emit(deltaTime);
             }
             playerThrust.update(deltaTime);

@@ -52,7 +52,7 @@ public abstract class SceneSetup extends ApplicationStart {
     public static Scene createMainMenu(JFXPanel fxPanel) {
         int buttonWidth = 400;
 
-        TypingLabel title = new TypingLabel("Star Line", 8);
+        TypingLabel title = new TypingLabel("Glow Line", 8);
         title.setId("title");
         title.setPadding(new Insets(0, 0, getResolutionY() * 0.5 + 140, 0));
 
