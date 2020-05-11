@@ -9,6 +9,11 @@ Mouse to aim.
 Mouse button 1 to shoot.
 W to thrust forward.
 
+javac -classpath src/ -d ./ src/MainGame/MainGame.java
+cp src/MainGame/Layout/GLM1080.css MainGame/Layout/
+java -classpath ./ MainGame.MainGame
+
+
 References:
 
 KeyListener : https://stackoverflow.com/questions/29962395/how-to-write-a-keylistener-for-javafx
