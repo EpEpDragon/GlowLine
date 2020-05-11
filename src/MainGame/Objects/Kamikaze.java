@@ -1,6 +1,5 @@
 package MainGame.Objects;
 
-import MainGame.Effects.Emitter;
 import MainGame.Math.OwnMath;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -39,7 +38,7 @@ public class Kamikaze extends GameObject {
 
     @Override
     void handelCollisions(double deltaTime) {
-        CollisionHandler.Collision collision;
+        Collision collision;
         for (GameObject allyBullet : getBullets()) {
             collision = this.getCollision(allyBullet);
             if (collision.isCollided() && !getGameOverState()) {

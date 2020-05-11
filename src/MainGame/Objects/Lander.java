@@ -21,7 +21,7 @@ public class Lander extends GameObject {
 
     @Override
     void handelCollisions(double deltaTime) {
-        CollisionHandler.Collision collision;
+        Collision collision;
 
         //lander, floor collision; lose life
         collision = this.getCollision(getFloor());
@@ -42,7 +42,7 @@ public class Lander extends GameObject {
         landerCollision(collision);
     }
 
-    private void landerCollision(CollisionHandler.Collision collision) {
+    private void landerCollision(Collision collision) {
         //if lander (collided with floor) or (collided with player)
         if (collision.isCollided()) {
             //if on last life and gameOver ensues

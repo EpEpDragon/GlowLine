@@ -51,7 +51,7 @@ public class Player extends GameObject {
 
     @Override
     void handelCollisions(double deltaTime) {
-        CollisionHandler.Collision collision;
+        Collision collision;
         double deltaY;
         //player, floor collision; keep above floor
         collision = getCollision(getFloor());
