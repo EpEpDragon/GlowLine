@@ -1,5 +1,6 @@
 package MainGame.Objects;
 
+import MainGame.Effects.Emitter;
 import MainGame.Math.OwnMath;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -38,8 +39,6 @@ public class Player extends GameObject {
                     }
                 }
             }
-
-
 
             // Show recharge
             if ((getCurrentTime() - getLastShot()) / rechargeTime > 1) {
