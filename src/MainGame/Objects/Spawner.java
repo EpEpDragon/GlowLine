@@ -88,7 +88,6 @@ public abstract class Spawner {
     public static void removeGameObjectAll(GameObject... objects) {
         for (GameObject object : objects) {
             object.setDead();
-
             for (Node view : object.getView()) {
                 getGameplayElements().getChildren().remove(view);
             }

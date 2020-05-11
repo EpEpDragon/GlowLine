@@ -147,7 +147,7 @@ public abstract class SceneSetup {
         back.setOnAction(e -> fxPanel.setScene(mainMenu));
 
         Label difficultyLabel = new Label("Set difficulty:");
-        Label difficultyExplanation = new Label("This effects the starting difficulty, as well as the\nrate at which the difficulty increases in level 2.");
+        Label difficultyExplanation = new Label("This affects the starting difficulty, as well as the\nrate at which the difficulty increases in level 2.");
         difficultyExplanation.setStyle("-fx-font-size: 15px; -fx-text-alignment: center");
         difficultyExplanation.setPadding(new Insets(-5, 0, 5, 0));
 
@@ -292,7 +292,7 @@ public abstract class SceneSetup {
         /**Intermediate Info**/
         Label intermediateLevelUp = new Label("LEVEL UP");
         intermediateLevelUp.setStyle("-fx-font-size: 250px; -fx-text-alignment: center");
-        Label levelInfo = new Label("You are now free to move anywhere: aim with your mouse and use <W> to go there...\nOh, and don't forget to use <SPACEBAR> to help you! ;)");
+        Label levelInfo = new Label("You are now free to move anywhere: aim with your mouse and use <W> to go there...\nDon't forget to use <SPACEBAR> to help you!");
         levelInfo.setStyle("-fx-font-size: 30px; -fx-text-alignment: center");
 
         VBox intermediateInfo = new VBox(intermediateLevelUp, levelInfo);

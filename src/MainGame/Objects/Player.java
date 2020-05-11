@@ -57,9 +57,6 @@ public class Player extends GameObject {
         collision = getCollision(getFloor());
         if (collision.isCollided()) {
             deltaY = collision.getY() - getFloor().getY();
-            //For bounce
-            //player.setVelocity(player.getVelocity().getX(), player.getVelocity().getY() - deltaY/deltaTime);
-            //No bounce
             setVelocity(getVelocity().getX(), 0);
             getView()[0].setTranslateY(getView()[0].getTranslateY() - deltaY);
         }
