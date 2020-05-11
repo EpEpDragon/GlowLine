@@ -68,7 +68,6 @@ public class SwellButton extends Button {
             if (finished) {
                 currentScale = getScaleX();
                 grow.stop();
-                System.out.println("Enter: " + getScaleX());
 
                 grow.setToX(growScale);
                 grow.setToY(growScale);
@@ -84,7 +83,6 @@ public class SwellButton extends Button {
             currentScale = getScaleX();
             grow.stop();
 
-            System.out.println("Exit: " + getScaleX());
             grow.setToX(1);
             grow.setToY(1);
             grow.setFromX(currentScale);

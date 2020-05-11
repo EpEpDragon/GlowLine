@@ -133,7 +133,6 @@ public class ApplicationStart extends Application {
     /********************Resolution setup***********************/
     //Window JFrame initialization (This is needed to change the desktop resolution)
     private static void initWindow() {
-        System.out.println(resolutionX);
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice devices = g.getScreenDevices()[0];
         //This is the application window
