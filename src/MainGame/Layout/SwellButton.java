@@ -7,7 +7,6 @@ import javafx.util.Duration;
 
 public class SwellButton extends Button {
     private static double growScale = 1.3;
-    private static int durationMilliGrow = 300;
     private static int durationMilliUnfold = 800;
     private static int getDurationMilliFade = 200;
     private static double currentScale;
@@ -61,6 +60,7 @@ public class SwellButton extends Button {
             setScaleY(1);
         }
         //Swell on mouse move
+        int durationMilliGrow = 300;
         ScaleTransition grow = new ScaleTransition(Duration.millis(durationMilliGrow), this);
         grow.setCycleCount(1);
 
