@@ -204,7 +204,7 @@ public class ApplicationStart extends Application {
                     break;
                 case Q:
                     if (timer != null) {
-                        if (timer.isRunning() || root.getChildren().get(10).isVisible()) {
+                        if (timer.isRunning() || root.getChildren().get(11).isVisible()) {
                             stopGamePlaySongs();
                             startMainMenuSong();
                             timer.stop();
@@ -216,23 +216,23 @@ public class ApplicationStart extends Application {
                                 setGameOverVisible(false);
                                 saveScore();
                             }
-                            if (root.getChildren().get(10).isVisible()) {
-                                root.getChildren().get(10).setVisible(false);
+                            if (root.getChildren().get(11).isVisible()) {
+                                root.getChildren().get(11).setVisible(false);
                             }
                         }
                     }
                     break;
                 case ESCAPE:
-                    if (root.getChildren().get(10).isVisible() && !gameOverState) {
+                    if (root.getChildren().get(11).isVisible() && !gameOverState) {
                         if (SceneSetup.isReadyToResume()) {
                             timer.start();
-                            root.getChildren().get(10).setVisible(false);
+                            root.getChildren().get(11).setVisible(false);
                         }
                     } else if (timer != null && !space){ //!space is necessary to prevent escape from working while time dilating, because this causes bug...
                         if (!gameOverState && timer.isRunning()) {
                             SceneSetup.setReadyToResume(false);
                             timer.stop();
-                            root.getChildren().get(10).setVisible(true);
+                            root.getChildren().get(11).setVisible(true);
                             playAll((Pane) gameplay.getRoot());
                         }
                     }
@@ -368,7 +368,7 @@ public class ApplicationStart extends Application {
     /*****************Game Loop update**************************/
     private static void update(double deltaTime, double time) {
         if (enemiesKillCount >= getL1EnemyCount()) {
-            if (level == 1)
+            if (timeOfLevel2 == -1)
             {
                 gameplaySong.stop();
                 level2Song.play();
@@ -379,8 +379,28 @@ public class ApplicationStart extends Application {
                 double difficultyChangeRate = 1.0/(getOriginalDifficulty()*60); //1 difficulty per 60 seconds if difficulty level set was 1
                 gameDifficulty = getOriginalDifficulty() + (time-timeOfLevel2-5)*difficultyChangeRate;
             }
+<<<<<<< HEAD
             forceThrust = time - timeOfLevel2 < 0.05;
+=======
+
+            int messageTime = 5;
+            if (time-timeOfLevel2 < messageTime){
+                root.getChildren().get(10).setVisible(true);
+            }
+            else{
+                level = 2;
+                root.getChildren().get(10).setVisible(false);
+                if (time-timeOfLevel2 < messageTime+0.05)
+                {
+                    forceThrust = true;
+                } else {
+                    forceThrust = false;
+                }
+            }
+>>>>>>> 1c35a7287efa8ca226806926cf59f4ae6d738329
         }
+
+
 
         setLives(livesLeft);
 
